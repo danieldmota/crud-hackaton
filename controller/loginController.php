@@ -35,7 +35,7 @@ try {
         $_SESSION['loginTentativas'] = ($_SESSION['loginTentativas'] ?? 0) + 1;
 
         if ($_SESSION['loginTentativas'] >= 5) {
-            $_SESSION['loginBloqueado'] = time() + 120; // 2 minutos
+            $_SESSION['loginBloqueado'] = time() + 300; // 5 minutos
             $_SESSION['loginTentativas'] = 0;
             throw new Exception("Muitas tentativas de login.");
         }
