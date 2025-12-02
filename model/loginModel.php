@@ -13,11 +13,14 @@ class loginModel
         $this->conn = $db->conectar();
     }
 
-    public function Login($email, $senha)
+    public function loginUsuario($email, $senha)
     {
-        $sql = "SELECT id,tipo_perfil, email, senha FROM {$this->tabela} WHERE email = :email LIMIT 1";
+        $sql = "SELECT id, nome, email, senha 
+            FROM usuarios 
+            WHERE email = :email LIMIT 1";
+
         $stmt = $this->conn->prepare($sql);
-        $stmt->bindValue(':email', $email, PDO::PARAM_STR);
+        $stmt->bindValue(':email', $email);
         $stmt->execute();
 
         $usuario = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -25,6 +28,26 @@ class loginModel
         if ($usuario && password_verify($senha, $usuario['senha'])) {
             unset($usuario['senha']);
             return (object) $usuario;
+        }
+
+        return false;
+    }
+
+    public function loginRestaurante($cnpj, $senha)
+    {
+        $sql = "SELECT id, nome, cnpj, senha 
+            FROM restaurantes 
+            WHERE cnpj = :cnpj LIMIT 1";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':cnpj', $cnpj);
+        $stmt->execute();
+
+        $restaurante = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        if ($restaurante && password_verify($senha, $restaurante['senha'])) {
+            unset($restaurante['senha']);
+            return (object) $restaurante;
         }
 
         return false;

@@ -14,21 +14,32 @@ try {
         throw new Exception("Muitas tentativas de login.");
     }
 
-    $email = trim($_POST['email'] ?? '');
+    $login = trim($_POST['cnpj'] ?? $_POST['email'] ?? '');
     $senha = trim($_POST['senha'] ?? '');
 
-    if (empty($email) || empty($senha)) {
+    if (empty($login) || empty($senha)) {
 
         throw new Exception("Preencha todos os campos");
     }
 
-    if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
+    $loginLimpo = preg_replace('/\D/', '', $login);
 
-        throw new Exception("Informe um email válido");
+    $isEmail = filter_var($login, FILTER_VALIDATE_EMAIL);
+    $isCnpj = preg_match('/^\d{14}$/', $loginLimpo);
+
+    if (!$isEmail && !$isCnpj) {
+        throw new Exception("Informe um email ou CNPJ válido");
     }
 
     $loginModel = new LoginModel();
-    $usuarioLogin = $loginModel->Login($email, $senha);
+
+    if ($isCnpj) {
+        $usuarioLogin = $loginModel->loginRestaurante($loginLimpo, $senha);
+    }
+
+    if ($isEmail) {
+        $usuarioLogin = $loginModel->loginUsuario($login, $senha);
+    }
 
     if (!$usuarioLogin) {
 
@@ -44,7 +55,6 @@ try {
     } else {
 
         $_SESSION['id'] = $usuarioLogin->id;
-        $_SESSION['perfil'] = $usuarioLogin->tipo_perfil;
         $_SESSION['loginTentativas'] = 0;
         unset($_SESSION['loginBloqueado']);
 
