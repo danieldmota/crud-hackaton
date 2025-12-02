@@ -1,0 +1,2762 @@
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    /* Cores Gastronômicas */
+    --primary-orange: #ff6b35;
+    --secondary-orange: #ff8c42;
+    --accent-brown: #8b4513;
+    --dark-brown: #5c2e0a;
+    --light-orange: #ffab73;
+    --warm-white: #fff8f0;
+    --cream: #f5e6d3;
+    
+    --dark-bg: #1a1612;
+    --dark-surface: #2a2520;
+    --dark-surface-2: #352f28;
+    --dark-border: rgba(255, 107, 53, 0.3);
+    --text-primary: #ffffff;
+    --text-secondary: #e0d5c8;
+    --text-muted: #a89685;
+    
+    /* Gradientes Gastronômicos */
+    --gradient-primary: linear-gradient(135deg, #ff6b35 0%, #ff8c42 100%);
+    --gradient-secondary: linear-gradient(135deg, #ff8c42 0%, #ffab73 100%);
+    --gradient-accent: linear-gradient(135deg, #8b4513 0%, #5c2e0a 100%);
+    --gradient-warm: linear-gradient(135deg, #fff8f0 0%, #f5e6d3 100%);
+    --gradient-dark: linear-gradient(135deg, #1a1612 0%, #2a2520 100%);
+    
+    /* Sombras Gastronômicas */
+    --shadow-neon-primary: 0 0 20px rgba(255, 107, 53, 0.5),
+                          0 0 40px rgba(255, 107, 53, 0.3),
+                          0 0 60px rgba(255, 107, 53, 0.1);
+    --shadow-neon-secondary: 0 0 20px rgba(255, 140, 66, 0.5),
+                            0 0 40px rgba(255, 140, 66, 0.3);
+    --shadow-neon-accent: 0 0 15px rgba(139, 69, 19, 0.6);
+    
+    /* Transições */
+    --transition-fast: 0.2s ease;
+    --transition-normal: 0.3s ease;
+    --transition-slow: 0.5s ease;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-primary);
+    background: var(--dark-bg);
+    background-image: 
+        radial-gradient(at 0% 0%, rgba(255, 107, 53, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(255, 140, 66, 0.08) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(139, 69, 19, 0.05) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(255, 171, 115, 0.05) 0px, transparent 50%);
+    background-attachment: fixed;
+    min-height: 100vh;
+    line-height: 1.6;
+    overflow-x: hidden;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+}
+
+/* Meta viewport deve ser adicionado no HTML */
+/* <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes"> */
+
+/* Animações Globais */
+@keyframes float {
+    0%, 100% { transform: translateY(0px); }
+    50% { transform: translateY(-20px); }
+}
+
+@keyframes pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.5; }
+}
+
+@keyframes glow {
+    0%, 100% { box-shadow: 0 0 5px var(--primary-orange), 0 0 10px var(--primary-orange), 0 0 15px var(--primary-orange); }
+    50% { box-shadow: 0 0 10px var(--primary-orange), 0 0 20px var(--primary-orange), 0 0 30px var(--primary-orange); }
+}
+
+@keyframes slideInUp {
+    from {
+        opacity: 0;
+        transform: translateY(30px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+@keyframes shimmer {
+    0% { background-position: -1000px 0; }
+    100% { background-position: 1000px 0; }
+}
+
+@keyframes scan {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100vw); }
+}
+
+/* Partículas de Fundo */
+body::before {
+    content: '';
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-image: 
+        radial-gradient(2px 2px at 20% 30%, var(--primary-orange), transparent),
+        radial-gradient(2px 2px at 60% 70%, var(--secondary-orange), transparent),
+        radial-gradient(1px 1px at 50% 50%, var(--light-orange), transparent),
+        radial-gradient(1px 1px at 80% 10%, var(--primary-orange), transparent),
+        radial-gradient(2px 2px at 90% 40%, var(--accent-brown), transparent);
+    background-size: 200% 200%;
+    background-position: 0% 0%;
+    animation: float 20s ease-in-out infinite;
+    opacity: 0.3;
+    pointer-events: none;
+    z-index: 0;
+}
+
+/* Header Futurístico */
+.header {
+    background: rgba(26, 22, 18, 0.95);
+    backdrop-filter: blur(20px);
+    border-bottom: 1px solid var(--dark-border);
+    padding: 1rem 0;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+    width: 100%;
+}
+
+.header::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 1px;
+    background: var(--gradient-primary);
+    opacity: 0.5;
+}
+
+.header-container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 0 2rem;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    z-index: 1;
+    flex-wrap: nowrap;
+}
+
+.logo {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.8rem;
+    font-weight: 900;
+    text-decoration: none;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    position: relative;
+    letter-spacing: 2px;
+    transition: var(--transition-normal);
+}
+
+.logo::after {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: transform var(--transition-normal);
+}
+
+.logo:hover::after {
+    transform: scaleX(1);
+}
+
+.nav {
+    transition: all var(--transition-normal);
+}
+
+.nav-menu {
+    display: flex;
+    list-style: none;
+    gap: 2.5rem;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+}
+
+/* Mobile Menu Toggle */
+.mobile-menu-toggle {
+    display: none;
+    flex-direction: column;
+    gap: 5px;
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.75rem;
+    z-index: 1001;
+    position: relative;
+    min-width: 44px;
+    min-height: 44px;
+    justify-content: center;
+    align-items: center;
+}
+
+.mobile-menu-toggle span {
+    display: block;
+    width: 28px;
+    height: 3px;
+    background: var(--primary-orange);
+    border-radius: 3px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    box-shadow: 0 0 5px rgba(255, 107, 53, 0.5);
+}
+
+.mobile-menu-toggle.active span:nth-child(1) {
+    transform: rotate(45deg) translate(9px, 9px);
+    background: var(--primary-orange);
+}
+
+.mobile-menu-toggle.active span:nth-child(2) {
+    opacity: 0;
+    transform: translateX(-10px);
+}
+
+.mobile-menu-toggle.active span:nth-child(3) {
+    transform: rotate(-45deg) translate(8px, -8px);
+    background: var(--primary-orange);
+}
+
+.nav-menu a {
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1.1rem;
+    position: relative;
+    transition: var(--transition-normal);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.nav-menu a::before {
+    content: '';
+    position: absolute;
+    bottom: -5px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--gradient-primary);
+    transition: width var(--transition-normal);
+}
+
+.nav-menu a:hover {
+    color: var(--primary-orange);
+    text-shadow: 0 0 10px var(--primary-orange);
+}
+
+.nav-menu a:hover::before {
+    width: 100%;
+}
+
+/* Botão Voltar */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: rgba(139, 69, 19, 0.1);
+    border: 2px solid var(--accent-brown);
+    border-radius: 8px;
+    color: var(--accent-brown);
+    font-family: 'Poppins', sans-serif;
+    font-weight: 600;
+    font-size: 0.95rem;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    margin-bottom: 1.5rem;
+    position: relative;
+    overflow: hidden;
+    min-height: 44px;
+    min-width: 44px;
+}
+
+.btn-back::before {
+    content: '←';
+    font-size: 1.2rem;
+    transition: transform var(--transition-normal);
+    display: inline-block;
+}
+
+.btn-back:hover {
+    background: rgba(139, 69, 19, 0.2);
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+    transform: translateX(-5px);
+    box-shadow: 0 5px 15px rgba(255, 107, 53, 0.3);
+}
+
+.btn-back:hover::before {
+    transform: translateX(-3px);
+}
+
+.btn-back:active {
+    transform: translateX(-2px);
+}
+
+.btn-back:focus {
+    outline: 2px solid var(--primary-orange);
+    outline-offset: 2px;
+}
+
+/* Botões Futurísticos */
+.btn {
+    padding: 0.875rem 2rem;
+    border: none;
+    border-radius: 8px;
+    font-size: 1rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-decoration: none;
+    display: inline-block;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+    overflow: hidden;
+}
+
+.btn::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left var(--transition-slow);
+}
+
+.btn:hover::before {
+    left: 100%;
+}
+
+.btn-primary {
+    background: var(--gradient-primary);
+    color: var(--dark-bg);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-neon-primary);
+}
+
+.btn-secondary {
+    background: var(--gradient-secondary);
+    color: var(--text-primary);
+    box-shadow: 0 0 20px rgba(255, 140, 66, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-neon-secondary);
+}
+
+.btn-outline {
+    background: transparent;
+    border: 2px solid var(--primary-orange);
+    color: var(--primary-orange);
+}
+
+.btn-outline:hover {
+    background: rgba(255, 107, 53, 0.1);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.4);
+}
+
+/* Container */
+.container {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: 2rem;
+    position: relative;
+    z-index: 1;
+}
+
+/* Hero Section Futurístico */
+.hero-section {
+    background: linear-gradient(135deg, rgba(10, 10, 15, 0.95) 0%, rgba(26, 26, 36, 0.9) 100%),
+                url('https://images.unsplash.com/photo-1504674900247-0877df9cc836?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+    background-size: cover;
+    background-position: center;
+    background-attachment: fixed;
+    padding: 8rem 2rem;
+    text-align: center;
+    color: var(--text-primary);
+    border-radius: 0 0 30px 30px;
+    margin-bottom: 4rem;
+    position: relative;
+    overflow: hidden;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(10, 10, 15, 0.85) 0%, rgba(26, 26, 36, 0.75) 100%);
+    z-index: 0;
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: radial-gradient(circle at 50% 50%, rgba(255, 107, 53, 0.05) 0%, transparent 70%);
+    z-index: 0;
+}
+
+.hero-section .container {
+    position: relative;
+    z-index: 1;
+}
+
+.hero-section h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 107, 53, 0.3);
+    animation: slideInUp 0.8s ease-out;
+    letter-spacing: 1px;
+    line-height: 1.2;
+}
+
+.hero-section p {
+    font-size: 1.5rem;
+    margin-bottom: 2rem;
+    color: var(--text-secondary);
+    font-weight: 400;
+    animation: slideInUp 1s ease-out;
+    letter-spacing: 1px;
+}
+
+/* Search Section Futurístico */
+.search-section {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border-radius: 20px;
+    border: 1px solid var(--dark-border);
+    margin-bottom: 3rem;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.search-section::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+    animation: scan 3s infinite;
+}
+
+.search-bar {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    flex-wrap: wrap;
+}
+
+.search-input {
+    flex: 1;
+    min-width: 300px;
+    padding: 1.25rem 1.5rem;
+    background: rgba(10, 10, 15, 0.6);
+    border: 2px solid var(--dark-border);
+    border-radius: 12px;
+    font-size: 1.1rem;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+    transition: all var(--transition-normal);
+    outline: none;
+}
+
+.search-input::placeholder {
+    color: var(--text-muted);
+}
+
+.search-input:focus {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+    background: rgba(10, 10, 15, 0.8);
+}
+
+.search-btn {
+    padding: 1.25rem 2.5rem;
+    background: var(--gradient-primary);
+    color: var(--dark-bg);
+    border: none;
+    border-radius: 12px;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+
+.search-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-neon-primary);
+}
+
+/* Filters Futurísticos */
+.filters-container {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    align-items: center;
+}
+
+.filter-group label {
+    font-weight: 700;
+    color: var(--text-primary);
+    min-width: 140px;
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.filter-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    flex: 1;
+}
+
+.filter-chip {
+    padding: 0.75rem 1.5rem;
+    background: rgba(10, 10, 15, 0.6);
+    border: 2px solid var(--dark-border);
+    border-radius: 25px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    position: relative;
+    overflow: hidden;
+}
+
+.filter-chip::before {
+    content: '';
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    width: 0;
+    height: 0;
+    border-radius: 50%;
+    background: rgba(255, 107, 53, 0.2);
+    transform: translate(-50%, -50%);
+    transition: width 0.5s, height 0.5s;
+}
+
+.filter-chip:hover {
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+    transform: translateY(-2px);
+    box-shadow: 0 0 15px rgba(255, 107, 53, 0.3);
+}
+
+.filter-chip:hover::before {
+    width: 300px;
+    height: 300px;
+}
+
+.filter-chip.active {
+    background: var(--gradient-primary);
+    color: var(--dark-bg);
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.5);
+    font-weight: 700;
+}
+
+.filter-select {
+    padding: 0.75rem 1.5rem;
+    background: rgba(10, 10, 15, 0.6);
+    border: 2px solid var(--dark-border);
+    border-radius: 12px;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    outline: none;
+    flex: 1;
+    min-width: 200px;
+}
+
+.filter-select:focus {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+}
+
+.filter-select option {
+    background: var(--dark-surface);
+    color: var(--text-primary);
+}
+
+/* Smart Filters Futurísticos */
+.smart-filters {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--dark-border);
+    margin-top: 2rem;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.smart-filters h3 {
+    margin-bottom: 2rem;
+    font-size: 1.4rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 0.5px;
+}
+
+.smart-filters-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 1rem;
+}
+
+.smart-filter-item {
+    background: rgba(10, 10, 15, 0.5);
+    backdrop-filter: blur(10px);
+    padding: 1rem 1.5rem;
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    border: 2px solid var(--dark-border);
+    text-align: center;
+    color: var(--text-secondary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 50px;
+}
+
+.smart-filter-item:hover {
+    background: rgba(255, 107, 53, 0.1);
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+    transform: translateY(-3px);
+    box-shadow: 0 5px 20px rgba(255, 107, 53, 0.2);
+}
+
+.smart-filter-item.active {
+    background: rgba(255, 107, 53, 0.15);
+    border-color: var(--primary-orange);
+    color: var(--primary-orange);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+    font-weight: 600;
+}
+
+.smart-filter-item i {
+    display: none;
+}
+
+.smart-filter-item span {
+    font-weight: 500;
+    font-size: 0.95rem;
+    letter-spacing: 0.3px;
+}
+
+/* Restaurant List Futurístico */
+.restaurants-section {
+    margin-top: 3rem;
+}
+
+.section-title {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    margin-bottom: 2rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 900;
+    letter-spacing: 2px;
+}
+
+.restaurants-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+    gap: 2rem;
+}
+
+.restaurant-card {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all var(--transition-normal);
+    cursor: pointer;
+    position: relative;
+}
+
+.restaurant-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    transform: scaleX(0);
+    transition: transform var(--transition-normal);
+}
+
+.restaurant-card:hover {
+    transform: translateY(-10px) scale(1.02);
+    border-color: var(--primary-orange);
+    box-shadow: var(--shadow-neon-primary);
+}
+
+.restaurant-card:hover::before {
+    transform: scaleX(1);
+}
+
+.restaurant-image {
+    width: 100%;
+    height: 250px;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    position: relative;
+    overflow: hidden;
+}
+
+.restaurant-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(26, 22, 18, 0.5) 100%);
+    transition: opacity var(--transition-normal);
+}
+
+.restaurant-card:hover .restaurant-image::after {
+    opacity: 0.5;
+}
+
+.restaurant-info {
+    padding: 2rem;
+}
+
+.restaurant-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+}
+
+.restaurant-category {
+    color: var(--primary-orange);
+    font-weight: 600;
+    margin-bottom: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    font-size: 1rem;
+}
+
+.restaurant-location {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    margin-bottom: 1rem;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.restaurant-rating {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.stars {
+    color: var(--secondary-orange);
+    font-size: 1.3rem;
+    text-shadow: 0 0 10px var(--secondary-orange);
+}
+
+.rating-text {
+    color: var(--text-secondary);
+    font-size: 1rem;
+}
+
+.restaurant-features {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+}
+
+.feature-badge {
+    padding: 0.5rem 1rem;
+    background: rgba(255, 107, 53, 0.1);
+    border: 1px solid var(--dark-border);
+    border-radius: 20px;
+    font-size: 0.85rem;
+    color: var(--primary-orange);
+    font-weight: 600;
+    transition: all var(--transition-normal);
+}
+
+.restaurant-card:hover .feature-badge {
+    background: rgba(255, 107, 53, 0.2);
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 10px rgba(255, 107, 53, 0.3);
+}
+
+.restaurant-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.btn-small {
+    padding: 0.75rem 1.5rem;
+    font-size: 0.95rem;
+    flex: 1;
+}
+
+/* Restaurant Details Futurístico */
+.restaurant-details {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 25px;
+    overflow: hidden;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+    margin-bottom: 3rem;
+}
+
+.restaurant-header {
+    position: relative;
+    height: 450px;
+    background: linear-gradient(135deg, rgba(10, 10, 15, 0.95) 0%, rgba(26, 26, 36, 0.9) 100%),
+                url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-primary);
+    text-align: center;
+    overflow: hidden;
+}
+
+.restaurant-header::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(135deg, rgba(10, 10, 15, 0.85) 0%, rgba(26, 26, 36, 0.75) 100%);
+    z-index: 0;
+}
+
+.restaurant-header-content {
+    z-index: 1;
+    position: relative;
+}
+
+.restaurant-header h1 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 4rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 107, 53, 0.3);
+    letter-spacing: 1px;
+}
+
+.restaurant-header .restaurant-category {
+    color: var(--text-primary);
+    font-size: 1.5rem;
+    opacity: 0.9;
+    font-weight: 600;
+    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
+}
+
+.restaurant-body {
+    padding: 3rem;
+}
+
+.details-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 3rem;
+    margin-bottom: 3rem;
+}
+
+.details-section {
+    background: rgba(10, 10, 15, 0.4);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 20px;
+    border: 1px solid var(--dark-border);
+}
+
+.details-section h3 {
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+    font-size: 1.75rem;
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    letter-spacing: 1px;
+}
+
+.info-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: rgba(255, 107, 53, 0.05);
+    border-radius: 12px;
+    border-left: 3px solid var(--primary-orange);
+    transition: all var(--transition-normal);
+}
+
+.info-item:hover {
+    background: rgba(255, 107, 53, 0.1);
+    transform: translateX(5px);
+}
+
+.info-item i {
+    color: var(--primary-orange);
+    font-size: 1.5rem;
+    width: 30px;
+    text-shadow: 0 0 10px var(--primary-orange);
+}
+
+/* Tabs Futurísticos */
+.tabs {
+    display: flex;
+    gap: 1rem;
+    margin-bottom: 2rem;
+    border-bottom: 2px solid var(--dark-border);
+}
+
+.tab {
+    padding: 1.25rem 2rem;
+    background: none;
+    border: none;
+    font-size: 1.1rem;
+    font-weight: 700;
+    font-family: 'Poppins', sans-serif;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    transition: all var(--transition-normal);
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    position: relative;
+}
+
+.tab::before {
+    content: '';
+    position: absolute;
+    bottom: -2px;
+    left: 0;
+    width: 0;
+    height: 3px;
+    background: var(--gradient-primary);
+    transition: width var(--transition-normal);
+}
+
+.tab:hover {
+    color: var(--text-primary);
+}
+
+.tab.active {
+    color: var(--primary-orange);
+}
+
+.tab.active::before {
+    width: 100%;
+}
+
+.tab-content {
+    display: none;
+    padding: 2rem 0;
+    animation: slideInUp 0.5s ease-out;
+}
+
+.tab-content.active {
+    display: block;
+}
+
+/* Menu Futurístico */
+.menu-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 2rem;
+}
+
+.menu-item {
+    background: rgba(10, 10, 15, 0.4);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--dark-border);
+    border-radius: 15px;
+    padding: 2rem;
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.menu-item::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 107, 53, 0.1), transparent);
+    transition: left var(--transition-slow);
+}
+
+.menu-item:hover::before {
+    left: 100%;
+}
+
+.menu-item:hover {
+    border-color: var(--primary-orange);
+    transform: translateY(-5px);
+    box-shadow: 0 0 25px rgba(255, 107, 53, 0.3);
+}
+
+.menu-item-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.4rem;
+    font-weight: 700;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+}
+
+.menu-item-description {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+    line-height: 1.6;
+}
+
+.menu-item-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.6rem;
+    font-weight: 900;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 2px;
+}
+
+/* Reviews Futurísticos */
+.review-card {
+    background: rgba(10, 10, 15, 0.4);
+    backdrop-filter: blur(10px);
+    border: 2px solid var(--dark-border);
+    border-radius: 15px;
+    padding: 2rem;
+    margin-bottom: 1.5rem;
+    transition: all var(--transition-normal);
+}
+
+.review-card:hover {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.2);
+    transform: translateX(5px);
+}
+
+.review-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1rem;
+}
+
+.reviewer-name {
+    font-family: 'Poppins', sans-serif;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1.2rem;
+}
+
+.review-date {
+    color: var(--text-muted);
+    font-size: 0.95rem;
+}
+
+.review-rating {
+    margin-bottom: 0.75rem;
+}
+
+.review-text {
+    color: var(--text-secondary);
+    line-height: 1.8;
+    font-size: 1.05rem;
+}
+
+/* Reservation Form Futurístico */
+.reservation-form {
+    background: rgba(10, 10, 15, 0.4);
+    backdrop-filter: blur(10px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.reservation-form h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    margin-bottom: 2rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    font-weight: 700;
+}
+
+.form-group {
+    margin-bottom: 2rem;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 0.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.form-group input,
+.form-group select,
+.form-group textarea {
+    width: 100%;
+    padding: 1rem 1.5rem;
+    background: rgba(10, 10, 15, 0.6);
+    border: 2px solid var(--dark-border);
+    border-radius: 12px;
+    font-size: 1rem;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+    transition: all var(--transition-normal);
+    outline: none;
+}
+
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 20px rgba(255, 107, 53, 0.3);
+    background: rgba(10, 10, 15, 0.8);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 120px;
+}
+
+.form-group select option {
+    background: var(--dark-surface);
+    color: var(--text-primary);
+}
+
+/* Reservations List Futurístico */
+.reservations-list {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+}
+
+.reservation-card {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    padding: 2.5rem;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+    transition: all var(--transition-normal);
+    position: relative;
+    overflow: hidden;
+}
+
+.reservation-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: var(--gradient-primary);
+    transform: scaleY(0);
+    transition: transform var(--transition-normal);
+}
+
+.reservation-card:hover {
+    border-color: var(--primary-orange);
+    box-shadow: var(--shadow-neon-primary);
+    transform: translateX(10px);
+}
+
+.reservation-card:hover::before {
+    transform: scaleY(1);
+}
+
+.reservation-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: start;
+    margin-bottom: 1.5rem;
+    flex-wrap: wrap;
+    gap: 1rem;
+}
+
+.reservation-restaurant {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    letter-spacing: 1px;
+}
+
+.reservation-status {
+    padding: 0.75rem 1.5rem;
+    border-radius: 25px;
+    font-weight: 700;
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+}
+
+.status-confirmed {
+    background: rgba(139, 69, 19, 0.2);
+    color: #d4a574;
+    border: 2px solid #d4a574;
+    box-shadow: 0 0 15px rgba(139, 69, 19, 0.3);
+}
+
+.status-pending {
+    background: rgba(255, 140, 66, 0.2);
+    color: var(--secondary-orange);
+    border: 2px solid var(--secondary-orange);
+    box-shadow: 0 0 15px rgba(255, 140, 66, 0.3);
+}
+
+.status-cancelled {
+    background: rgba(255, 0, 0, 0.2);
+    color: #ff4444;
+    border: 2px solid #ff4444;
+    box-shadow: 0 0 15px rgba(255, 0, 0, 0.3);
+}
+
+.reservation-details {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.reservation-detail-item {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: var(--text-secondary);
+    font-size: 1.05rem;
+}
+
+.reservation-detail-item i {
+    color: var(--primary-orange);
+    font-size: 1.3rem;
+    text-shadow: 0 0 10px var(--primary-orange);
+}
+
+.reservation-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+/* Empty State Futurístico */
+.empty-state {
+    text-align: center;
+    padding: 6rem 2rem;
+    color: var(--text-secondary);
+}
+
+.empty-state i {
+    font-size: 5rem;
+    color: var(--text-muted);
+    margin-bottom: 2rem;
+    opacity: 0.5;
+}
+
+.empty-state h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2rem;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+    letter-spacing: 2px;
+}
+
+/* Footer Futurístico */
+.footer {
+    background: rgba(10, 10, 15, 0.8);
+    backdrop-filter: blur(20px);
+    color: var(--text-secondary);
+    padding: 3rem 0;
+    margin-top: 6rem;
+    text-align: center;
+    border-top: 1px solid var(--dark-border);
+    position: relative;
+}
+
+.footer::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background: var(--gradient-primary);
+    opacity: 0.5;
+}
+
+.footer p {
+    font-size: 1.1rem;
+    letter-spacing: 1px;
+}
+
+/* Scrollbar Futurística */
+::-webkit-scrollbar {
+    width: 12px;
+}
+
+::-webkit-scrollbar-track {
+    background: var(--dark-bg);
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--gradient-primary);
+    border-radius: 6px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+    background: var(--gradient-secondary);
+}
+
+/* Formulário de Cadastro de Restaurante */
+.registration-form-container {
+    max-width: 1000px;
+    margin: 0 auto;
+}
+
+.registration-form {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border-radius: 25px;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+.form-section {
+    margin-bottom: 3rem;
+    padding-bottom: 2rem;
+    border-bottom: 1px solid var(--dark-border);
+}
+
+.form-section:last-of-type {
+    border-bottom: none;
+}
+
+.section-title-form {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 2rem;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    letter-spacing: 0.5px;
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1.5rem;
+    margin-bottom: 1.5rem;
+}
+
+.form-group small {
+    display: block;
+    margin-top: 0.5rem;
+}
+
+.file-input {
+    padding: 0.75rem;
+    background: rgba(10, 10, 15, 0.6);
+    border: 2px dashed var(--dark-border);
+    border-radius: 12px;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.file-input:hover {
+    border-color: var(--primary-orange);
+    background: rgba(255, 107, 53, 0.05);
+}
+
+/* Horários de Funcionamento */
+.schedule-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+}
+
+.schedule-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem;
+    background: rgba(10, 10, 15, 0.4);
+    border-radius: 12px;
+    border: 1px solid var(--dark-border);
+    transition: all var(--transition-normal);
+}
+
+.schedule-row:hover {
+    border-color: var(--primary-orange);
+    background: rgba(255, 107, 53, 0.05);
+}
+
+.schedule-day {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    flex: 1;
+}
+
+.schedule-day input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary-orange);
+}
+
+.schedule-day label {
+    font-weight: 600;
+    color: var(--text-primary);
+    cursor: pointer;
+    margin: 0;
+}
+
+.schedule-times {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.time-input {
+    padding: 0.5rem 1rem;
+    background: rgba(10, 10, 15, 0.6);
+    border: 2px solid var(--dark-border);
+    border-radius: 8px;
+    color: var(--text-primary);
+    font-family: 'Poppins', sans-serif;
+    transition: all var(--transition-normal);
+}
+
+.time-input:focus {
+    border-color: var(--primary-orange);
+    box-shadow: 0 0 15px rgba(255, 107, 53, 0.3);
+    outline: none;
+}
+
+/* Grid de Características */
+.features-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 1rem;
+}
+
+.feature-checkbox {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(10, 10, 15, 0.4);
+    border: 2px solid var(--dark-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.feature-checkbox:hover {
+    border-color: var(--primary-orange);
+    background: rgba(255, 107, 53, 0.05);
+    transform: translateY(-2px);
+}
+
+.feature-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    cursor: pointer;
+    accent-color: var(--primary-orange);
+}
+
+.feature-checkbox span {
+    font-weight: 500;
+    color: var(--text-primary);
+    cursor: pointer;
+}
+
+.feature-checkbox input[type="checkbox"]:checked + span {
+    color: var(--primary-orange);
+    font-weight: 600;
+}
+
+.feature-checkbox input[type="checkbox"]:checked ~ span,
+.feature-checkbox:has(input[type="checkbox"]:checked) {
+    border-color: var(--primary-orange);
+    background: rgba(255, 107, 53, 0.1);
+}
+
+/* Termos */
+.terms-checkbox {
+    display: flex;
+    align-items: flex-start;
+    gap: 0.75rem;
+    padding: 1rem;
+    background: rgba(10, 10, 15, 0.4);
+    border: 2px solid var(--dark-border);
+    border-radius: 12px;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+}
+
+.terms-checkbox:hover {
+    border-color: var(--primary-orange);
+}
+
+.terms-checkbox input[type="checkbox"] {
+    width: 20px;
+    height: 20px;
+    margin-top: 2px;
+    cursor: pointer;
+    accent-color: var(--primary-orange);
+}
+
+.terms-checkbox span {
+    color: var(--text-secondary);
+    line-height: 1.6;
+    cursor: pointer;
+}
+
+/* Botões de Ação */
+.form-actions {
+    margin-top: 3rem;
+    padding-top: 2rem;
+    border-top: 1px solid var(--dark-border);
+}
+
+.btn-large {
+    padding: 1.25rem 3rem;
+    font-size: 1.2rem;
+}
+
+/* Login */
+.login-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.login-card {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border-radius: 25px;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+.login-form {
+    margin-top: 2rem;
+}
+
+/* Dashboard */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 2rem;
+}
+
+.dashboard-section {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: 20px;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-top: 1.5rem;
+}
+
+.stat-card {
+    background: rgba(10, 10, 15, 0.4);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 1px solid var(--dark-border);
+    text-align: center;
+    transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+    border-color: var(--primary-orange);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(255, 107, 53, 0.2);
+}
+
+.stat-value {
+    font-family: 'Poppins', sans-serif;
+    font-size: 2.5rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 0.5rem;
+}
+
+.stat-label {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    font-weight: 500;
+}
+
+.quick-actions {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1rem;
+    margin-top: 1.5rem;
+}
+
+.action-btn {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+    padding: 2rem;
+    background: rgba(10, 10, 15, 0.4);
+    border: 2px solid var(--dark-border);
+    border-radius: 15px;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all var(--transition-normal);
+    text-align: center;
+}
+
+.action-btn:hover {
+    border-color: var(--primary-orange);
+    transform: translateY(-5px);
+    box-shadow: 0 5px 20px rgba(255, 107, 53, 0.2);
+    color: var(--primary-orange);
+}
+
+.action-icon {
+    font-size: 2.5rem;
+    opacity: 0.7;
+    transition: opacity var(--transition-normal);
+}
+
+.action-btn:hover .action-icon {
+    opacity: 1;
+}
+
+.action-btn span:not(.action-icon) {
+    font-weight: 600;
+    font-size: 1.1rem;
+}
+
+/* Responsive Futurístico - Tablet */
+@media (max-width: 1024px) {
+    .container {
+        padding: 1.5rem;
+    }
+    
+    .hero-section {
+        padding: 4rem 1.5rem;
+    }
+    
+    .hero-section h1 {
+        font-size: 3rem;
+    }
+    
+    .nav-menu {
+        gap: 1.5rem;
+    }
+}
+
+/* Responsive - Mobile Large (992px e abaixo) */
+@media (max-width: 992px) {
+    .mobile-menu-toggle {
+        display: flex !important;
+        order: 2;
+    }
+    
+    .header-container {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 0 1rem;
+    }
+
+    .logo {
+        font-size: 1.4rem;
+        flex: 1;
+        letter-spacing: 1px;
+        order: 1;
+    }
+    
+    .header {
+        position: relative;
+    }
+    
+    .nav {
+        width: 100%;
+        max-height: 0;
+        overflow: hidden;
+        transition: max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        order: 3;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: rgba(26, 22, 18, 0.98);
+        backdrop-filter: blur(20px);
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        z-index: 999;
+    }
+
+    .nav.active {
+        max-height: 600px;
+    }
+
+    .nav-menu {
+        flex-direction: column;
+        gap: 0;
+        width: 100%;
+        align-items: stretch;
+        padding: 1rem 0;
+    }
+
+    .nav-menu li {
+        width: 100%;
+    }
+
+    .nav-menu a {
+        display: block;
+        padding: 1.25rem 1.5rem;
+        border-bottom: 1px solid var(--dark-border);
+        text-align: left;
+        font-size: 1rem;
+        width: 100%;
+    }
+    
+    .nav-menu a::before {
+        display: none;
+    }
+
+    .nav-menu a:hover {
+        background: rgba(255, 107, 53, 0.15);
+        color: var(--primary-orange);
+        padding-left: 2rem;
+        text-shadow: none;
+    }
+
+    .nav-menu .btn {
+        width: calc(100% - 3rem);
+        text-align: center;
+        margin: 0.5rem 1.5rem;
+    }
+}
+
+@media (max-width: 768px) {
+    .mobile-menu-toggle {
+        display: flex !important;
+    }
+    
+    .header-container {
+        flex-wrap: wrap;
+        gap: 0.75rem;
+        padding: 0 1rem;
+    }
+    
+    .logo {
+        font-size: 1.3rem;
+    }
+
+    /* Hero Section Mobile */
+    .hero-section {
+        padding: 3rem 1rem;
+        margin-bottom: 2rem;
+    }
+
+    .hero-section h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+        letter-spacing: 0.5px;
+        margin-bottom: 1rem;
+    }
+
+    .hero-section p {
+        font-size: 1rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.5;
+    }
+    
+    .hero-section .btn {
+        width: 100%;
+        padding: 1rem 2rem;
+        font-size: 1rem;
+    }
+
+    /* Search Mobile */
+    .search-section {
+        padding: 1.5rem;
+        margin-bottom: 2rem;
+    }
+
+    .search-bar {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .search-input {
+        width: 100%;
+        min-width: auto;
+        font-size: 1rem;
+    }
+
+    .search-btn {
+        width: 100%;
+        padding: 1rem;
+    }
+
+    /* Filters Mobile */
+    .filters-container {
+        gap: 1.5rem;
+    }
+
+    .filter-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .filter-group label {
+        min-width: auto;
+        font-size: 1rem;
+    }
+
+    .filter-options {
+        width: 100%;
+    }
+
+    .filter-chip {
+        font-size: 0.9rem;
+        padding: 0.6rem 1.2rem;
+    }
+
+    .smart-filters {
+        padding: 1.5rem;
+    }
+
+    .smart-filters h3 {
+        font-size: 1.2rem;
+        margin-bottom: 1rem;
+    }
+
+    .smart-filters-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .smart-filter-item {
+        padding: 1rem;
+        font-size: 0.85rem;
+    }
+
+    /* Restaurant Cards Mobile */
+    .restaurants-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    .restaurant-card {
+        margin: 0;
+    }
+
+    .restaurant-image {
+        height: 220px;
+    }
+
+    .restaurant-info {
+        padding: 1.25rem;
+    }
+
+    .restaurant-name {
+        font-size: 1.4rem;
+        margin-bottom: 0.5rem;
+    }
+    
+    .restaurant-category {
+        font-size: 0.9rem;
+    }
+    
+    .restaurant-location {
+        font-size: 0.85rem;
+        margin-bottom: 0.75rem;
+    }
+    
+    .restaurant-rating {
+        margin-bottom: 1rem;
+    }
+    
+    .restaurant-features {
+        margin-bottom: 1rem;
+        gap: 0.5rem;
+    }
+    
+    .feature-badge {
+        font-size: 0.75rem;
+        padding: 0.4rem 0.8rem;
+    }
+
+    .restaurant-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .btn-small {
+        width: 100%;
+    }
+
+    /* Details Mobile */
+    .details-grid {
+        grid-template-columns: 1fr;
+        gap: 2rem;
+    }
+
+    .restaurant-header {
+        height: 280px;
+        padding: 2rem 1rem;
+    }
+
+    .restaurant-header h1 {
+        font-size: 2rem;
+        line-height: 1.2;
+    }
+    
+    .restaurant-header .restaurant-category {
+        font-size: 1.2rem;
+    }
+
+    .restaurant-body {
+        padding: 1.5rem 1rem;
+    }
+    
+    .details-section {
+        padding: 1.5rem;
+    }
+    
+    .details-section h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1rem;
+    }
+
+    .tabs {
+        flex-wrap: nowrap;
+        gap: 0.5rem;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        -ms-overflow-style: none;
+        padding-bottom: 0.5rem;
+    }
+    
+    .tabs::-webkit-scrollbar {
+        display: none;
+    }
+
+    .tab {
+        padding: 0.875rem 1.25rem;
+        font-size: 0.85rem;
+        white-space: nowrap;
+        flex-shrink: 0;
+    }
+
+    /* Menu Items Mobile */
+    .menu-grid {
+        grid-template-columns: 1fr;
+        gap: 1.25rem;
+    }
+    
+    .menu-item {
+        padding: 1.25rem;
+    }
+    
+    .menu-item-name {
+        font-size: 1.2rem;
+    }
+    
+    .menu-item-price {
+        font-size: 1.4rem;
+    }
+
+    /* Reservation Cards Mobile */
+    .reservation-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .reservation-details {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .reservation-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .reservation-actions .btn {
+        width: 100%;
+    }
+
+    /* Forms Mobile */
+    .registration-form-container {
+        padding: 0;
+    }
+
+    .registration-form {
+        padding: 1.5rem 1rem;
+        border-radius: 15px;
+    }
+    
+    .form-group {
+        margin-bottom: 1.25rem;
+    }
+    
+    .form-group label {
+        font-size: 1rem;
+        margin-bottom: 0.5rem;
+    }
+
+    .form-section {
+        margin-bottom: 2rem;
+        padding-bottom: 1.5rem;
+    }
+
+    .section-title-form {
+        font-size: 1.5rem;
+        margin-bottom: 1.5rem;
+    }
+
+    .form-row {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .form-group input,
+    .form-group select,
+    .form-group textarea {
+        font-size: 1rem;
+        padding: 0.875rem 1.25rem;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+    }
+
+    .features-grid {
+        grid-template-columns: 1fr;
+        gap: 0.75rem;
+    }
+
+    .feature-checkbox {
+        padding: 0.875rem;
+        font-size: 0.9rem;
+    }
+
+    .schedule-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+        padding: 1rem;
+    }
+
+    .schedule-times {
+        width: 100%;
+        justify-content: space-between;
+        gap: 0.75rem;
+    }
+
+    .time-input {
+        flex: 1;
+        padding: 0.75rem;
+        font-size: 0.95rem;
+    }
+    
+    .schedule-day label {
+        font-size: 0.95rem;
+    }
+
+    .form-actions {
+        margin-top: 2rem;
+        padding-top: 1.5rem;
+    }
+
+    .btn-large {
+        width: 100%;
+        padding: 1.25rem 2rem;
+        font-size: 1.1rem;
+    }
+
+    /* Dashboard Mobile */
+    .stats-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+    
+    .stat-card {
+        padding: 1.25rem;
+    }
+    
+    .stat-value {
+        font-size: 2rem;
+    }
+    
+    .stat-label {
+        font-size: 0.85rem;
+    }
+
+    .stat-card {
+        padding: 1.5rem;
+    }
+
+    .stat-value {
+        font-size: 2rem;
+    }
+
+    .stat-label {
+        font-size: 0.9rem;
+    }
+
+    .quick-actions {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 0.75rem;
+    }
+
+    .action-btn {
+        padding: 1.25rem 0.75rem;
+    }
+
+    .action-icon {
+        font-size: 1.75rem;
+    }
+    
+    .action-btn span:not(.action-icon) {
+        font-size: 0.95rem;
+    }
+
+    .dashboard-section {
+        padding: 1.5rem 1rem;
+    }
+    
+    .section-title-form {
+        font-size: 1.3rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Tables Mobile */
+    .tables-grid {
+        grid-template-columns: 1fr;
+        gap: 1rem;
+    }
+
+    .table-card {
+        padding: 1.5rem;
+    }
+
+    /* Menu Items Grid Mobile */
+    .menu-items-grid {
+        grid-template-columns: 1fr;
+        gap: 1.5rem;
+    }
+
+    /* Modal Mobile */
+    .modal-content {
+        width: 95%;
+        max-width: 95%;
+        padding: 1.5rem;
+        margin: 1rem;
+        max-height: 85vh;
+    }
+
+    .modal-header h3 {
+        font-size: 1.5rem;
+    }
+
+    .modal-actions {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .modal-actions .btn {
+        width: 100%;
+    }
+
+    /* Login Mobile */
+    .login-container {
+        padding: 0;
+    }
+
+    .login-card {
+        padding: 2rem 1.25rem;
+    }
+    
+    .login-card h2 {
+        font-size: 1.75rem;
+    }
+
+    /* Section Title Mobile */
+    .section-title {
+        font-size: 1.75rem;
+        margin-bottom: 1.25rem;
+        line-height: 1.3;
+    }
+
+    /* Container Mobile */
+    .container {
+        padding: 1rem 0.75rem;
+    }
+    
+    /* Melhorias de espaçamento mobile */
+    .reservations-list {
+        gap: 1.25rem;
+    }
+    
+    .review-card {
+        padding: 1.25rem;
+    }
+    
+    .reservation-form {
+        padding: 1.5rem 1rem;
+    }
+    
+    .reservation-form h3 {
+        font-size: 1.4rem;
+        margin-bottom: 1.25rem;
+    }
+
+    /* Footer Mobile */
+    .footer {
+        padding: 2rem 1rem;
+        font-size: 0.85rem;
+    }
+    
+    /* Melhorias de toque */
+    input, select, textarea, button {
+        font-size: 16px !important; /* Previne zoom no iOS */
+    }
+    
+    /* Scroll suave */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+    
+    /* Melhorias de performance mobile */
+    * {
+        -webkit-tap-highlight-color: rgba(255, 107, 53, 0.2);
+    }
+}
+
+/* Mobile Pequeno */
+@media (max-width: 480px) {
+    .hero-section h1 {
+        font-size: 1.75rem;
+    }
+
+    .hero-section p {
+        font-size: 0.95rem;
+    }
+    
+    .section-title {
+        font-size: 1.5rem;
+    }
+    
+    .stats-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .quick-actions {
+        grid-template-columns: 1fr;
+    }
+
+    .restaurant-header h1 {
+        font-size: 1.75rem;
+    }
+    
+    .smart-filters-grid {
+        grid-template-columns: 1fr;
+    }
+    
+    .filter-chip {
+        font-size: 0.85rem;
+        padding: 0.5rem 1rem;
+    }
+    
+    .btn {
+        padding: 0.875rem 1.5rem;
+        font-size: 0.9rem;
+    }
+    
+    .container {
+        padding: 0.75rem;
+    }
+    
+    .search-section {
+        padding: 1.25rem;
+    }
+    
+    .registration-form {
+        padding: 1.25rem 0.75rem;
+    }
+    
+    .dashboard-section {
+        padding: 1.25rem 0.75rem;
+    }
+    
+    .modal-content {
+        padding: 1.25rem 0.75rem;
+        width: 98%;
+        max-width: 98%;
+    }
+    
+    /* Prevenir zoom no iOS ao focar inputs */
+    input, select, textarea {
+        font-size: 16px !important;
+    }
+    
+    /* Melhorias de toque */
+    .btn, .filter-chip, .smart-filter-item, .tab, .feature-checkbox {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Scroll suave */
+    html {
+        scroll-behavior: smooth;
+        -webkit-overflow-scrolling: touch;
+    }
+}
+
+/* Modal */
+.modal {
+    display: none;
+    position: fixed;
+    z-index: 10000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.8);
+    backdrop-filter: blur(5px);
+    align-items: center;
+    justify-content: center;
+    animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.modal-content {
+    background: rgba(18, 18, 26, 0.95);
+    backdrop-filter: blur(20px);
+    padding: 2.5rem;
+    border-radius: 25px;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.8);
+    max-width: 500px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    animation: slideInUp 0.3s ease-out;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 2rem;
+    padding-bottom: 1rem;
+    border-bottom: 1px solid var(--dark-border);
+}
+
+.modal-header h3 {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.75rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.close-modal {
+    color: var(--text-secondary);
+    font-size: 2rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: var(--transition-normal);
+    line-height: 1;
+}
+
+.close-modal:hover {
+    color: var(--primary-orange);
+    transform: rotate(90deg);
+}
+
+.modal-form {
+    margin-top: 1rem;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 1rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid var(--dark-border);
+}
+
+/* Grid de Mesas */
+.tables-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 1.5rem;
+}
+
+.table-card {
+    background: rgba(10, 10, 15, 0.4);
+    backdrop-filter: blur(10px);
+    padding: 2rem;
+    border-radius: 15px;
+    border: 2px solid var(--dark-border);
+    transition: all var(--transition-normal);
+    text-align: center;
+}
+
+.table-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+}
+
+.table-card.available {
+    border-color: rgba(139, 69, 19, 0.3);
+}
+
+.table-card.occupied {
+    border-color: rgba(255, 140, 66, 0.3);
+}
+
+.table-card.reserved {
+    border-color: rgba(255, 107, 53, 0.3);
+}
+
+.table-card.unavailable {
+    border-color: rgba(255, 68, 68, 0.3);
+    opacity: 0.7;
+}
+
+.table-number {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+}
+
+.table-capacity {
+    color: var(--text-secondary);
+    font-size: 1rem;
+    margin-bottom: 1rem;
+}
+
+.table-status {
+    display: inline-block;
+    padding: 0.5rem 1rem;
+    border-radius: 20px;
+    font-weight: 600;
+    font-size: 0.9rem;
+    margin-bottom: 1rem;
+}
+
+.table-status.available {
+    background: rgba(139, 69, 19, 0.2);
+    color: var(--accent-brown);
+    border: 1px solid var(--accent-brown);
+}
+
+.table-status.occupied {
+    background: rgba(255, 140, 66, 0.2);
+    color: var(--secondary-orange);
+    border: 1px solid var(--secondary-orange);
+}
+
+.table-status.reserved {
+    background: rgba(255, 107, 53, 0.2);
+    color: var(--primary-orange);
+    border: 1px solid var(--primary-orange);
+}
+
+.table-status.unavailable {
+    background: rgba(255, 68, 68, 0.2);
+    color: #ff4444;
+    border: 1px solid #ff4444;
+}
+
+.table-info-occupied {
+    margin: 1rem 0;
+    padding: 1rem;
+    background: rgba(0, 0, 0, 0.3);
+    border-radius: 10px;
+}
+
+.table-info-occupied small {
+    display: block;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    margin: 0.25rem 0;
+}
+
+.table-actions {
+    display: flex;
+    gap: 0.5rem;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+
+/* Menu Items Grid */
+.menu-items-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 2rem;
+}
+
+.menu-item-card {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    border-radius: 20px;
+    overflow: hidden;
+    border: 1px solid var(--dark-border);
+    transition: all var(--transition-normal);
+}
+
+.menu-item-card:hover {
+    transform: translateY(-5px);
+    border-color: var(--primary-orange);
+    box-shadow: 0 10px 30px rgba(255, 107, 53, 0.2);
+}
+
+.menu-item-image {
+    width: 100%;
+    height: 200px;
+    background-size: cover;
+    background-position: center;
+    position: relative;
+}
+
+.menu-item-image::after {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: linear-gradient(180deg, transparent 0%, rgba(10, 10, 15, 0.5) 100%);
+}
+
+.menu-item-info {
+    padding: 1.5rem;
+}
+
+.menu-item-name {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.3rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin-bottom: 0.75rem;
+}
+
+.menu-item-description {
+    color: var(--text-secondary);
+    font-size: 0.95rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.menu-item-footer {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 1rem;
+    border-top: 1px solid var(--dark-border);
+}
+
+.menu-item-price {
+    font-family: 'Poppins', sans-serif;
+    font-size: 1.5rem;
+    font-weight: 800;
+    background: var(--gradient-primary);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+}
+
+.menu-item-actions {
+    display: flex;
+    gap: 0.5rem;
+}
+
+.btn-icon {
+    background: rgba(10, 10, 15, 0.6);
+    border: 2px solid var(--dark-border);
+    border-radius: 8px;
+    padding: 0.5rem;
+    cursor: pointer;
+    transition: all var(--transition-normal);
+    font-size: 1.2rem;
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-icon:hover {
+    border-color: var(--primary-orange);
+    background: rgba(255, 107, 53, 0.1);
+    transform: scale(1.1);
+}
+
+.menu-content {
+    display: none;
+}
+
+.menu-content.active {
+    display: block;
+}
+
+/* Melhorias adicionais para toque em mobile */
+@media (hover: none) and (pointer: coarse) {
+    /* Aumentar áreas de toque */
+    .btn, .filter-chip, .smart-filter-item, .tab, .feature-checkbox {
+        min-height: 44px;
+        min-width: 44px;
+    }
+    
+    /* Remover hover effects em touch */
+    .restaurant-card:hover,
+    .menu-item:hover,
+    .review-card:hover {
+        transform: none;
+    }
+}
+
+/* Viewport fix para mobile */
+@supports (-webkit-touch-callout: none) {
+    body {
+        -webkit-font-smoothing: antialiased;
+        -webkit-tap-highlight-color: rgba(255, 107, 53, 0.2);
+    }
+}
