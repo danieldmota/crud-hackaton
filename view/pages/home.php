@@ -1,7 +1,6 @@
 <?php include_once __DIR__ . '/../../components/header.php'; ?>
 
-<link rel="stylesheet" href="../../assets/css/style.css">
-
+<link rel="stylesheet" href="../assets/css/style.css">
 <section class="hero-section">
     <div class="container">
         <h1>Encontre o Restaurante Perfeito</h1>

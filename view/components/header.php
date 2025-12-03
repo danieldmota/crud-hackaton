@@ -34,9 +34,12 @@ $is_client_area = strpos($current_path, '/cliente/') !== false;
                         <li><a href="login.php">LOGIN</a></li>
                         <li><a href="dashboard.php">DASHBOARD</a></li>
                         <li><a href="../cliente/home.php">ÁREA DO CLIENTE</a></li>
-                    <?php else: ?>
+                    <?php elseif ($is_client_area): ?>
                         <li><a href="home.php">INÍCIO</a></li>
                         <li><a href="reservas.php">MINHAS RESERVAS</a></li>
+                    <?php else: ?>
+                        <li><a href="home.php">INÍCIO</a></li>
+                        <li><a href="restaurantes.php">RESTAURANTES</a></li>
                         <li><a href="../restaurante/cadastro.php" style="color: var(--secondary-orange);">SOU
                                 RESTAURANTE</a></li>
                         <li><a href="../cliente/login.php" class="btn btn-outline">Entrar</a></li>
