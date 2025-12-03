@@ -1,12 +1,12 @@
-<?php 
-$restaurantId = $_GET['id'] ?? 1;
-include_once __DIR__ . '/../../components/header.php'; 
-
 <?php
-    if (!isset($restaurantId)) {
-        die("Erro: ID do restaurante não definido.");
-    }
+$restaurantId = $_GET['id'] ?? 1;
+include_once __DIR__ . '/../../components/header.php';
+
 ?>
+<?php
+if (!isset($restaurantId)) {
+    die("Erro: ID do restaurante não definido.");
+}
 ?>
 
 <link rel="stylesheet" href="../../assets/css/style.css">
@@ -33,9 +33,12 @@ include_once __DIR__ . '/../../components/header.php';
                     <div class="details-section">
                         <h3>📋 Sobre o Restaurante</h3>
                         <p style="line-height: 1.8; color: var(--text-secondary);">
-                            O La Bella Italia oferece uma experiência gastronômica única com pratos autênticos da culinária italiana. 
-                            Nossa equipe de chefs traz receitas tradicionais passadas de geração em geração, preparadas com ingredientes 
-                            frescos e selecionados. Ambiente acolhedor e sofisticado, perfeito para jantares românticos, encontros com 
+                            O La Bella Italia oferece uma experiência gastronômica única com pratos autênticos da
+                            culinária italiana.
+                            Nossa equipe de chefs traz receitas tradicionais passadas de geração em geração, preparadas
+                            com ingredientes
+                            frescos e selecionados. Ambiente acolhedor e sofisticado, perfeito para jantares românticos,
+                            encontros com
                             amigos ou celebrações especiais.
                         </p>
                     </div>
@@ -51,7 +54,8 @@ include_once __DIR__ . '/../../components/header.php';
                         <div class="menu-grid">
                             <div class="menu-item">
                                 <h4 class="menu-item-name">Spaghetti Carbonara</h4>
-                                <p class="menu-item-description">Massa artesanal com bacon, ovos, queijo parmesão e pimenta preta</p>
+                                <p class="menu-item-description">Massa artesanal com bacon, ovos, queijo parmesão e
+                                    pimenta preta</p>
                                 <p class="menu-item-price">R$ 45,90</p>
                             </div>
                             <div class="menu-item">
@@ -61,12 +65,14 @@ include_once __DIR__ . '/../../components/header.php';
                             </div>
                             <div class="menu-item">
                                 <h4 class="menu-item-name">Pizza Margherita</h4>
-                                <p class="menu-item-description">Massa fina, molho de tomate, mussarela de búfala e manjericão</p>
+                                <p class="menu-item-description">Massa fina, molho de tomate, mussarela de búfala e
+                                    manjericão</p>
                                 <p class="menu-item-price">R$ 42,90</p>
                             </div>
                             <div class="menu-item">
                                 <h4 class="menu-item-name">Lasagna à Bolonhesa</h4>
-                                <p class="menu-item-description">Camadas de massa, molho bolonhesa, queijo e bechamel</p>
+                                <p class="menu-item-description">Camadas de massa, molho bolonhesa, queijo e bechamel
+                                </p>
                                 <p class="menu-item-price">R$ 52,90</p>
                             </div>
                             <div class="menu-item">
@@ -76,7 +82,8 @@ include_once __DIR__ . '/../../components/header.php';
                             </div>
                             <div class="menu-item">
                                 <h4 class="menu-item-name">Tiramisu</h4>
-                                <p class="menu-item-description">Sobremesa tradicional italiana com café e mascarpone</p>
+                                <p class="menu-item-description">Sobremesa tradicional italiana com café e mascarpone
+                                </p>
                                 <p class="menu-item-price">R$ 24,90</p>
                             </div>
                         </div>
@@ -95,7 +102,8 @@ include_once __DIR__ . '/../../components/header.php';
                                 </div>
                             </div>
                             <p class="review-text">
-                                Experiência incrível! A comida estava deliciosa, o ambiente é acolhedor e o atendimento foi impecável. 
+                                Experiência incrível! A comida estava deliciosa, o ambiente é acolhedor e o atendimento
+                                foi impecável.
                                 Definitivamente voltarei!
                             </p>
                         </div>
@@ -110,7 +118,8 @@ include_once __DIR__ . '/../../components/header.php';
                                 </div>
                             </div>
                             <p class="review-text">
-                                Ótimo restaurante! A pizza estava perfeita e o serviço foi rápido. O único ponto negativo foi a espera 
+                                Ótimo restaurante! A pizza estava perfeita e o serviço foi rápido. O único ponto
+                                negativo foi a espera
                                 para conseguir uma mesa, mas valeu a pena.
                             </p>
                         </div>
@@ -125,7 +134,8 @@ include_once __DIR__ . '/../../components/header.php';
                                 </div>
                             </div>
                             <p class="review-text">
-                                Melhor restaurante italiano da cidade! O risotto estava divino e o ambiente é perfeito para um jantar 
+                                Melhor restaurante italiano da cidade! O risotto estava divino e o ambiente é perfeito
+                                para um jantar
                                 romântico. Recomendo muito!
                             </p>
                         </div>
@@ -186,9 +196,10 @@ include_once __DIR__ . '/../../components/header.php';
                 <div>
                     <div class="reservation-form">
                         <h3 style="margin-bottom: 1.5rem;">Fazer Reserva</h3>
-                        <form id="reservationForm" action="index.php?action=store" method="POST" onsubmit="submitReservation(event)">
+                        <form id="reservationForm" action="index.php?action=store" method="POST"
+                            onsubmit="submitReservation(event)">
                             <input type="hidden" name="restaurant_id" value="<?php echo $restaurantId; ?>">
-                            
+
                             <div class="form-group">
                                 <label for="date">Data:</label>
                                 <input type="date" id="date" name="date" required min="<?php echo date('Y-m-d'); ?>">
@@ -227,10 +238,12 @@ include_once __DIR__ . '/../../components/header.php';
 
                             <div class="form-group">
                                 <label for="special_requests">Pedidos Especiais (opcional):</label>
-                                <textarea id="special_requests" name="special_requests" placeholder="Ex: Mesa perto da janela, aniversário, restrições alimentares..."></textarea>
+                                <textarea id="special_requests" name="special_requests"
+                                    placeholder="Ex: Mesa perto da janela, aniversário, restrições alimentares..."></textarea>
                             </div>
 
-                            <button type="submit" class="btn btn-primary" style="width: 100%;">CONFIRMAR RESERVA</button>
+                            <button type="submit" class="btn btn-primary" style="width: 100%;">CONFIRMAR
+                                RESERVA</button>
                         </form>
                     </div>
 
@@ -258,4 +271,3 @@ include_once __DIR__ . '/../../components/header.php';
     // Definir data mínima como hoje
     document.getElementById('date').min = new Date().toISOString().split('T')[0];
 </script>
-
