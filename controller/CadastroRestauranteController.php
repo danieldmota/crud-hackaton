@@ -44,21 +44,40 @@ try {
     // Upload da imagem
     $imagemRestaurante = null;
     if (!empty($_FILES['restaurant_image']['name'])) {
-        $ext = pathinfo($_FILES['restaurant_image']['name'], PATHINFO_EXTENSION);
+
+        $file = $_FILES['restaurant_image'];
+
+        $ext = pathinfo($file['name'], PATHINFO_EXTENSION);
         $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
 
         if (!in_array(strtolower($ext), $permitidas)) {
             throw new Exception("Formato de imagem inválido.");
         }
 
-        $novoNome = uniqid("rest_", true) . "." . $ext;
-        $destino = __DIR__ . '/../uploads/restaurantes/' . $novoNome;
+        $allowedTypes = ['image/jpeg', 'image/png', 'image/webp'];
+        $maxSize = 5 * 1024 * 1024; // 5 MB
 
-        if (!move_uploaded_file($_FILES['restaurant_image']['tmp_name'], $destino)) {
+        // Valida tamanho
+        if ($file['size'] > $maxSize) {
+            throw new Exception("Arquivo muito grande. Máximo permitido: 5MB.");
+        }
+
+        // Cria pasta se não existir
+        $uploadDir = __DIR__ . '/../uploads/restaurantes/';
+        if (!is_dir($uploadDir)) {
+            mkdir($uploadDir, 0777, true);
+        }
+
+        // Gera nome único
+        $novoNome = uniqid("rest_", true) . "." . $ext;
+        $destino = $uploadDir . $novoNome;
+
+        if (!move_uploaded_file($file['tmp_name'], $destino)) {
             throw new Exception("Erro ao fazer upload da imagem.");
         }
 
-        $imagemRestaurante = $novoNome;
+        // Salva o caminho relativo no banco
+        $imagemRestaurante = 'uploads/restaurantes/' . $novoNome;
     }
 
     $dadosRestaurante = [
@@ -71,7 +90,7 @@ try {
         'password' => $_POST['password']
     ];
 
-    $model = new RestauranteModel();
+    $model = new CadastroRestauranteModel();
     $restauranteId = $model->cadastrarRestaurante($dadosRestaurante);
 
     // Endereço
@@ -121,3 +140,4 @@ try {
     header("Location: ../view/pages/restaurante-cadastro.php");
     exit();
 }
+?>
