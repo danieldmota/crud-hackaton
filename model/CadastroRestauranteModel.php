@@ -38,7 +38,7 @@ class RestaurantModel
                 ':telefone' => $data['telefone'],
                 ':email' => $data['email'],
                 ':website' => $data['website'],
-                ':password' => password_hash($data['password'], PASSWORD_DEFAULT)
+                ':password' => password_hash($data['password'], PASSWORD_BCRYPT)
             ]);
 
             return $this->conn->lastInsertId();
