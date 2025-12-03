@@ -1,12 +1,14 @@
-<?php include_once __DIR__ . '/../../components/header.php'; ?>
+<?php include_once __DIR__ . '/../components/header.php'; ?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
+
 <section class="hero-section">
     <div class="container">
         <h1>Encontre o Restaurante Perfeito</h1>
         <p>Descubra os melhores restaurantes e reserve sua mesa com facilidade</p>
         <div style="margin-top: 2rem;">
-            <button class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;" onclick="document.getElementById('searchInput').focus()">
+            <button class="btn btn-primary" style="font-size: 1.2rem; padding: 1rem 3rem;"
+                onclick="document.getElementById('searchInput').focus()">
                 Começar Busca
             </button>
         </div>
@@ -16,7 +18,8 @@
 <div class="container">
     <div class="search-section">
         <div class="search-bar">
-            <input type="text" id="searchInput" class="search-input" placeholder="🔍 Buscar por nome, cidade ou tipo de comida...">
+            <input type="text" id="searchInput" class="search-input"
+                placeholder="🔍 Buscar por nome, cidade ou tipo de comida...">
             <button id="searchBtn" class="search-btn">
                 BUSCAR
             </button>
@@ -32,7 +35,7 @@
                 </div>
             </div>
 
-            
+
         </div>
 
         <div class="smart-filters">
@@ -83,7 +86,9 @@
         <div class="restaurants-grid" id="restaurantsGrid">
             <!-- Exemplo de restaurantes (será preenchido dinamicamente) -->
             <div class="restaurant-card" data-href="detalhes.php?id=1">
-                <div class="restaurant-image" style="background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+                <div class="restaurant-image"
+                    style="background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+                </div>
                 <div class="restaurant-info">
                     <h3 class="restaurant-name">La Bella Italia</h3>
                     <p class="restaurant-category">Italiana</p>
@@ -98,14 +103,18 @@
                         <span class="feature-badge">🅿️ Estacionamento</span>
                     </div>
                     <div class="restaurant-actions">
-                        <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); makeReservation(1)">Reservar Mesa</button>
-                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(1)">Ver Cardápio</button>
+                        <button class="btn btn-primary btn-small"
+                            onclick="event.stopPropagation(); makeReservation(1)">Reservar Mesa</button>
+                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(1)">Ver
+                            Cardápio</button>
                     </div>
                 </div>
             </div>
 
             <div class="restaurant-card" data-href="detalhes.php?id=2">
-                <div class="restaurant-image" style="background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+                <div class="restaurant-image"
+                    style="background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+                </div>
                 <div class="restaurant-info">
                     <h3 class="restaurant-name">Sushi Master</h3>
                     <p class="restaurant-category">Japonesa</p>
@@ -120,14 +129,18 @@
                         <span class="feature-badge">📶 Wi-Fi</span>
                     </div>
                     <div class="restaurant-actions">
-                        <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); makeReservation(2)">Reservar Mesa</button>
-                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(2)">Ver Cardápio</button>
+                        <button class="btn btn-primary btn-small"
+                            onclick="event.stopPropagation(); makeReservation(2)">Reservar Mesa</button>
+                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(2)">Ver
+                            Cardápio</button>
                     </div>
                 </div>
             </div>
 
             <div class="restaurant-card" data-href="detalhes.php?id=3">
-                <div class="restaurant-image" style="background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+                <div class="restaurant-image"
+                    style="background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+                </div>
                 <div class="restaurant-info">
                     <h3 class="restaurant-name">Churrascaria Gaúcha</h3>
                     <p class="restaurant-category">Brasileira</p>
@@ -142,14 +155,18 @@
                         <span class="feature-badge">🅿️ Estacionamento</span>
                     </div>
                     <div class="restaurant-actions">
-                        <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); makeReservation(3)">Reservar Mesa</button>
-                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(3)">Ver Cardápio</button>
+                        <button class="btn btn-primary btn-small"
+                            onclick="event.stopPropagation(); makeReservation(3)">Reservar Mesa</button>
+                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(3)">Ver
+                            Cardápio</button>
                     </div>
                 </div>
             </div>
 
             <div class="restaurant-card" data-href="detalhes.php?id=4">
-                <div class="restaurant-image" style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');"></div>
+                <div class="restaurant-image"
+                    style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
+                </div>
                 <div class="restaurant-info">
                     <h3 class="restaurant-name">Café Parisiense</h3>
                     <p class="restaurant-category">Francesa</p>
@@ -164,8 +181,10 @@
                         <span class="feature-badge">📶 Wi-Fi</span>
                     </div>
                     <div class="restaurant-actions">
-                        <button class="btn btn-primary btn-small" onclick="event.stopPropagation(); makeReservation(4)">Reservar Mesa</button>
-                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(4)">Ver Cardápio</button>
+                        <button class="btn btn-primary btn-small"
+                            onclick="event.stopPropagation(); makeReservation(4)">Reservar Mesa</button>
+                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(4)">Ver
+                            Cardápio</button>
                     </div>
                 </div>
             </div>
@@ -173,7 +192,6 @@
     </section>
 </div>
 
-<?php include_once __DIR__ . '/../../components/footer.php'; ?>
+<?php include_once __DIR__ . '/../components/footer.php'; ?>
 
 <script src="../../assets/js/main.js"></script>
-

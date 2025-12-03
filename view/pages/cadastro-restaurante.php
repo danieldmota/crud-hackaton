@@ -1,6 +1,6 @@
-<?php include_once __DIR__ . '/../../components/header.php'; ?>
+<?php include_once __DIR__ . '/../components/header.php'; ?>
 
-<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/style.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">
@@ -315,7 +315,7 @@
                     Cadastrar Restaurante
                 </button>
                 <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
-                    Já possui cadastro? <a href="login.php" style="color: var(--primary-neon); font-weight: 600;">Fazer login</a>
+                    Já possui cadastro? <a href="login-restaurante.php" style="color: var(--primary-neon); font-weight: 600;">Fazer login</a>
                 </p>
             </div>
 
@@ -323,7 +323,7 @@
     </div>
 </div>
 
-<?php include_once __DIR__ . '/../../components/footer.php'; ?>
+<?php include_once __DIR__ . '/../components/footer.php'; ?>
 
 <script src="../../assets/js/main.js"></script>
 <script>
