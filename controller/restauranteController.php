@@ -1,31 +1,30 @@
 <?php
 session_start();
-require_once __DIR__ . '/../model/restauranteModel.php';
+require_once __DIR__ . '/../model/CadastroRestauranteModel.php';
 
 try {
-
     if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
         throw new Exception("Requisição inválida.");
     }
 
-    $required = [
-        'restaurante_nome',
+    // Campos obrigatórios
+    $obrigatorios = [
+        'restaurant_name',
         'cnpj',
-        'categoria',
-        'capacidade',
-        'descricao',
-        'rua',
-        'bairro',
-        'cidade',
-        'estado',
-        'cep',
-        'telefone',
+        'category',
+        'capacity',
+        'description',
+        'address',
+        'neighborhood',
+        'city',
+        'state',
+        'zipcode',
+        'phone',
         'email',
-        'website',
         'password'
     ];
 
-    foreach ($required as $campo) {
+    foreach ($obrigatorios as $campo) {
         if (empty($_POST[$campo])) {
             throw new Exception("O campo '{$campo}' é obrigatório.");
         }
@@ -42,12 +41,10 @@ try {
         throw new Exception("Email inválido.");
     }
 
-    // Upload da imagem do restaurante
-    $restaurantImage = null;
-
-    if (!empty($_FILES['restaurante_imagem']['name'])) {
-
-        $ext = pathinfo($_FILES['restaurante_imagem']['name'], PATHINFO_EXTENSION);
+    // Upload da imagem
+    $imagemRestaurante = null;
+    if (!empty($_FILES['restaurant_image']['name'])) {
+        $ext = pathinfo($_FILES['restaurant_image']['name'], PATHINFO_EXTENSION);
         $permitidas = ['jpg', 'jpeg', 'png', 'webp'];
 
         if (!in_array(strtolower($ext), $permitidas)) {
@@ -55,55 +52,64 @@ try {
         }
 
         $novoNome = uniqid("rest_", true) . "." . $ext;
-        $destino = __DIR__ . '/../uploads/' . $novoNome;
+        $destino = __DIR__ . '/../uploads/restaurantes/' . $novoNome;
 
-        if (!move_uploaded_file($_FILES['restaurante_imagem']['tmp_name'], $destino)) {
+        if (!move_uploaded_file($_FILES['restaurant_image']['tmp_name'], $destino)) {
             throw new Exception("Erro ao fazer upload da imagem.");
         }
 
-        $restaurantImage = $novoNome;
+        $imagemRestaurante = $novoNome;
     }
 
-    $data = [
-        'restaurante_nome' => $_POST['restaurante_nome'],
+    $dadosRestaurante = [
+        'restaurant_name' => $_POST['restaurant_name'],
         'cnpj' => $cnpj,
-        'categoria' => $_POST['categoria'],
-        'capacidade' => $_POST['capacidade'],
-        'descricao' => $_POST['descricao'],
-        'restaurante_imagem' => $restaurantImage,
-        'rua' => $_POST['rua'],
-        'bairro' => $_POST['bairro'],
-        'cidade' => $_POST['cidade'],
-        'estado' => $_POST['estado'],
-        'cep' => $_POST['cep'],
-        'telefone' => $_POST['telefone'],
-        'email' => $_POST['email'],
-        'website' => $_POST['website'],
+        'category' => $_POST['category'],
+        'capacity' => $_POST['capacity'],
+        'description' => $_POST['description'],
+        'restaurant_image' => $imagemRestaurante,
         'password' => $_POST['password']
     ];
 
-    $model = new RestaurantModel();
+    $model = new RestauranteModel();
+    $restauranteId = $model->cadastrarRestaurante($dadosRestaurante);
 
-    $restauranteId = $model->createRestaurant($data);
+    // Endereço
+    $dadosEndereco = [
+        'address' => $_POST['address'],
+        'neighborhood' => $_POST['neighborhood'],
+        'city' => $_POST['city'],
+        'state' => $_POST['state'],
+        'zipcode' => $_POST['zipcode']
+    ];
+    $model->cadastrarEndereco($restauranteId, $dadosEndereco);
 
-    // Horários
-    if (!empty($_POST['dias']) && !empty($_POST['abertura']) && !empty($_POST['fechamento'])) {
-        $model->insertSchedule(
-            $restauranteId,
-            $_POST['dias'],
-            $_POST['abertura'],
-            $_POST['fechamento']
-        );
+    // Contato
+    $dadosContato = [
+        'phone' => $_POST['phone'],
+        'email' => $_POST['email'],
+        'website' => $_POST['website'] ?? null
+    ];
+    $model->cadastrarContato($restauranteId, $dadosContato);
+
+    // Horários de funcionamento
+    $dias = $_POST['days'] ?? [];
+    $abertura = $_POST['opening_time'] ?? [];
+    $fechamento = $_POST['closing_time'] ?? [];
+    if (!empty($dias)) {
+        $model->cadastrarHorarios($restauranteId, $dias, $abertura, $fechamento);
     }
 
-    // Características
-    if (!empty($_POST['features'])) {
-        $model->insertFeatures($restauranteId, $_POST['features']);
+    // Características (IDs)
+    $caracteristicas = $_POST['features'] ?? [];
+    if (!empty($caracteristicas)) {
+        $model->cadastrarCaracteristicas($restauranteId, $caracteristicas);
     }
 
-    // Métodos de pagamento
-    if (!empty($_POST['payment_methods'])) {
-        $model->metodoDePagamento($restauranteId, $_POST['payment_methods']);
+    // Formas de pagamento (IDs)
+    $formasPagamento = $_POST['payment_methods'] ?? [];
+    if (!empty($formasPagamento)) {
+        $model->cadastrarFormasPagamento($restauranteId, $formasPagamento);
     }
 
     $_SESSION['sucesso'] = "Restaurante cadastrado com sucesso!";
@@ -111,7 +117,6 @@ try {
     exit();
 
 } catch (Exception $e) {
-
     $_SESSION['erro'] = $e->getMessage();
     header("Location: ../view/pages/restaurante-cadastro.php");
     exit();

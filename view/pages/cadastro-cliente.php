@@ -1,5 +1,12 @@
 <?php include_once __DIR__ . '/../components/header.php'; ?>
 
+<?php
+if (!empty($_SESSION['erro'])) {
+    echo '<script>alert("' . $_SESSION['erro'] . '");</script>';
+    unset($_SESSION['erro']);
+}
+?>
+
 <link rel="stylesheet" href="../assets/css/style.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
@@ -29,14 +36,6 @@
                         <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00" maxlength="14">
                     </div>
                 </div>
-
-                <!-- <div class="form-group">
-                    <label for="restaurant_image">Foto de Perfil</label>
-                    <input type="file" id="restaurant_image" name="restaurant_image" accept="image/*"
-                        class="file-input">
-                    <small style="color: var(--text-secondary); font-size: 0.9rem;">Formatos aceitos: JPG, PNG (máx.
-                        5MB)</small>
-                </div> -->
             </div>
 
 

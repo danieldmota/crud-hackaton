@@ -18,14 +18,12 @@ class CadastroUsuarioModel
             $sql = "INSERT INTO clientes (
                         nome,
                         cpf,
-                        -- foto_perfil,
                         telefone,
                         email,
                         senha
                     ) VALUES (
                         :nome,
                         :cpf,
-                        -- :foto_perfil,
                         :telefone,
                         :email,
                         :senha
@@ -38,7 +36,6 @@ class CadastroUsuarioModel
 
             $stmt->bindParam(':nome', $data['nome']);
             $stmt->bindParam(':cpf', $data['cpf']);
-            // $stmt->bindParam(':foto_perfil', $data['foto_perfil']);
             $stmt->bindParam(':telefone', $data['telefone']);
             $stmt->bindParam(':email', $data['email']);
             $stmt->bindParam(':senha', $senhaHash);
