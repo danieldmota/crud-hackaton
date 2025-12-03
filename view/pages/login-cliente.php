@@ -35,7 +35,7 @@
                 </button>
 
                 <p style="text-align: center; margin-top: 2rem; color: var(--text-secondary);">
-                    Não possui cadastro? <a href="cadastro.php"
+                    Não possui cadastro? <a href="cadastro-cliente.php"
                         style="color: var(--primary-neon); font-weight: 600;">Cadastre-se</a>
                 </p>
             </form>
