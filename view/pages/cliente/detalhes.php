@@ -1,6 +1,12 @@
 <?php 
 $restaurantId = $_GET['id'] ?? 1;
 include_once __DIR__ . '/../../components/header.php'; 
+
+<?php
+    if (!isset($restaurantId)) {
+        die("Erro: ID do restaurante não definido.");
+    }
+?>
 ?>
 
 <link rel="stylesheet" href="../../assets/css/style.css">
@@ -180,7 +186,7 @@ include_once __DIR__ . '/../../components/header.php';
                 <div>
                     <div class="reservation-form">
                         <h3 style="margin-bottom: 1.5rem;">Fazer Reserva</h3>
-                        <form id="reservationForm" onsubmit="submitReservation(event)">
+                        <form id="reservationForm" action="index.php?action=store" method="POST" onsubmit="submitReservation(event)">
                             <input type="hidden" name="restaurant_id" value="<?php echo $restaurantId; ?>">
                             
                             <div class="form-group">

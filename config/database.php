@@ -4,7 +4,7 @@ class Database
 {
     private $host = "localhost";
     private $port = "3306";
-    private $dbName = ""; // nome do banco de dados
+    private $dbName = "agenda-gourmet"; // nome do banco de dados
     private $user = "root";
     private $password = "";
 
