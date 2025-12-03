@@ -1,11 +1,11 @@
-<?php include_once __DIR__ . '../components/header.php'; ?>
+<?php include_once __DIR__ . '/../components/header.php'; ?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">
-        <h1 style="font-size: 3rem; margin-bottom: 1rem;">Área do Restaurante</h1>
-        <p style="font-size: 1.3rem;">Acesse sua conta e gerencie seu restaurante</p>
+        <h1 style="font-size: 3rem; margin-bottom: 1rem;">Área do Cliente</h1>
+        <p style="font-size: 1.3rem;">Acesse sua conta e realize reservas</p>
     </div>
 </section>
 
@@ -18,8 +18,8 @@
 
             <form action="loginController.php" method="POST" id="loginForm" class="login-form">
                 <div class="form-group">
-                    <label for="login_email">E-mail ou CNPJ</label>
-                    <input type="text" id="login_email" name="email" required placeholder="seu@email.com ou CNPJ">
+                    <label for="login_email">E-mail</label>
+                    <input type="text" id="login_email" name="email" required placeholder="seu@email.com">
                 </div>
 
                 <div class="form-group">
@@ -35,17 +35,17 @@
                 </button>
 
                 <p style="text-align: center; margin-top: 2rem; color: var(--text-secondary);">
-                    Não possui cadastro? <a href="cadastro.php"
-                        style="color: var(--primary-neon); font-weight: 600;">Cadastre seu restaurante</a>
+                    Não possui cadastro? <a href="cadastro-cliente.php"
+                        style="color: var(--primary-neon); font-weight: 600;">Cadastre-se</a>
                 </p>
             </form>
         </div>
     </div>
 </div>
 
-<?php include_once __DIR__ . '../components/footer.php'; ?>
+<?php include_once __DIR__ . '/../components/footer.php'; ?>
 
-<script src="../assets/js/main.js"></script>
+<script src="../../assets/js/main.js"></script>
 <script>
     document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();

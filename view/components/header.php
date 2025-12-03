@@ -30,16 +30,16 @@ $is_client_area = strpos($current_path, '/cliente/') !== false;
             <nav class="nav" id="mainNav">
                 <ul class="nav-menu">
                     <?php if ($is_restaurant_area): ?>
-                        <li><a href="cadastro.php">CADASTRAR</a></li>
-                        <li><a href="login.php">LOGIN</a></li>
                         <li><a href="dashboard.php">DASHBOARD</a></li>
-                        <li><a href="../cliente/home.php">ÁREA DO CLIENTE</a></li>
-                    <?php else: ?>
+                        <li><a href="../login-cliente.php">ÁREA DO CLIENTE</a></li>
+                    <?php elseif ($is_client_area): ?>
                         <li><a href="home.php">INÍCIO</a></li>
                         <li><a href="reservas.php">MINHAS RESERVAS</a></li>
-                        <li><a href="../restaurante/cadastro.php" style="color: var(--secondary-orange);">SOU
+                    <?php else: ?>
+                        <li><a href="home.php">INÍCIO</a></li>
+                        <li><a href="cadastro-restaurante.php" style="color: var(--secondary-orange);">SOU
                                 RESTAURANTE</a></li>
-                        <li><a href="#" class="btn btn-outline">Entrar</a></li>
+                        <li><a href="login-cliente.php" class="btn btn-outline">Entrar</a></li>
                     <?php endif; ?>
                 </ul>
             </nav>
