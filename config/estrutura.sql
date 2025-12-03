@@ -1,3 +1,5 @@
+create database route2eat;
+
 use route2eat;
 
 create table clientes(
@@ -8,11 +10,6 @@ telefone varchar(15) not null,
 email varchar(230) not null unique,
 cpf varchar(11) unique not null
 );
-
-select * from clientes;
-
-drop table clientes;
-
 
 CREATE TABLE restaurantes (
     id INT AUTO_INCREMENT PRIMARY KEY,
