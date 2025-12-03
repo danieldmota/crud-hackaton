@@ -39,7 +39,7 @@ $is_client_area = strpos($current_path, '/cliente/') !== false;
                         <li><a href="reservas.php">MINHAS RESERVAS</a></li>
                         <li><a href="../restaurante/cadastro.php" style="color: var(--secondary-orange);">SOU
                                 RESTAURANTE</a></li>
-                        <li><a href="#" class="btn btn-outline">Entrar</a></li>
+                        <li><a href="../cliente/login.php" class="btn btn-outline">Entrar</a></li>
                     <?php endif; ?>
                 </ul>
             </nav>
