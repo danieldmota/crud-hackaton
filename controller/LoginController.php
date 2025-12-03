@@ -1,6 +1,6 @@
 <?php
 session_start();
-require_once __DIR__ . "/../model/loginModel.php";
+require_once __DIR__ . "/../model/LoginModel.php";
 
 try {
 
@@ -8,62 +8,98 @@ try {
         throw new Exception("Método inválido para esta requisição");
     }
 
-    if (isset($_SESSION['loginBloqueado']) && time() < $_SESSION['loginBloqueado']) {
-        $restante = $_SESSION['loginBloqueado'] - time();
+    // Recebe o tipo de login (cliente ou restaurante)
+    $tipo = $_POST['tipo'] ?? '';
 
+    if (empty($tipo)) {
+        throw new Exception("Tipo de login inválido.");
+    }
+
+    // Controle de bloqueio por tentativas
+    if (isset($_SESSION['loginBloqueado']) && time() < $_SESSION['loginBloqueado']) {
         throw new Exception("Muitas tentativas de login.");
     }
 
-    $login = trim($_POST['cnpj'] ?? $_POST['email'] ?? '');
+    // Credenciais
+    $login = trim($_POST['login'] ?? '');
     $senha = trim($_POST['senha'] ?? '');
 
     if (empty($login) || empty($senha)) {
-
         throw new Exception("Preencha todos os campos");
     }
 
+    // Remove máscara (de CNPJ/CPF/telefone, se vier com)
     $loginLimpo = preg_replace('/\D/', '', $login);
 
-    $isEmail = filter_var($login, FILTER_VALIDATE_EMAIL);
-    $isCnpj = preg_match('/^\d{14}$/', $loginLimpo);
-
-    if (!$isEmail && !$isCnpj) {
-        throw new Exception("Informe um email ou CNPJ válido");
-    }
-
     $loginModel = new LoginModel();
+    $usuarioLogin = null;
 
-    if ($isCnpj) {
-        $usuarioLogin = $loginModel->loginRestaurante($loginLimpo, $senha);
-    }
+    if ($tipo === 'cliente') {
 
-    if ($isEmail) {
-        $usuarioLogin = $loginModel->loginUsuario($login, $senha);
-    }
-
-    if (!$usuarioLogin) {
-
-        $_SESSION['loginTentativas'] = ($_SESSION['loginTentativas'] ?? 0) + 1;
-
-        if ($_SESSION['loginTentativas'] >= 5) {
-            $_SESSION['loginBloqueado'] = time() + 300; // 5 minutos
-            $_SESSION['loginTentativas'] = 0;
-            throw new Exception("Muitas tentativas de login.");
+        if (!filter_var($login, FILTER_VALIDATE_EMAIL)) {
+            throw new Exception("E-mail inválido.");
         }
 
-        throw new Exception("Email ou senha incorretos.");
-    } else {
+        $usuarioLogin = $loginModel->loginUsuario($login, $senha);
 
+        if (!$usuarioLogin) {
+            throw new Exception("E-mail ou senha incorretos.");
+        }
+
+        // Login bem sucedido → redireciona cliente
         $_SESSION['id'] = $usuarioLogin->id;
         $_SESSION['loginTentativas'] = 0;
+        $_SESSION['sucesso'] = "Login realizado com sucesso!";
         unset($_SESSION['loginBloqueado']);
 
-        header('Location: ../index.php');
+        header('Location: ../view/pages/cliente/home.php');
         exit();
     }
+
+    if ($tipo === 'restaurante') {
+
+        if (!preg_match('/^\d{14}$/', $loginLimpo)) {
+            throw new Exception("CNPJ inválido.");
+        }
+
+        $usuarioLogin = $loginModel->loginRestaurante($loginLimpo, $senha);
+
+        if (!$usuarioLogin) {
+            throw new Exception("CNPJ ou senha incorretos.");
+        }
+
+        // Login bem sucedido → redireciona restaurante
+        $_SESSION['id'] = $usuarioLogin->id;
+        $_SESSION['loginTentativas'] = 0;
+        $_SESSION['sucesso'] = "Login realizado com sucesso!";
+        unset($_SESSION['loginBloqueado']);
+
+        header('Location: ../view/pages/restaurante/dashboard.php');
+        exit();
+    }
+
+    // Se tipo for inválido
+    throw new Exception("Tipo de login desconhecido.");
+
 } catch (Exception $e) {
+
+    // Registra tentativa para bloqueio
+    $_SESSION['loginTentativas'] = ($_SESSION['loginTentativas'] ?? 0) + 1;
+
+    if ($_SESSION['loginTentativas'] >= 5) {
+        $_SESSION['loginBloqueado'] = time() + 300; // 5 minutos
+        $_SESSION['loginTentativas'] = 0;
+    }
+
     $_SESSION['erro'] = $e->getMessage();
-    header('Location: ../view/pages/login.php');
+
+    // Redireciona conforme o tipo
+    if (($_POST['tipo'] ?? '') === 'restaurante') {
+        header('Location: ../view/pages/login-restaurante.php');
+    } else {
+        header('Location: ../view/pages/login-cliente.php');
+    }
+
     exit();
 }
 ?>
