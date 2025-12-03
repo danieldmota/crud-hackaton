@@ -1,54 +1,109 @@
 <?php
-include_once __DIR__ . '/../config/database.php';
 
-declare(strict_types=1);
+require_once __DIR__ . '/../config/database.php';
 
 class ReservaModel
 {
-    private static PDO $pdo;
+    private $conn;
 
-    private ?int $id;
-    private int $restaurantId;
-    private DateTime $date;
-    private DateTime $time;
-    private int $guests;
-    private ?string $specialRequests;
-
-    public function __construct(
-        int $restaurantId,
-        DateTime $date,
-        DateTime $time,
-        int $guests,
-        ?string $specialRequests = null,
-        ?int $id = null
-    ) {
-        $this->restaurantId = $restaurantId;
-        $this->date = $date;
-        $this->time = $time;
-        $this->guests = $guests;
-        $this->specialRequests = $specialRequests;
-        $this->id = $id;
+    public function __construct()
+    {
+        $db = new Database();
+        $this->conn = $db->conectar();
+        // Configurar PDO para lançar exceções
+        $this->conn->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
     }
 
-    public function save(): void
+    /**
+     * Cria uma nova reserva no banco de dados
+     * @param array $data Dados da reserva
+     * @return bool|array Retorna true em caso de sucesso ou array com erro
+     */
+    public function criarReserva($data)
     {
-        if ($this->id === null) {
-            $sql = "INSERT INTO reservations 
-                        (restaurant_id, date, time, guests, special_requests)
-                    VALUES 
-                        (:restaurant_id, :date, :time, :guests, :special_requests)";
+        try {
+            $sql = "INSERT INTO reservas (
+                        cliente_id,
+                        restaurante_id,
+                        data_reserva,
+                        horario,
+                        numero_pessoas,
+                        pedidos_especiais,
+                        status
+                    ) VALUES (
+                        :cliente_id,
+                        :restaurante_id,
+                        :data_reserva,
+                        :horario,
+                        :numero_pessoas,
+                        :pedidos_especiais,
+                        :status
+                    )";
 
-            $stmt = self::$pdo->prepare($sql);
+            $stmt = $this->conn->prepare($sql);
 
-            $stmt->execute([
-                ":restaurant_id"   => $this->restaurantId,
-                ":date"            => $this->date->format("Y-m-d"),
-                ":time"            => $this->time->format("H:i:s"),
-                ":guests"          => $this->guests,
-                ":special_requests"=> $this->specialRequests
-            ]);
+            $stmt->bindParam(':cliente_id', $data['cliente_id']);
+            $stmt->bindParam(':restaurante_id', $data['restaurante_id']);
+            $stmt->bindParam(':data_reserva', $data['data_reserva']);
+            $stmt->bindParam(':horario', $data['horario']);
+            $stmt->bindParam(':numero_pessoas', $data['numero_pessoas']);
+            $stmt->bindParam(':pedidos_especiais', $data['pedidos_especiais']);
+            $stmt->bindParam(':status', $data['status']);
 
-            $this->id = (int)self::$pdo->lastInsertId();
+            return $stmt->execute();
+        } catch (PDOException $e) {
+            return [
+                'error' => true,
+                'message' => 'Erro ao criar reserva: ' . $e->getMessage()
+            ];
+        }
+    }
+
+    /**
+     * Busca reservas de um cliente
+     * @param int $clienteId ID do cliente
+     * @return array Lista de reservas
+     */
+    public function buscarReservasPorCliente($clienteId)
+    {
+        try {
+            $sql = "SELECT r.*, rest.nome_empresa 
+                    FROM reservas r
+                    INNER JOIN restaurantes rest ON r.restaurante_id = rest.id_rest
+                    WHERE r.cliente_id = :cliente_id
+                    ORDER BY r.data_reserva DESC, r.horario DESC";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':cliente_id', $clienteId);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
+        }
+    }
+
+    /**
+     * Busca reservas de um restaurante
+     * @param int $restauranteId ID do restaurante
+     * @return array Lista de reservas
+     */
+    public function buscarReservasPorRestaurante($restauranteId)
+    {
+        try {
+            $sql = "SELECT r.*, c.nome as nome_cliente, c.telefone, c.email
+                    FROM reservas r
+                    INNER JOIN clientes c ON r.cliente_id = c.id
+                    WHERE r.restaurante_id = :restaurante_id
+                    ORDER BY r.data_reserva DESC, r.horario DESC";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->bindParam(':restaurante_id', $restauranteId);
+            $stmt->execute();
+
+            return $stmt->fetchAll(PDO::FETCH_ASSOC);
+        } catch (PDOException $e) {
+            return [];
         }
     }
 }
