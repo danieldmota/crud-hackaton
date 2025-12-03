@@ -77,6 +77,34 @@ CREATE TABLE restaurante_pagamentos (
     FOREIGN KEY (pagamento_id) REFERENCES formas_pagamento(id) ON DELETE CASCADE
 );
 
+create table categoria( 
+id int primary key unique auto_increment,
+categoria varchar(230)
+);
+
+
+
+create table perfil ( 
+restaurantes ;
+clientes 
+
+
+);
+
+create table cardapio_itens(
+id int primary key auto_increment,
+restaurante_id int not null,
+categoria varchar(20) not null,
+nome varchar(150) not null,
+descricao text not null,
+preco decimal(10,2) not null,
+imagem varchar(255),
+disponivel tinyint(1) default 1,
+criado_em datetime default current_timestamp,
+atualizado_em datetime default current_timestamp on update current_timestamp,
+FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id) on delete cascade
+);
+
 create table reservas(
 id int(5) primary key auto_increment,
 cliente_id int(5) not null,
@@ -90,41 +118,6 @@ data_criacao datetime default current_timestamp,
 FOREIGN KEY (cliente_id) REFERENCES clientes(id),
 FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
 );
-
-CREATE TABLE estados (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    sigla VARCHAR(2) NOT NULL,
-    nome VARCHAR(50) NOT NULL
-);
-
-
-
-CREATE TABLE formas_pagamento (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    nome VARCHAR(50) NOT NULL UNIQUE
-);
-
-select * from formas_pagamento;
-
-
-INSERT INTO formas_pagamento (nome) VALUES
-('cash'), ('credit-card'), ('debit-card'),
-('pix'), ('voucher');
-
-INSERT INTO caracteristicas (nome) VALUES
-('vegetarian'), ('vegan'), ('gluten-free'),
-('romantic'), ('family-friendly'), ('pet-friendly'),
-('outdoor'), ('live-music'), ('parking'),
-('wifi'), ('delivery'), ('bar');
-
-INSERT INTO estados (sigla, nome) VALUES
-('AC','Acre'), ('AL','Alagoas'), ('AP','Amapá'), ('AM','Amazonas'),
-('BA','Bahia'), ('CE','Ceará'), ('DF','Distrito Federal'), ('ES','Espírito Santo'),
-('GO','Goiás'), ('MA','Maranhão'), ('MT','Mato Grosso'), ('MS','Mato Grosso do Sul'),
-('MG','Minas Gerais'), ('PA','Pará'), ('PB','Paraíba'), ('PR','Paraná'),
-('PE','Pernambuco'), ('PI','Piauí'), ('RJ','Rio de Janeiro'), ('RN','Rio Grande do Norte'),
-('RS','Rio Grande do Sul'), ('RO','Rondônia'), ('RR','Roraima'), ('SC','Santa Catarina'),
-('SP','São Paulo'), ('SE','Sergipe'), ('TO','Tocantins');
 
 select * from reservas;
 
