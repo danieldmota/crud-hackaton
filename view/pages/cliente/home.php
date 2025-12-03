@@ -2,7 +2,10 @@
 
 <?php
 if (!empty($_SESSION['sucesso'])) {
-    echo '<script>alert("' . $_SESSION['sucesso'] . '");</script>';
+    $msg = $_SESSION['sucesso'];
+    echo "<script>
+        showNotification(" . json_encode($msg) . ", 'info');
+    </script>";
     unset($_SESSION['sucesso']);
 }
 ?>

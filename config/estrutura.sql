@@ -3,7 +3,7 @@ create database route2eat;
 use route2eat;
 
 create table clientes(
-id int(5) primary key auto_increment,
+id int primary key auto_increment,
 senha varchar(255) not null,
 nome varchar(230) not null,
 telefone varchar(15) not null,

@@ -28,7 +28,7 @@ if (!empty($_SESSION['erro'])) {
                 class="login-form">
                 <div class="form-group">
                     <label for="login_email">E-mail</label>
-                    <input type="text" id="login_email" name="login" required placeholder="seu@email.com">
+                    <input type="email" id="login_email" name="login" required placeholder="seu@email.com">
                     <input type="hidden" name="tipo" value="cliente">
                 </div>
 
