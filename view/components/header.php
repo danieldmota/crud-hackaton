@@ -13,14 +13,14 @@ $is_client_area = strpos($current_path, '/cliente/') !== false;
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="theme-color" content="#ff6b35">
-    <title>ReservaTech - Sistema de Reservas</title>
+    <title>Route2Eat - Sistema de Reservas</title>
 </head>
 
 <body>
     <header class="header">
         <div class="header-container">
             <a href="../../index.php" class="logo">
-                ReservaTech
+                Route2Eat
             </a>
             <button class="mobile-menu-toggle" id="mobileMenuToggle" aria-label="Menu">
                 <span></span>
