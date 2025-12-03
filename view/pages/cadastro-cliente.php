@@ -1,5 +1,12 @@
 <?php include_once __DIR__ . '/../components/header.php'; ?>
 
+<?php
+if (!empty($_SESSION['erro'])) {
+    echo '<script>alert("' . $_SESSION['erro'] . '");</script>';
+    unset($_SESSION['erro']);
+}
+?>
+
 <link rel="stylesheet" href="../assets/css/style.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">

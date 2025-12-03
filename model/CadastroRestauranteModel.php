@@ -1,7 +1,8 @@
 <?php
 
-require_once 'config/database.php';
-class RestaurantModel
+include_once __DIR__ . '/../config/database.php';
+
+class RestauranteModel
 {
     protected $conn;
 
@@ -11,34 +12,26 @@ class RestaurantModel
         $this->conn = $db->conectar();
     }
 
-    public function createRestaurant($data)
+    // Cadastra o restaurante
+    public function cadastrarRestaurante($dados)
     {
         try {
             $sql = "INSERT INTO restaurantes (
-                        nome, cnpj, categoria, capacidade, descricao, imagem, rua, bairro, cidade, estado, cep, telefone, email, website, owner_name, owner_cpf, owner_email, owner_phone,
-                        password
-                    ) VALUES ( 
-                        :nome, :cnpj, :categoria, :capacidade, :descricao, :imagem, :rua, :bairro, :cidade, :estado, :cep, :telefone, :email, :website, :owner_name, :owner_cpf, :owner_email, :owner_phone, :password
+                        nome, cnpj, categoria, capacidade, descricao, imagem, senha
+                    ) VALUES (
+                        :nome, :cnpj, :categoria, :capacidade, :descricao, :imagem, :senha
                     )";
 
             $stmt = $this->conn->prepare($sql);
 
             $stmt->execute([
-                ':nome' => $data['restaurante_nome'],
-                ':cnpj' => $data['cnpj'],
-                ':categoria' => $data['categoria'],
-                ':capacidade' => $data['capacidade'],
-                ':descricao' => $data['descricao'],
-                ':imagem' => $data['restaurante_imagem'] ?? null,
-                ':rua' => $data['rua'],
-                ':bairro' => $data['bairro'],
-                ':cidade' => $data['cidade'],
-                ':estado' => $data['estado'],
-                ':cep' => $data['cep'],
-                ':telefone' => $data['telefone'],
-                ':email' => $data['email'],
-                ':website' => $data['website'],
-                ':password' => password_hash($data['password'], PASSWORD_BCRYPT)
+                ':nome' => $dados['restaurant_name'],
+                ':cnpj' => $dados['cnpj'],
+                ':categoria' => $dados['category'],
+                ':capacidade' => $dados['capacity'],
+                ':descricao' => $dados['description'],
+                ':imagem' => $dados['restaurant_image'] ?? null,
+                ':senha' => password_hash($dados['password'], PASSWORD_BCRYPT)
             ]);
 
             return $this->conn->lastInsertId();
@@ -48,12 +41,67 @@ class RestaurantModel
         }
     }
 
-    public function insertSchedule($restauranteId, $dias, $abertura, $fechamento)
+    // Cadastra endereço do restaurante
+    public function cadastrarEndereco($restauranteId, $dados)
     {
         try {
-            $sql = "INSERT INTO restaurant_schedule 
-                    (restaurante_id, dia, hora_abertura, hora_fechamento)
-                    VALUES (:restaurante_id, :dia, :abertura, :fechamento)";
+            $sql = "INSERT INTO enderecos_restaurantes (
+                        restaurante_id, rua, bairro, cidade, estado, cep
+                    ) VALUES (
+                        :restaurante_id, :rua, :bairro, :cidade, :estado, :cep
+                    )";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':restaurante_id' => $restauranteId,
+                ':rua' => $dados['address'],
+                ':bairro' => $dados['neighborhood'],
+                ':cidade' => $dados['city'],
+                ':estado' => $dados['state'],
+                ':cep' => $dados['zipcode']
+            ]);
+
+            return true;
+
+        } catch (Exception $e) {
+            throw new Exception("Erro ao cadastrar endereço: " . $e->getMessage());
+        }
+    }
+
+    // Cadastra contato do restaurante
+    public function cadastrarContato($restauranteId, $dados)
+    {
+        try {
+            $sql = "INSERT INTO contatos_restaurantes (
+                        restaurante_id, telefone, email, website
+                    ) VALUES (
+                        :restaurante_id, :telefone, :email, :website
+                    )";
+
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute([
+                ':restaurante_id' => $restauranteId,
+                ':telefone' => $dados['phone'],
+                ':email' => $dados['email'],
+                ':website' => $dados['website'] ?? null
+            ]);
+
+            return true;
+
+        } catch (Exception $e) {
+            throw new Exception("Erro ao cadastrar contato: " . $e->getMessage());
+        }
+    }
+
+    // Cadastra horários de funcionamento
+    public function cadastrarHorarios($restauranteId, $dias, $abertura, $fechamento)
+    {
+        try {
+            $sql = "INSERT INTO horarios_funcionamento (
+                        restaurante_id, dia_semana, hora_abertura, hora_fechamento, ativo
+                    ) VALUES (
+                        :restaurante_id, :dia, :abertura, :fechamento, :ativo
+                    )";
 
             $stmt = $this->conn->prepare($sql);
 
@@ -63,58 +111,64 @@ class RestaurantModel
                     ':dia' => $dias[$i],
                     ':abertura' => $abertura[$i],
                     ':fechamento' => $fechamento[$i],
+                    ':ativo' => 1
                 ]);
             }
 
             return true;
 
         } catch (Exception $e) {
-            throw new Exception("Erro ao salvar horários: " . $e->getMessage());
+            throw new Exception("Erro ao cadastrar horários: " . $e->getMessage());
         }
     }
-
-    public function insertFeatures($restauranteId, $features)
+    // Cadastra características do restaurante
+    public function cadastrarCaracteristicas($restauranteId, $caracteristicas)
     {
         try {
-            $sql = "INSERT INTO restaurant_features (restaurante_id, feature)
-                    VALUES (:restaurante_id, :feature)";
+            $sql = "INSERT INTO restaurante_caracteristicas (
+                        restaurante_id, caracteristica_id
+                    ) VALUES (
+                        :restaurante_id, :caracteristica_id
+                    )";
 
             $stmt = $this->conn->prepare($sql);
 
-            foreach ($features as $f) {
+            foreach ($caracteristicas as $c) {
                 $stmt->execute([
                     ':restaurante_id' => $restauranteId,
-                    ':feature' => $f
+                    ':caracteristica_id' => $c
                 ]);
             }
 
             return true;
 
         } catch (Exception $e) {
-            throw new Exception("Erro ao salvar características: " . $e->getMessage());
+            throw new Exception("Erro ao cadastrar características: " . $e->getMessage());
         }
     }
-
-    public function metodoDePagamento($restauranteId, $methods)
+    // Cadastra formas de pagamento
+    public function cadastrarFormasPagamento($restauranteId, $formas)
     {
         try {
-            $sql = "INSERT INTO restaurant_payment_methods (restaurante_id, metodo)
-                    VALUES (:restaurante_id, :metodo)";
+            $sql = "INSERT INTO restaurante_pagamentos (
+                        restaurante_id, pagamento_id
+                    ) VALUES (
+                        :restaurante_id, :pagamento_id
+                    )";
 
             $stmt = $this->conn->prepare($sql);
 
-            foreach ($methods as $m) {
+            foreach ($formas as $f) {
                 $stmt->execute([
                     ':restaurante_id' => $restauranteId,
-                    ':metodo' => $m
+                    ':pagamento_id' => $f
                 ]);
             }
 
             return true;
 
         } catch (Exception $e) {
-            throw new Exception("Erro ao salvar formas de pagamento: " . $e->getMessage());
+            throw new Exception("Erro ao cadastrar formas de pagamento: " . $e->getMessage());
         }
     }
 }
-
