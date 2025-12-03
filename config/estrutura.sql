@@ -1,4 +1,4 @@
-use agendaGourmet;
+use route2eat;
 
 create table clientes(
 id int(5) primary key auto_increment,
