@@ -58,6 +58,20 @@
                 </div>
             </div>
 
+            <div class="form-row">
+                    <div class="form-group">
+                        <label for="password">Senha *</label>
+                        <input type="password" id="password" name="password" required placeholder="Mínimo 8 caracteres"
+                            minlength="8">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirm_password">Confirmar Senha *</label>
+                        <input type="password" id="confirm_password" name="confirm_password" required
+                            placeholder="Digite novamente" minlength="8">
+                    </div>
+            </div>
+
             <!-- Termos -->
             <div class="form-section">
                 <label class="terms-checkbox">
@@ -83,7 +97,7 @@
 
 <?php include_once __DIR__ . '/../components/footer.php'; ?>
 
-<script src="../../assets/js/main.js"></script>
+<script src="../assets/js/main.js"></script>
 <script>
     // Máscaras de input
 
