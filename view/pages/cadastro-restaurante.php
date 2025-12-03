@@ -12,20 +12,22 @@
 <div class="container">
     <div class="registration-form-container">
         <form id="restaurantRegistrationForm" class="registration-form" enctype="multipart/form-data">
-            
+
             <!-- Dados do Restaurante -->
             <div class="form-section">
                 <h3 class="section-title-form">Informações do Restaurante</h3>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="restaurant_name">Nome do Restaurante *</label>
-                        <input type="text" id="restaurant_name" name="restaurant_name" required placeholder="Ex: La Bella Italia">
+                        <input type="text" id="restaurant_name" name="restaurant_name" required
+                            placeholder="Ex: La Bella Italia">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="cnpj">CNPJ *</label>
-                        <input type="text" id="cnpj" name="cnpj" required placeholder="00.000.000/0000-00" maxlength="18">
+                        <input type="text" id="cnpj" name="cnpj" required placeholder="00.000.000/0000-00"
+                            maxlength="18">
                     </div>
                 </div>
 
@@ -57,26 +59,29 @@
 
                 <div class="form-group">
                     <label for="description">Descrição do Restaurante *</label>
-                    <textarea id="description" name="description" required rows="4" placeholder="Descreva seu restaurante, especialidades, ambiente..."></textarea>
+                    <textarea id="description" name="description" required rows="4"
+                        placeholder="Descreva seu restaurante, especialidades, ambiente..."></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="restaurant_image">Foto do Restaurante</label>
-                    <input type="file" id="restaurant_image" name="restaurant_image" accept="image/*" class="file-input">
-                    <small style="color: var(--text-secondary); font-size: 0.9rem;">Formatos aceitos: JPG, PNG (máx. 5MB)</small>
+                    <input type="file" id="restaurant_image" name="restaurant_image" accept="image/*"
+                        class="file-input">
+                    <small style="color: var(--text-secondary); font-size: 0.9rem;">Formatos aceitos: JPG, PNG (máx.
+                        5MB)</small>
                 </div>
             </div>
 
             <!-- Endereço -->
             <div class="form-section">
                 <h3 class="section-title-form">Endereço</h3>
-                
+
                 <div class="form-row">
                     <div class="form-group" style="flex: 2;">
                         <label for="address">Rua/Avenida *</label>
                         <input type="text" id="address" name="address" required placeholder="Ex: Rua das Flores, 123">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="neighborhood">Bairro *</label>
                         <input type="text" id="neighborhood" name="neighborhood" required placeholder="Ex: Centro">
@@ -88,7 +93,7 @@
                         <label for="city">Cidade *</label>
                         <input type="text" id="city" name="city" required placeholder="Ex: São Paulo">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="state">Estado *</label>
                         <select id="state" name="state" required>
@@ -122,7 +127,7 @@
                             <option value="TO">Tocantins</option>
                         </select>
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="zipcode">CEP *</label>
                         <input type="text" id="zipcode" name="zipcode" required placeholder="00000-000" maxlength="9">
@@ -133,13 +138,13 @@
             <!-- Contato -->
             <div class="form-section">
                 <h3 class="section-title-form">Contato</h3>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phone">Telefone *</label>
                         <input type="tel" id="phone" name="phone" required placeholder="(11) 99999-9999" maxlength="15">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="email">E-mail *</label>
                         <input type="email" id="email" name="email" required placeholder="contato@restaurante.com">
@@ -155,23 +160,24 @@
             <!-- Horários de Funcionamento -->
             <div class="form-section">
                 <h3 class="section-title-form">Horários de Funcionamento</h3>
-                
+
                 <div class="schedule-container">
-                    <?php 
+                    <?php
                     $days = ['Segunda-feira', 'Terça-feira', 'Quarta-feira', 'Quinta-feira', 'Sexta-feira', 'Sábado', 'Domingo'];
-                    foreach($days as $day): 
-                    ?>
-                    <div class="schedule-row">
-                        <div class="schedule-day">
-                            <input type="checkbox" id="day_<?php echo strtolower(substr($day, 0, 3)); ?>" name="days[]" value="<?php echo $day; ?>" checked>
-                            <label for="day_<?php echo strtolower(substr($day, 0, 3)); ?>"><?php echo $day; ?></label>
+                    foreach ($days as $day):
+                        ?>
+                        <div class="schedule-row">
+                            <div class="schedule-day">
+                                <input type="checkbox" id="day_<?php echo strtolower(substr($day, 0, 3)); ?>" name="days[]"
+                                    value="<?php echo $day; ?>" checked>
+                                <label for="day_<?php echo strtolower(substr($day, 0, 3)); ?>"><?php echo $day; ?></label>
+                            </div>
+                            <div class="schedule-times">
+                                <input type="time" name="opening_time[]" class="time-input" value="18:00">
+                                <span>às</span>
+                                <input type="time" name="closing_time[]" class="time-input" value="23:00">
+                            </div>
                         </div>
-                        <div class="schedule-times">
-                            <input type="time" name="opening_time[]" class="time-input" value="18:00">
-                            <span>às</span>
-                            <input type="time" name="closing_time[]" class="time-input" value="23:00">
-                        </div>
-                    </div>
                     <?php endforeach; ?>
                 </div>
             </div>
@@ -179,7 +185,7 @@
             <!-- Características -->
             <div class="form-section">
                 <h3 class="section-title-form">Características do Restaurante</h3>
-                
+
                 <div class="features-grid">
                     <label class="feature-checkbox">
                         <input type="checkbox" name="features[]" value="vegetarian">
@@ -235,7 +241,7 @@
             <!-- Formas de Pagamento -->
             <div class="form-section">
                 <h3 class="section-title-form">Formas de Pagamento</h3>
-                
+
                 <div class="features-grid">
                     <label class="feature-checkbox">
                         <input type="checkbox" name="payment_methods[]" value="cash" checked>
@@ -263,16 +269,17 @@
             <!-- Dados do Proprietário -->
             <div class="form-section">
                 <h3 class="section-title-form">Dados do Proprietário/Administrador</h3>
-                
+
                 <div class="form-row">
                     <div class="form-group">
                         <label for="owner_name">Nome Completo *</label>
                         <input type="text" id="owner_name" name="owner_name" required placeholder="Nome completo">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="owner_cpf">CPF *</label>
-                        <input type="text" id="owner_cpf" name="owner_cpf" required placeholder="000.000.000-00" maxlength="14">
+                        <input type="text" id="owner_cpf" name="owner_cpf" required placeholder="000.000.000-00"
+                            maxlength="14">
                     </div>
                 </div>
 
@@ -281,22 +288,25 @@
                         <label for="owner_email">E-mail *</label>
                         <input type="email" id="owner_email" name="owner_email" required placeholder="seu@email.com">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="owner_phone">Telefone *</label>
-                        <input type="tel" id="owner_phone" name="owner_phone" required placeholder="(11) 99999-9999" maxlength="15">
+                        <input type="tel" id="owner_phone" name="owner_phone" required placeholder="(11) 99999-9999"
+                            maxlength="15">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="password">Senha *</label>
-                        <input type="password" id="password" name="password" required placeholder="Mínimo 8 caracteres" minlength="8">
+                        <input type="password" id="password" name="password" required placeholder="Mínimo 8 caracteres"
+                            minlength="8">
                     </div>
-                    
+
                     <div class="form-group">
                         <label for="confirm_password">Confirmar Senha *</label>
-                        <input type="password" id="confirm_password" name="confirm_password" required placeholder="Digite novamente" minlength="8">
+                        <input type="password" id="confirm_password" name="confirm_password" required
+                            placeholder="Digite novamente" minlength="8">
                     </div>
                 </div>
             </div>
@@ -305,7 +315,8 @@
             <div class="form-section">
                 <label class="terms-checkbox">
                     <input type="checkbox" id="terms" name="terms" required>
-                    <span>Aceito os <a href="#" style="color: var(--primary-neon);">termos e condições</a> e a <a href="#" style="color: var(--primary-neon);">política de privacidade</a> *</span>
+                    <span>Aceito os <a href="#" style="color: var(--primary-neon);">termos e condições</a> e a <a
+                            href="#" style="color: var(--primary-neon);">política de privacidade</a> *</span>
                 </label>
             </div>
 
@@ -327,92 +338,91 @@
 
 <script src="../../assets/js/main.js"></script>
 <script>
-// Máscaras de input
-document.getElementById('cnpj').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 14) {
-        value = value.replace(/^(\d{2})(\d)/, '$1.$2');
-        value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
-        value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
-        value = value.replace(/(\d{4})(\d)/, '$1-$2');
-        e.target.value = value;
-    }
-});
+    // Máscaras de input
+    document.getElementById('cnpj').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 14) {
+            value = value.replace(/^(\d{2})(\d)/, '$1.$2');
+            value = value.replace(/^(\d{2})\.(\d{3})(\d)/, '$1.$2.$3');
+            value = value.replace(/\.(\d{3})(\d)/, '.$1/$2');
+            value = value.replace(/(\d{4})(\d)/, '$1-$2');
+            e.target.value = value;
+        }
+    });
 
-document.getElementById('owner_cpf').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 11) {
-        value = value.replace(/^(\d{3})(\d)/, '$1.$2');
-        value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
-        value = value.replace(/\.(\d{3})(\d)/, '.$1-$2');
-        e.target.value = value;
-    }
-});
+    document.getElementById('owner_cpf').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+            value = value.replace(/^(\d{3})(\d)/, '$1.$2');
+            value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+            value = value.replace(/\.(\d{3})(\d)/, '.$1-$2');
+            e.target.value = value;
+        }
+    });
 
-document.getElementById('zipcode').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 8) {
-        value = value.replace(/^(\d{5})(\d)/, '$1-$2');
-        e.target.value = value;
-    }
-});
+    document.getElementById('zipcode').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 8) {
+            value = value.replace(/^(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        }
+    });
 
-document.getElementById('phone').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 11) {
-        value = value.replace(/^(\d{2})(\d)/, '($1) $2');
-        value = value.replace(/(\d{5})(\d)/, '$1-$2');
-        e.target.value = value;
-    }
-});
+    document.getElementById('phone').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+            value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        }
+    });
 
-document.getElementById('owner_phone').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 11) {
-        value = value.replace(/^(\d{2})(\d)/, '($1) $2');
-        value = value.replace(/(\d{5})(\d)/, '$1-$2');
-        e.target.value = value;
-    }
-});
+    document.getElementById('owner_phone').addEventListener('input', function (e) {
+        let value = e.target.value.replace(/\D/g, '');
+        if (value.length <= 11) {
+            value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+            value = value.replace(/(\d{5})(\d)/, '$1-$2');
+            e.target.value = value;
+        }
+    });
 
-// Validação de senha
-document.getElementById('confirm_password').addEventListener('input', function(e) {
-    const password = document.getElementById('password').value;
-    if (e.target.value !== password) {
-        e.target.setCustomValidity('As senhas não coincidem');
-    } else {
-        e.target.setCustomValidity('');
-    }
-});
+    // Validação de senha
+    document.getElementById('confirm_password').addEventListener('input', function (e) {
+        const password = document.getElementById('password').value;
+        if (e.target.value !== password) {
+            e.target.setCustomValidity('As senhas não coincidem');
+        } else {
+            e.target.setCustomValidity('');
+        }
+    });
 
-// Submissão do formulário
-document.getElementById('restaurantRegistrationForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const formData = new FormData(this);
-    
-    // Validar senhas
-    const password = formData.get('password');
-    const confirmPassword = formData.get('confirm_password');
-    
-    if (password !== confirmPassword) {
-        alert('As senhas não coincidem!');
-        return;
-    }
-    
-    // Aqui você faria a requisição AJAX para salvar os dados
-    console.log('Dados do formulário:', Object.fromEntries(formData));
-    
-    // Simular envio
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'CADASTRANDO...';
-    submitBtn.disabled = true;
-    
-    setTimeout(() => {
-        alert('Cadastro realizado com sucesso! Aguarde a aprovação.');
-        window.location.href = 'login.php';
-    }, 2000);
-});
+    // Submissão do formulário
+    document.getElementById('restaurantRegistrationForm').addEventListener('submit', function (e) {
+        e.preventDefault();
+
+        const formData = new FormData(this);
+
+        // Validar senhas
+        const password = formData.get('password');
+        const confirmPassword = formData.get('confirm_password');
+
+        if (password !== confirmPassword) {
+            alert('As senhas não coincidem!');
+            return;
+        }
+
+        // Aqui você faria a requisição AJAX para salvar os dados
+        console.log('Dados do formulário:', Object.fromEntries(formData));
+
+        // Simular envio
+        const submitBtn = this.querySelector('button[type="submit"]');
+        const originalText = submitBtn.textContent;
+        submitBtn.textContent = 'CADASTRANDO...';
+        submitBtn.disabled = true;
+
+        setTimeout(() => {
+            alert('Cadastro realizado com sucesso! Aguarde a aprovação.');
+            window.location.href = 'login.php';
+        }, 2000);
+    });
 </script>
-
