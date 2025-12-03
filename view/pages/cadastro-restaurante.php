@@ -1,4 +1,14 @@
 <?php include_once __DIR__ . '/../components/header.php'; ?>
+<?php include_once __DIR__ . '/../../model/cadastroRestauranteModel.php';
+
+$model = new CadastroRestauranteModel();
+
+$estados = $model->listarEstados();
+$categorias = $model->listarCaracteristicas();
+// $caracteristicas = $model->caracteristicasDoRestaurante();
+$formasPagamento = $model->listarFormasPagamento();
+
+?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
 
@@ -36,18 +46,9 @@
                         <label for="category">Categoria *</label>
                         <select id="category" name="category" required>
                             <option value="">Selecione a categoria</option>
-                            <option value="italiana">Italiana</option>
-                            <option value="japonesa">Japonesa</option>
-                            <option value="brasileira">Brasileira</option>
-                            <option value="francesa">Francesa</option>
-                            <option value="mexicana">Mexicana</option>
-                            <option value="asiatica">Asiática</option>
-                            <option value="pizzaria">Pizzaria</option>
-                            <option value="churrascaria">Churrascaria</option>
-                            <option value="fast-food">Fast Food</option>
-                            <option value="vegetariana">Vegetariana</option>
-                            <option value="vegana">Vegana</option>
-                            <option value="outro">Outro</option>
+                            <?php foreach ($categorias as $categoria): ?>
+                                <option value="<?= $categoria['id'] ?>"><?= $categoria['nome'] ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -98,33 +99,9 @@
                         <label for="state">Estado *</label>
                         <select id="state" name="state" required>
                             <option value="">Selecione o estado</option>
-                            <option value="AC">Acre</option>
-                            <option value="AL">Alagoas</option>
-                            <option value="AP">Amapá</option>
-                            <option value="AM">Amazonas</option>
-                            <option value="BA">Bahia</option>
-                            <option value="CE">Ceará</option>
-                            <option value="DF">Distrito Federal</option>
-                            <option value="ES">Espírito Santo</option>
-                            <option value="GO">Goiás</option>
-                            <option value="MA">Maranhão</option>
-                            <option value="MT">Mato Grosso</option>
-                            <option value="MS">Mato Grosso do Sul</option>
-                            <option value="MG">Minas Gerais</option>
-                            <option value="PA">Pará</option>
-                            <option value="PB">Paraíba</option>
-                            <option value="PR">Paraná</option>
-                            <option value="PE">Pernambuco</option>
-                            <option value="PI">Piauí</option>
-                            <option value="RJ">Rio de Janeiro</option>
-                            <option value="RN">Rio Grande do Norte</option>
-                            <option value="RS">Rio Grande do Sul</option>
-                            <option value="RO">Rondônia</option>
-                            <option value="RR">Roraima</option>
-                            <option value="SC">Santa Catarina</option>
-                            <option value="SP">São Paulo</option>
-                            <option value="SE">Sergipe</option>
-                            <option value="TO">Tocantins</option>
+                            <?php foreach ($estados as $estado): ?>
+                                <option value="<?= $estado['sigla'] ?>"><?= $estado['nome'] ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
 
@@ -187,148 +164,63 @@
                 <h3 class="section-title-form">Características do Restaurante</h3>
 
                 <div class="features-grid">
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="vegetarian">
-                        <span>Vegetariano</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="vegan">
-                        <span>Vegano</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="gluten-free">
-                        <span>Sem Glúten</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="romantic">
-                        <span>Romântico</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="family-friendly">
-                        <span>Família</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="pet-friendly">
-                        <span>Pet Friendly</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="outdoor">
-                        <span>Área Externa</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="live-music">
-                        <span>Música ao Vivo</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="parking">
-                        <span>Estacionamento</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="wifi">
-                        <span>Wi-Fi Grátis</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="delivery">
-                        <span>Delivery</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="features[]" value="bar">
-                        <span>Bar</span>
-                    </label>
+                    <?php foreach ($caracteristicas as $feature): ?>
+                        <label class="feature-checkbox">
+                            <input type="checkbox" name="features[]" value="<?= $feature['valor'] ?>">
+                            <span><?= $feature['nome'] ?></span>
+                        </label>
+                    <?php endforeach; ?>
                 </div>
-            </div>
 
-            <!-- Formas de Pagamento -->
-            <div class="form-section">
-                <h3 class="section-title-form">Formas de Pagamento</h3>
+                <!-- Formas de Pagamento -->
+                <div class="form-section">
+                    <h3 class="section-title-form">Formas de Pagamento</h3>
 
-                <div class="features-grid">
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="payment_methods[]" value="cash" checked>
-                        <span>Dinheiro</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="payment_methods[]" value="credit-card" checked>
-                        <span>Cartão de Crédito</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="payment_methods[]" value="debit-card" checked>
-                        <span>Cartão de Débito</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="payment_methods[]" value="pix" checked>
-                        <span>PIX</span>
-                    </label>
-                    <label class="feature-checkbox">
-                        <input type="checkbox" name="payment_methods[]" value="voucher">
-                        <span>Vale Alimentação</span>
-                    </label>
-                </div>
-            </div>
-
-            <!-- Dados do Proprietário -->
-            <div class="form-section">
-                <h3 class="section-title-form">Dados do Proprietário/Administrador</h3>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="owner_name">Nome Completo *</label>
-                        <input type="text" id="owner_name" name="owner_name" required placeholder="Nome completo">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="owner_cpf">CPF *</label>
-                        <input type="text" id="owner_cpf" name="owner_cpf" required placeholder="000.000.000-00"
-                            maxlength="14">
+                    <div class="features-grid">
+                        <?php foreach ($formasPagamento as $pagamento): ?>
+                            <label class="feature-checkbox">
+                                <input type="checkbox" name="payment_methods[]" value="<?= $pagamento['id'] ?>">
+                                <span><?= $pagamento['nome'] ?></span>
+                            </label>
+                        <?php endforeach; ?>
                     </div>
                 </div>
 
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="owner_email">E-mail *</label>
-                        <input type="email" id="owner_email" name="owner_email" required placeholder="seu@email.com">
-                    </div>
+                <!-- Dados do Proprietário -->
+                <div class="form-section">
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label for="password">Senha *</label>
+                            <input type="password" id="password" name="password" required
+                                placeholder="Mínimo 8 caracteres" minlength="8">
+                        </div>
 
-                    <div class="form-group">
-                        <label for="owner_phone">Telefone *</label>
-                        <input type="tel" id="owner_phone" name="owner_phone" required placeholder="(11) 99999-9999"
-                            maxlength="15">
-                    </div>
-                </div>
-
-                <div class="form-row">
-                    <div class="form-group">
-                        <label for="password">Senha *</label>
-                        <input type="password" id="password" name="password" required placeholder="Mínimo 8 caracteres"
-                            minlength="8">
-                    </div>
-
-                    <div class="form-group">
-                        <label for="confirm_password">Confirmar Senha *</label>
-                        <input type="password" id="confirm_password" name="confirm_password" required
-                            placeholder="Digite novamente" minlength="8">
+                        <div class="form-group">
+                            <label for="confirm_password">Confirmar Senha *</label>
+                            <input type="password" id="confirm_password" name="confirm_password" required
+                                placeholder="Digite novamente" minlength="8">
+                        </div>
                     </div>
                 </div>
-            </div>
+                <!-- Termos -->
+                <div class="form-section">
+                    <label class="terms-checkbox">
+                        <input type="checkbox" id="terms" name="terms" required>
+                        <span>Aceito os <a href="#" style="color: var(--primary-neon);">termos e condições</a> e a <a
+                                href="#" style="color: var(--primary-neon);">política de privacidade</a> *</span>
+                    </label>
+                </div>
 
-            <!-- Termos -->
-            <div class="form-section">
-                <label class="terms-checkbox">
-                    <input type="checkbox" id="terms" name="terms" required>
-                    <span>Aceito os <a href="#" style="color: var(--primary-neon);">termos e condições</a> e a <a
-                            href="#" style="color: var(--primary-neon);">política de privacidade</a> *</span>
-                </label>
-            </div>
-
-            <!-- Botão de Envio -->
-            <div class="form-actions">
-                <button type="submit" class="btn btn-primary btn-large">
-                    Cadastrar Restaurante
-                </button>
-                <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
-                    Já possui cadastro? <a href="login-restaurante.php" style="color: var(--primary-neon); font-weight: 600;">Fazer login</a>
-                </p>
-            </div>
+                <!-- Botão de Envio -->
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary btn-large">
+                        Cadastrar Restaurante
+                    </button>
+                    <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
+                        Já possui cadastro? <a href="login-restaurante.php"
+                            style="color: var(--primary-neon); font-weight: 600;">Fazer login</a>
+                    </p>
+                </div>
 
         </form>
     </div>

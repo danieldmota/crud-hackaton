@@ -2,7 +2,7 @@
 
 include_once __DIR__ . '/../config/database.php';
 
-class RestauranteModel
+class CadastroRestauranteModel
 {
     protected $conn;
 
@@ -170,5 +170,50 @@ class RestauranteModel
         } catch (Exception $e) {
             throw new Exception("Erro ao cadastrar formas de pagamento: " . $e->getMessage());
         }
+    }
+
+    // Pega todas as formas de pagamento
+    public function listarFormasPagamento()
+    {
+        $sql = "SELECT * FROM formas_pagamento ORDER BY nome ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Pega todas as características
+    public function listarCaracteristicas()
+    {
+        $sql = "SELECT * FROM caracteristicas ORDER BY nome ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Pega todos os estados
+    public function listarEstados()
+    {
+        $sql = "SELECT * FROM estados ORDER BY nome ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    // Pega os pagamentos já cadastrados de um restaurante
+    public function pagamentosDoRestaurante($restauranteId)
+    {
+        $sql = "SELECT pagamento_id FROM restaurante_pagamentos WHERE restaurante_id = :restaurante_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':restaurante_id' => $restauranteId]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    // Pega as características já cadastradas de um restaurante
+    public function caracteristicasDoRestaurante($restauranteId)
+    {
+        $sql = "SELECT caracteristica_id FROM restaurante_caracteristicas WHERE restaurante_id = :restaurante_id";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([':restaurante_id' => $restauranteId]);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
     }
 }

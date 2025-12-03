@@ -38,7 +38,7 @@ try {
     // Validação de data
     $dataReserva = $_POST['date'];
     $dataAtual = date('Y-m-d');
-    
+
     if ($dataReserva < $dataAtual) {
         throw new Exception("A data da reserva não pode ser no passado.");
     }
@@ -54,10 +54,10 @@ try {
 
     $data = [
         'cliente_id' => $_SESSION['id'],
-        'restaurante_id' => (int)$_POST['restaurant_id'],
+        'restaurante_id' => $_POST['restaurant_id'],
         'data_reserva' => $dataReserva,
         'horario' => $horario,
-        'numero_pessoas' => (int)$_POST['guests'],
+        'numero_pessoas' => (int) $_POST['guests'],
         'pedidos_especiais' => !empty($_POST['special_requests']) ? trim($_POST['special_requests']) : null,
         'status' => 'pendente'
     ];
@@ -75,7 +75,7 @@ try {
 
     // Sucesso
     $_SESSION['sucesso'] = "Reserva realizada com sucesso! Aguarde a confirmação do restaurante.";
-    
+
     // Retorna JSON para requisições AJAX
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
         echo json_encode([
@@ -104,7 +104,7 @@ try {
     }
 
     $_SESSION['erro'] = $e->getMessage();
-    
+
     // Redireciona de volta para a página de detalhes
     $restaurantId = $_POST['restaurant_id'] ?? 1;
     header("Location: ../view/pages/cliente/detalhes.php?id=" . $restaurantId);
@@ -112,7 +112,7 @@ try {
 } catch (Error $e) {
     // Captura erros fatais do PHP
     error_log("Erro fatal em ReservaController: " . $e->getMessage());
-    
+
     if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
         http_response_code(500);
         echo json_encode([
@@ -121,7 +121,7 @@ try {
         ], JSON_UNESCAPED_UNICODE);
         exit();
     }
-    
+
     $_SESSION['erro'] = 'Erro interno do servidor. Tente novamente mais tarde.';
     $restaurantId = $_POST['restaurant_id'] ?? 1;
     header("Location: ../view/pages/cliente/detalhes.php?id=" . $restaurantId);

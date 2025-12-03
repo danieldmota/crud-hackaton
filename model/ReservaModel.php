@@ -42,7 +42,7 @@ class ReservaModel
 
             $stmt = $this->conn->prepare($sql);
 
-            $stmt->bindParam(':cliente_id', $data['cliente_id']);
+            $stmt->bindParam(':cliente_id', $data[$_SESSION(['id'])]);
             $stmt->bindParam(':restaurante_id', $data['restaurante_id']);
             $stmt->bindParam(':data_reserva', $data['data_reserva']);
             $stmt->bindParam(':horario', $data['horario']);
