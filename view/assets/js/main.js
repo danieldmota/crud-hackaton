@@ -905,3 +905,24 @@ document.addEventListener("DOMContentLoaded", function () {
     });
   });
 });
+
+async function submitReservation(event) {
+    event.preventDefault();
+
+    const form = document.getElementById("reservationForm");
+    const formData = new FormData(form);
+
+    const response = await fetch("index.php?action=store", {
+        method: "POST",
+        body: formData
+    });
+
+    const result = await response.json();
+
+    if (result.success) {
+        alert("Reserva realizada com sucesso!");
+        form.reset();
+    } else {
+        alert("Erro: " + result.error);
+    }
+}
