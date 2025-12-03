@@ -1,14 +1,14 @@
-create database gestao_de_reserva;
-
-use gestao_de_reserva;
+use agendaGourmet;
 
 create table clientes(
-id_client int(5) primary key auto_increment,
+id int(5) primary key auto_increment,
 senha varchar(10) not null,
-cliente varchar(230) not null,
-telefone int(15) not null,
-email varchar(230) not null
+nome varchar(230) not null,
+telefone varchar(15) not null,
+email varchar(230) not null unique,
+cpf varchar(11) unique not null
 );
+
 
 create table  restaurantes( 
 id_rest int(5) primary key auto_increment,

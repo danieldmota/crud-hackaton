@@ -2,7 +2,7 @@
 
 require_once __DIR__ . '/../config/database.php';
 
-class ClientModel
+class CadastroUsuarioModel
 {
     private $conn;
 
@@ -12,20 +12,20 @@ class ClientModel
         $this->conn = $db->conectar();
     }
 
-    public function createClient($data)
+    public function Cadastro($data)
     {
         try {
             $sql = "INSERT INTO clientes (
-                        nome_completo,
+                        nome,
                         cpf,
-                        foto_perfil,
+                        -- foto_perfil,
                         telefone,
                         email,
                         senha
                     ) VALUES (
-                        :nome_completo,
+                        :nome,
                         :cpf,
-                        :foto_perfil,
+                        -- :foto_perfil,
                         :telefone,
                         :email,
                         :senha
@@ -34,11 +34,11 @@ class ClientModel
             $stmt = $this->conn->prepare($sql);
 
             // Preparação de senha com hash seguro
-            $hashedPassword = password_hash($data['password'], PASSWORD_DEFAULT);
+            $hashedPassword = password_hash($data['senha'], PASSWORD_DEFAULT);
 
-            $stmt->bindParam(':nome_completo', $data['nome_completo']);
+            $stmt->bindParam(':nome', $data['nome']);
             $stmt->bindParam(':cpf', $data['cpf']);
-            $stmt->bindParam(':foto_perfil', $data['foto_perfil']);
+            // $stmt->bindParam(':foto_perfil', $data['foto_perfil']);
             $stmt->bindParam(':telefone', $data['telefone']);
             $stmt->bindParam(':email', $data['email']);
             $stmt->bindParam(':senha', $hashedPassword);

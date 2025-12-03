@@ -11,7 +11,8 @@
 
 <div class="container">
     <div class="registration-form-container">
-        <form id="restaurantRegistrationForm" class="registration-form" enctype="multipart/form-data">
+        <form id="restaurantRegistrationForm" class="registration-form" enctype="multipart/form-data" method="POST"
+            action="/crud-hackaton/controller/CadastroUsuarioController.php">
 
             <!-- Dados do Restaurante -->
             <div class="form-section">
@@ -20,24 +21,22 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="restaurant_name">Nome Completo *</label>
-                        <input type="text" id="restaurant_name" name="restaurant_name" required
-                            placeholder="João Pedro da Silva">
+                        <input type="text" id="restaurant_name" name="nome" required placeholder="João Pedro da Silva">
                     </div>
 
                     <div class="form-group">
                         <label for="cpf">Cpf *</label>
-                        <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00"
-                            maxlength="14">
+                        <input type="text" id="cpf" name="cpf" required placeholder="000.000.000-00" maxlength="14">
                     </div>
                 </div>
 
-                <div class="form-group">
+                <!-- <div class="form-group">
                     <label for="restaurant_image">Foto de Perfil</label>
                     <input type="file" id="restaurant_image" name="restaurant_image" accept="image/*"
                         class="file-input">
                     <small style="color: var(--text-secondary); font-size: 0.9rem;">Formatos aceitos: JPG, PNG (máx.
                         5MB)</small>
-                </div>
+                </div> -->
             </div>
 
 
@@ -48,7 +47,8 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phone">Telefone *</label>
-                        <input type="tel" id="phone" name="phone" required placeholder="(11) 99999-9999" maxlength="15">
+                        <input type="tel" id="phone" name="telefone" required placeholder="(11) 99999-9999"
+                            maxlength="15">
                     </div>
 
                     <div class="form-group">
@@ -59,17 +59,17 @@
             </div>
 
             <div class="form-row">
-                    <div class="form-group">
-                        <label for="password">Senha *</label>
-                        <input type="password" id="password" name="password" required placeholder="Mínimo 8 caracteres"
-                            minlength="8">
-                    </div>
+                <div class="form-group">
+                    <label for="password">Senha *</label>
+                    <input type="password" id="password" name="senha" required placeholder="Mínimo 8 caracteres"
+                        minlength="8">
+                </div>
 
-                    <div class="form-group">
-                        <label for="confirm_password">Confirmar Senha *</label>
-                        <input type="password" id="confirm_password" name="confirm_password" required
-                            placeholder="Digite novamente" minlength="8">
-                    </div>
+                <div class="form-group">
+                    <label for="confirm_password">Confirmar Senha *</label>
+                    <input type="password" id="confirm_password" name="confirm_senha" required
+                        placeholder="Digite novamente" minlength="8">
+                </div>
             </div>
 
             <!-- Termos -->
@@ -87,7 +87,8 @@
                     Cadastrar
                 </button>
                 <p style="text-align: center; margin-top: 1rem; color: var(--text-secondary);">
-                    Já possui cadastro? <a href="login-cliente.php" style="color: var(--primary-neon); font-weight: 600;">Fazer login</a>
+                    Já possui cadastro? <a href="login-cliente.php"
+                        style="color: var(--primary-neon); font-weight: 600;">Fazer login</a>
                 </p>
             </div>
 
