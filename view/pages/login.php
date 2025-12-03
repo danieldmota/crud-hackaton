@@ -1,6 +1,6 @@
-<?php include_once __DIR__ . '/../../components/header.php'; ?>
+<?php include_once __DIR__ . '../components/header.php'; ?>
 
-<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/style.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">
@@ -43,9 +43,9 @@
     </div>
 </div>
 
-<?php include_once __DIR__ . '/../../components/footer.php'; ?>
+<?php include_once __DIR__ . '../components/footer.php'; ?>
 
-<script src="../../assets/js/main.js"></script>
+<script src="../assets/js/main.js"></script>
 <script>
     document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
