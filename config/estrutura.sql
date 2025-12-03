@@ -91,6 +91,20 @@ clientes
 
 );
 
+create table cardapio_itens(
+id int primary key auto_increment,
+restaurante_id int not null,
+categoria varchar(20) not null,
+nome varchar(150) not null,
+descricao text not null,
+preco decimal(10,2) not null,
+imagem varchar(255),
+disponivel tinyint(1) default 1,
+criado_em datetime default current_timestamp,
+atualizado_em datetime default current_timestamp on update current_timestamp,
+FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id) on delete cascade
+);
+
 create table reservas(
 id int(5) primary key auto_increment,
 cliente_id int(5) not null,
@@ -102,7 +116,7 @@ pedidos_especiais text,
 status varchar(20) default 'pendente',
 data_criacao datetime default current_timestamp,
 FOREIGN KEY (cliente_id) REFERENCES clientes(id),
-FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id_rest)
+FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
 );
 
 select * from reservas;

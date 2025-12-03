@@ -1,4 +1,31 @@
-<?php include_once __DIR__ . '/../../components/header.php'; ?>
+<?php
+include_once __DIR__ . '/../../components/header.php';
+require_once __DIR__ . '/../../../model/CardapioModel.php';
+
+$restauranteId = isset($_SESSION['id'])
+    ? (int) $_SESSION['id']
+    : (int) ($_GET['restaurante_id'] ?? 1);
+$cardapioModel = new CardapioModel();
+$itensCardapio = $cardapioModel->listarPorRestaurante($restauranteId);
+
+$categorias = [
+    'pratos' => [],
+    'bebidas' => [],
+    'sobremesas' => []
+];
+
+foreach ($itensCardapio as $item) {
+    if (isset($categorias[$item['categoria']])) {
+        $categorias[$item['categoria']][] = $item;
+    }
+}
+
+$imagensPadrao = [
+    'pratos' => 'https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=500&q=80',
+    'bebidas' => 'https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?auto=format&fit=crop&w=500&q=80',
+    'sobremesas' => 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?auto=format&fit=crop&w=500&q=80'
+];
+?>
 
 <link rel="stylesheet" href="../../assets/css/style.css">
 
@@ -26,105 +53,99 @@
         <!-- Pratos -->
         <div id="pratos" class="menu-content active">
             <div class="menu-items-grid">
-                <div class="menu-item-card">
-                    <div class="menu-item-image" style="background-image: url('https://images.unsplash.com/photo-1551183053-bf91a1d81141?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"></div>
-                    <div class="menu-item-info">
-                        <h4 class="menu-item-name">Spaghetti Carbonara</h4>
-                        <p class="menu-item-description">Massa artesanal com bacon, ovos, queijo parmesão e pimenta preta</p>
-                        <div class="menu-item-footer">
-                            <span class="menu-item-price">R$ 45,90</span>
-                            <div class="menu-item-actions">
-                                <button class="btn-icon" onclick="editMenuItem(1, 'pratos')" title="Editar">✏️</button>
-                                <button class="btn-icon" onclick="deleteMenuItem(1)" title="Excluir">🗑️</button>
+                <?php if (!empty($categorias['pratos'])): ?>
+                    <?php foreach ($categorias['pratos'] as $item): ?>
+                        <div class="menu-item-card">
+                            <div class="menu-item-image"
+                                style="background-image: url('<?php echo $item['imagem'] ? '../../' . htmlspecialchars($item['imagem']) : $imagensPadrao['pratos']; ?>');">
+                            </div>
+                            <div class="menu-item-info">
+                                <h4 class="menu-item-name">
+                                    <?php echo htmlspecialchars($item['nome']); ?>
+                                    <?php if ((int) $item['disponivel'] === 0): ?>
+                                        <span class="badge" style="background: #ff4444; color:#fff; font-size:0.75rem; padding:0.1rem 0.4rem; border-radius:6px;">Indisponível</span>
+                                    <?php endif; ?>
+                                </h4>
+                                <p class="menu-item-description"><?php echo htmlspecialchars($item['descricao']); ?></p>
+                                <div class="menu-item-footer">
+                                    <span class="menu-item-price">R$ <?php echo number_format((float) $item['preco'], 2, ',', '.'); ?></span>
+                                    <div class="menu-item-actions">
+                                        <button class="btn-icon" onclick="editMenuItem(<?php echo $item['id']; ?>)" title="Editar">✏️</button>
+                                        <button class="btn-icon" onclick="deleteMenuItem(<?php echo $item['id']; ?>)" title="Excluir">🗑️</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
-
-                <div class="menu-item-card">
-                    <div class="menu-item-image" style="background-image: url('https://images.unsplash.com/photo-1574894709920-11b28e7367e3?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"></div>
-                    <div class="menu-item-info">
-                        <h4 class="menu-item-name">Risotto de Camarão</h4>
-                        <p class="menu-item-description">Arroz arbóreo cremoso com camarões frescos e ervas</p>
-                        <div class="menu-item-footer">
-                            <span class="menu-item-price">R$ 58,90</span>
-                            <div class="menu-item-actions">
-                                <button class="btn-icon" onclick="editMenuItem(2, 'pratos')" title="Editar">✏️</button>
-                                <button class="btn-icon" onclick="deleteMenuItem(2)" title="Excluir">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="menu-item-card">
-                    <div class="menu-item-image" style="background-image: url('https://images.unsplash.com/photo-1574071318508-1cdbab80d002?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"></div>
-                    <div class="menu-item-info">
-                        <h4 class="menu-item-name">Pizza Margherita</h4>
-                        <p class="menu-item-description">Massa fina, molho de tomate, mussarela de búfala e manjericão</p>
-                        <div class="menu-item-footer">
-                            <span class="menu-item-price">R$ 42,90</span>
-                            <div class="menu-item-actions">
-                                <button class="btn-icon" onclick="editMenuItem(3, 'pratos')" title="Editar">✏️</button>
-                                <button class="btn-icon" onclick="deleteMenuItem(3)" title="Excluir">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="menu-item-card">
-                    <div class="menu-item-image" style="background-image: url('https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"></div>
-                    <div class="menu-item-info">
-                        <h4 class="menu-item-name">Lasagna à Bolonhesa</h4>
-                        <p class="menu-item-description">Camadas de massa, molho bolonhesa, queijo e bechamel</p>
-                        <div class="menu-item-footer">
-                            <span class="menu-item-price">R$ 52,90</span>
-                            <div class="menu-item-actions">
-                                <button class="btn-icon" onclick="editMenuItem(4, 'pratos')" title="Editar">✏️</button>
-                                <button class="btn-icon" onclick="deleteMenuItem(4)" title="Excluir">🗑️</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p style="color: var(--text-secondary);">Nenhum prato cadastrado ainda.</p>
+                <?php endif; ?>
             </div>
         </div>
 
         <!-- Bebidas -->
         <div id="bebidas" class="menu-content">
             <div class="menu-items-grid">
-                <div class="menu-item-card">
-                    <div class="menu-item-image" style="background-image: url('https://images.unsplash.com/photo-1513475382585-d06e58bcb0e0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"></div>
-                    <div class="menu-item-info">
-                        <h4 class="menu-item-name">Vinho Tinto Reserva</h4>
-                        <p class="menu-item-description">Vinho tinto nacional, garrafa 750ml</p>
-                        <div class="menu-item-footer">
-                            <span class="menu-item-price">R$ 89,90</span>
-                            <div class="menu-item-actions">
-                                <button class="btn-icon" onclick="editMenuItem(5, 'bebidas')" title="Editar">✏️</button>
-                                <button class="btn-icon" onclick="deleteMenuItem(5)" title="Excluir">🗑️</button>
+                <?php if (!empty($categorias['bebidas'])): ?>
+                    <?php foreach ($categorias['bebidas'] as $item): ?>
+                        <div class="menu-item-card">
+                            <div class="menu-item-image"
+                                style="background-image: url('<?php echo $item['imagem'] ? '../../' . htmlspecialchars($item['imagem']) : $imagensPadrao['bebidas']; ?>');">
+                            </div>
+                            <div class="menu-item-info">
+                                <h4 class="menu-item-name">
+                                    <?php echo htmlspecialchars($item['nome']); ?>
+                                    <?php if ((int) $item['disponivel'] === 0): ?>
+                                        <span class="badge" style="background: #ff4444; color:#fff; font-size:0.75rem; padding:0.1rem 0.4rem; border-radius:6px;">Indisponível</span>
+                                    <?php endif; ?>
+                                </h4>
+                                <p class="menu-item-description"><?php echo htmlspecialchars($item['descricao']); ?></p>
+                                <div class="menu-item-footer">
+                                    <span class="menu-item-price">R$ <?php echo number_format((float) $item['preco'], 2, ',', '.'); ?></span>
+                                    <div class="menu-item-actions">
+                                        <button class="btn-icon" onclick="editMenuItem(<?php echo $item['id']; ?>)" title="Editar">✏️</button>
+                                        <button class="btn-icon" onclick="deleteMenuItem(<?php echo $item['id']; ?>)" title="Excluir">🗑️</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p style="color: var(--text-secondary);">Nenhuma bebida cadastrada ainda.</p>
+                <?php endif; ?>
             </div>
         </div>
 
         <!-- Sobremesas -->
         <div id="sobremesas" class="menu-content">
             <div class="menu-items-grid">
-                <div class="menu-item-card">
-                    <div class="menu-item-image" style="background-image: url('https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80');"></div>
-                    <div class="menu-item-info">
-                        <h4 class="menu-item-name">Tiramisu</h4>
-                        <p class="menu-item-description">Sobremesa tradicional italiana com café e mascarpone</p>
-                        <div class="menu-item-footer">
-                            <span class="menu-item-price">R$ 24,90</span>
-                            <div class="menu-item-actions">
-                                <button class="btn-icon" onclick="editMenuItem(6, 'sobremesas')" title="Editar">✏️</button>
-                                <button class="btn-icon" onclick="deleteMenuItem(6)" title="Excluir">🗑️</button>
+                <?php if (!empty($categorias['sobremesas'])): ?>
+                    <?php foreach ($categorias['sobremesas'] as $item): ?>
+                        <div class="menu-item-card">
+                            <div class="menu-item-image"
+                                style="background-image: url('<?php echo $item['imagem'] ? '../../' . htmlspecialchars($item['imagem']) : $imagensPadrao['sobremesas']; ?>');">
+                            </div>
+                            <div class="menu-item-info">
+                                <h4 class="menu-item-name">
+                                    <?php echo htmlspecialchars($item['nome']); ?>
+                                    <?php if ((int) $item['disponivel'] === 0): ?>
+                                        <span class="badge" style="background: #ff4444; color:#fff; font-size:0.75rem; padding:0.1rem 0.4rem; border-radius:6px;">Indisponível</span>
+                                    <?php endif; ?>
+                                </h4>
+                                <p class="menu-item-description"><?php echo htmlspecialchars($item['descricao']); ?></p>
+                                <div class="menu-item-footer">
+                                    <span class="menu-item-price">R$ <?php echo number_format((float) $item['preco'], 2, ',', '.'); ?></span>
+                                    <div class="menu-item-actions">
+                                        <button class="btn-icon" onclick="editMenuItem(<?php echo $item['id']; ?>)" title="Editar">✏️</button>
+                                        <button class="btn-icon" onclick="deleteMenuItem(<?php echo $item['id']; ?>)" title="Excluir">🗑️</button>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-                    </div>
-                </div>
+                    <?php endforeach; ?>
+                <?php else: ?>
+                    <p style="color: var(--text-secondary);">Nenhuma sobremesa cadastrada ainda.</p>
+                <?php endif; ?>
             </div>
         </div>
     </div>
@@ -140,6 +161,7 @@
         <form id="itemForm" class="modal-form" enctype="multipart/form-data">
             <input type="hidden" id="item_id" name="item_id">
             <input type="hidden" id="item_category" name="category">
+            <input type="hidden" id="restaurante_id" name="restaurante_id" value="<?php echo $restauranteId; ?>">
             
             <div class="form-group">
                 <label for="item_name">Nome do Item *</label>
@@ -190,8 +212,20 @@
 <?php include_once __DIR__ . '/../../components/footer.php'; ?>
 
 <script src="../../assets/js/main.js"></script>
+<script id="menuItemsData" type="application/json">
+<?php echo json_encode($itensCardapio, JSON_UNESCAPED_UNICODE | JSON_HEX_TAG); ?>
+</script>
 <script>
 let currentTab = 'pratos';
+const controllerUrl = "/crud-hackaton/controller/cardapioController.php";
+const menuItems = JSON.parse(document.getElementById('menuItemsData').textContent || '[]');
+
+const modal = document.getElementById('itemModal');
+const form = document.getElementById('itemForm');
+const submitBtn = form.querySelector('button[type="submit"]');
+const categorySelect = document.getElementById('item_category_select');
+const hiddenCategory = document.getElementById('item_category');
+const restauranteIdInput = document.getElementById('restaurante_id');
 
 function switchTab(tab) {
     currentTab = tab;
@@ -204,51 +238,103 @@ function switchTab(tab) {
 
 function openAddItemModal() {
     document.getElementById('itemModalTitle').textContent = 'Adicionar Novo Item';
-    document.getElementById('itemForm').reset();
+    form.reset();
     document.getElementById('item_id').value = '';
-    document.getElementById('item_category').value = currentTab;
-    document.getElementById('item_category_select').value = currentTab;
-    document.getElementById('itemModal').style.display = 'flex';
+    hiddenCategory.value = currentTab;
+    categorySelect.value = currentTab;
+    modal.style.display = 'flex';
 }
 
 function closeItemModal() {
-    document.getElementById('itemModal').style.display = 'none';
+    modal.style.display = 'none';
 }
 
-function editMenuItem(id, category) {
+function fillForm(item) {
+    document.getElementById('item_name').value = item.nome;
+    document.getElementById('item_description').value = item.descricao;
+    document.getElementById('item_price').value = item.preco;
+    categorySelect.value = item.categoria;
+    hiddenCategory.value = item.categoria;
+    document.getElementById('item_id').value = item.id;
+    const availableCheckbox = form.querySelector('input[name="available"]');
+    availableCheckbox.checked = Number(item.disponivel) === 1;
+}
+
+function editMenuItem(id) {
+    const item = menuItems.find(i => Number(i.id) === Number(id));
+    if (!item) {
+        alert('Item não encontrado.');
+        return;
+    }
     document.getElementById('itemModalTitle').textContent = 'Editar Item';
-    document.getElementById('item_id').value = id;
-    document.getElementById('item_category').value = category;
-    document.getElementById('item_category_select').value = category;
-    // Aqui você buscaria os dados do item
-    document.getElementById('itemModal').style.display = 'flex';
+    fillForm(item);
+    modal.style.display = 'flex';
 }
 
-function deleteMenuItem(id) {
-    if (confirm('Tem certeza que deseja excluir este item?')) {
-        alert('Item excluído com sucesso!');
-        location.reload();
+async function deleteMenuItem(id) {
+    if (!confirm('Tem certeza que deseja excluir este item?')) {
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append('action', 'delete');
+    formData.append('item_id', id);
+    formData.append('restaurante_id', restauranteIdInput.value);
+
+    try {
+        submitBtn.disabled = true;
+        const response = await fetch(controllerUrl, { method: 'POST', body: formData });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Não foi possível excluir o item.');
+        }
+
+        alert(result.message);
+        window.location.reload();
+    } catch (error) {
+        alert(error.message);
+    } finally {
+        submitBtn.disabled = false;
     }
 }
 
-// Fechar modal ao clicar fora
 window.onclick = function(event) {
-    const modal = document.getElementById('itemModal');
-    if (event.target == modal) {
+    if (event.target === modal) {
         closeItemModal();
     }
 }
 
-// Submissão do formulário
-document.getElementById('itemForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const itemId = document.getElementById('item_id').value;
-    const isEdit = itemId !== '';
-    
-    alert(isEdit ? 'Item atualizado com sucesso!' : 'Item adicionado com sucesso!');
-    closeItemModal();
-    location.reload();
+categorySelect.addEventListener('change', (event) => {
+    hiddenCategory.value = event.target.value;
+});
+
+form.addEventListener('submit', async function (event) {
+    event.preventDefault();
+    const formData = new FormData(form);
+    const itemId = formData.get('item_id');
+    formData.append('restaurante_id', restauranteIdInput.value);
+
+    formData.append('action', itemId ? 'update' : 'create');
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Salvando...';
+
+    try {
+        const response = await fetch(controllerUrl, { method: 'POST', body: formData });
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+            throw new Error(result.error || 'Não foi possível salvar o item.');
+        }
+
+        alert(result.message);
+        window.location.reload();
+    } catch (error) {
+        alert(error.message);
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Salvar Item';
+    }
 });
 </script>
 
