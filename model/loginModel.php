@@ -1,11 +1,10 @@
 <?php
 
-require_once 'config/database.php';
+include_once __DIR__ . '/../config/database.php';
 
 class loginModel
 {
     protected $conn;
-    protected $tabela = "usuarios";
 
     public function __construct()
     {
@@ -16,7 +15,7 @@ class loginModel
     public function loginUsuario($email, $senha)
     {
         $sql = "SELECT id, nome, email, senha 
-            FROM usuarios 
+            FROM clientes 
             WHERE email = :email LIMIT 1";
 
         $stmt = $this->conn->prepare($sql);
@@ -53,10 +52,4 @@ class loginModel
         return false;
     }
 }
-
-
-
-
-
-
 ?>

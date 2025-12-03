@@ -1,13 +1,19 @@
+create database agendaGourmet;
+
 use agendaGourmet;
 
 create table clientes(
 id int(5) primary key auto_increment,
-senha varchar(10) not null,
+senha varchar(255) not null,
 nome varchar(230) not null,
 telefone varchar(15) not null,
 email varchar(230) not null unique,
 cpf varchar(11) unique not null
 );
+
+select * from clientes;
+
+drop table clientes;
 
 
 create table  restaurantes( 
@@ -24,7 +30,6 @@ complemento varchar(230),
 telefone int(15) not null,
 email varchar(230) not null,
 categoria varchar(100)
-
 );
 
 create table categoria( 

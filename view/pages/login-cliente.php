@@ -1,5 +1,12 @@
 <?php include_once __DIR__ . '/../components/header.php'; ?>
 
+<?php
+if (!empty($_SESSION['erro'])) {
+    echo '<script>alert("' . $_SESSION['erro'] . '");</script>';
+    unset($_SESSION['erro']);
+}
+?>
+
 <link rel="stylesheet" href="../assets/css/style.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
@@ -13,18 +20,21 @@
     <div class="login-container">
         <div class="login-card">
             <h2 style="font-size: 2rem; margin-bottom: 0.5rem; text-align: center;">Login</h2>
-            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Entre com suas credenciais
+            <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Entre com suas
+                credenciais
             </p>
 
-            <form action="loginController.php" method="POST" id="loginForm" class="login-form">
+            <form action="/crud-hackaton/controller/loginController.php" method="POST" id="loginForm"
+                class="login-form">
                 <div class="form-group">
                     <label for="login_email">E-mail</label>
-                    <input type="text" id="login_email" name="email" required placeholder="seu@email.com">
+                    <input type="text" id="login_email" name="login" required placeholder="seu@email.com">
+                    <input type="hidden" name="tipo" value="cliente">
                 </div>
 
                 <div class="form-group">
                     <label for="login_password">Senha</label>
-                    <input type="password" id="login_password" name="password" required placeholder="Digite sua senha">
+                    <input type="password" id="login_password" name="senha" required placeholder="Digite sua senha">
                     <a href="#"
                         style="color: var(--primary-neon); font-size: 0.9rem; float: right; margin-top: 0.5rem;">Esqueceu
                         a senha?</a>
@@ -46,7 +56,7 @@
 <?php include_once __DIR__ . '/../components/footer.php'; ?>
 
 <script src="../assets/js/main.js"></script>
-<script>
+<!-- <script>
     document.getElementById('loginForm').addEventListener('submit', function (e) {
         e.preventDefault();
 
@@ -68,4 +78,4 @@
             window.location.href = 'dashboard.php';
         }, 1500);
     });
-</script>
+</script> -->

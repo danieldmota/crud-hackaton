@@ -19,7 +19,8 @@
             <form action="loginController.php" method="POST" id="loginForm" class="login-form">
                 <div class="form-group">
                     <label for="login_email">E-mail ou CNPJ</label>
-                    <input type="text" id="login_email" name="email" required placeholder="seu@email.com ou CNPJ">
+                    <input type="text" id="login_email" name="email" required placeholder="CNPJ">
+                    <input type="hidden" name="tipo" value="restaurante">
                 </div>
 
                 <div class="form-group">

@@ -34,14 +34,14 @@ class CadastroUsuarioModel
             $stmt = $this->conn->prepare($sql);
 
             // Preparação de senha com hash seguro
-            $hashedPassword = password_hash($data['senha'], PASSWORD_DEFAULT);
+            $senhaHash = password_hash($data['senha'], PASSWORD_BCRYPT);
 
             $stmt->bindParam(':nome', $data['nome']);
             $stmt->bindParam(':cpf', $data['cpf']);
             // $stmt->bindParam(':foto_perfil', $data['foto_perfil']);
             $stmt->bindParam(':telefone', $data['telefone']);
             $stmt->bindParam(':email', $data['email']);
-            $stmt->bindParam(':senha', $hashedPassword);
+            $stmt->bindParam(':senha', $senhaHash);
 
             return $stmt->execute();
         } catch (PDOException $e) {
