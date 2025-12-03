@@ -196,7 +196,7 @@ if (!isset($restaurantId)) {
                 <div>
                     <div class="reservation-form">
                         <h3 style="margin-bottom: 1.5rem;">Fazer Reserva</h3>
-                        <form id="reservationForm" action="index.php?action=store" method="POST"
+                        <form id="reservationForm" action="../../controller/reservaController.php" method="POST"
                             onsubmit="submitReservation(event)">
                             <input type="hidden" name="restaurant_id" value="<?php echo $restaurantId; ?>">
 

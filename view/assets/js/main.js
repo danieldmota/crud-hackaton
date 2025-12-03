@@ -910,19 +910,55 @@ async function submitReservation(event) {
     event.preventDefault();
 
     const form = document.getElementById("reservationForm");
+    if (!form) {
+        console.error("Formulário de reserva não encontrado");
+        return;
+    }
+
     const formData = new FormData(form);
 
-    const response = await fetch("index.php?action=store", {
-        method: "POST",
-        body: formData
-    });
+    // Mostrar loading
+    const submitBtn = form.querySelector('button[type="submit"]');
+    const originalText = submitBtn.textContent;
+    submitBtn.textContent = "PROCESSANDO...";
+    submitBtn.disabled = true;
 
-    const result = await response.json();
+    try {
+        // Usar caminho absoluto baseado na estrutura do projeto
+        const controllerPath = "/crud-hackaton/controller/reservaController.php";
+        const response = await fetch(controllerPath, {
+            method: "POST",
+            body: formData,
+            headers: {
+                'X-Requested-With': 'XMLHttpRequest'
+            }
+        });
 
-    if (result.success) {
-        alert("Reserva realizada com sucesso!");
-        form.reset();
-    } else {
-        alert("Erro: " + result.error);
+        // Verificar se a resposta é JSON
+        const contentType = response.headers.get("content-type");
+        if (!contentType || !contentType.includes("application/json")) {
+            const text = await response.text();
+            console.error("Resposta não é JSON:", text);
+            throw new Error("Resposta inválida do servidor. Verifique o console para mais detalhes.");
+        }
+
+        const result = await response.json();
+
+        if (result.success) {
+            showNotification("Reserva realizada com sucesso! ⚡", "success");
+            form.reset();
+            setTimeout(() => {
+                window.location.href = "reservas.php";
+            }, 1500);
+        } else {
+            showNotification("Erro: " + (result.error || "Erro ao realizar reserva"), "error");
+            submitBtn.textContent = originalText;
+            submitBtn.disabled = false;
+        }
+    } catch (error) {
+        console.error("Erro ao processar reserva:", error);
+        showNotification("Erro ao processar reserva: " + error.message, "error");
+        submitBtn.textContent = originalText;
+        submitBtn.disabled = false;
     }
 }

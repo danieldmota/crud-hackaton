@@ -1,3 +1,4 @@
+create database route2eat;
 use route2eat;
 
 create table clientes(
@@ -44,9 +45,19 @@ clientes
 
 );
 
-creat table(
-FOREIGN KEY (pessoa_id) REFERENCES pessoa (pessoa_id),
-FOREIGN KEY (aula_id) REFERENCES aula (aula_id)
-)
+create table reservas(
+id int(5) primary key auto_increment,
+cliente_id int(5) not null,
+restaurante_id int(5) not null,
+data_reserva date not null,
+horario time not null,
+numero_pessoas int(3) not null,
+pedidos_especiais text,
+status varchar(20) default 'pendente',
+data_criacao datetime default current_timestamp,
+FOREIGN KEY (cliente_id) REFERENCES clientes(id),
+FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id_rest)
+);
 
+select * from reservas;
 
