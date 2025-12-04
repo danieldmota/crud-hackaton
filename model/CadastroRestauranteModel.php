@@ -209,11 +209,11 @@ class CadastroRestauranteModel
     }
 
     // Pega as características já cadastradas de um restaurante
-    public function caracteristicasDoRestaurante($restauranteId)
+    public function caracteristicasDoRestaurante()
     {
-        $sql = "SELECT caracteristica_id FROM restaurante_caracteristicas WHERE restaurante_id = :restaurante_id";
+        $sql = "SELECT id, nome FROM caracteristicas";
         $stmt = $this->conn->prepare($sql);
-        $stmt->execute([':restaurante_id' => $restauranteId]);
-        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $stmt->execute();
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }

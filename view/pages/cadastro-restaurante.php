@@ -5,7 +5,7 @@ $model = new CadastroRestauranteModel();
 
 $estados = $model->listarEstados();
 $categorias = $model->listarCaracteristicas();
-// $caracteristicas = $model->caracteristicasDoRestaurante();
+$caracteristicas = $model->caracteristicasDoRestaurante();
 $formasPagamento = $model->listarFormasPagamento();
 
 ?>
@@ -166,7 +166,7 @@ $formasPagamento = $model->listarFormasPagamento();
                 <div class="features-grid">
                     <?php foreach ($caracteristicas as $feature): ?>
                         <label class="feature-checkbox">
-                            <input type="checkbox" name="features[]" value="<?= $feature['valor'] ?>">
+                            <input type="checkbox" name="features[]" value="<?= $feature['id'] ?>">
                             <span><?= $feature['nome'] ?></span>
                         </label>
                     <?php endforeach; ?>
