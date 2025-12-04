@@ -18,6 +18,9 @@ document.addEventListener("DOMContentLoaded", function () {
   initializeBackButtons();
 });
 
+// Cache simples de localização para evitar múltiplas prompts
+let cachedLocation = null;
+
 // ============================================
 // MENU MOBILE
 // ============================================
@@ -253,7 +256,7 @@ function initializeSoundEffects() {
 // INICIALIZAR FILTROS
 // ============================================
 function initializeFilters() {
-  const filterChips = document.querySelectorAll(".filter-chip");
+  const filterChips = document.querySelectorAll(".filter-chip:not(select)");
   filterChips.forEach((chip) => {
     chip.addEventListener("click", function () {
       this.classList.toggle("active");
@@ -275,8 +278,92 @@ function initializeFilters() {
   selectFilters.forEach((select) => {
     select.addEventListener("change", function () {
       createRippleEffect(this);
-      applyFilters();
+      // Se for o filtro de cidade, buscar características disponíveis para essa cidade,
+      // reconstruir os filtros inteligentes e então aplicar os filtros.
+      if (this.id === "cityFilter") {
+        const city = this.value;
+        fetchCharacteristicsForCity(city)
+          .then(() => {
+            applyFilters();
+          })
+          .catch(() => {
+            applyFilters();
+          });
+      } else {
+        applyFilters();
+      }
     });
+  });
+}
+
+// Busca as características disponíveis para uma cidade e reconstrói os botões de filtros inteligentes
+function fetchCharacteristicsForCity(city) {
+  return new Promise((resolve, reject) => {
+    const url =
+      "/crud-hackaton/controller/filtersController.php?cidade=" +
+      encodeURIComponent(city);
+    fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+      .then((resp) => {
+        if (!resp.ok) throw new Error("Erro ao buscar características");
+        return resp.json();
+      })
+      .then((data) => {
+        if (!data.success) throw new Error(data.error || "Resposta inválida");
+
+        const container = document.querySelector(".smart-filters-grid");
+        if (!container) return resolve();
+
+        // Preservar seleção atual (ids)
+        const selected = Array.from(
+          document.querySelectorAll(".smart-filter-item.active")
+        )
+          .map((btn) => btn.getAttribute("data-id"))
+          .filter(Boolean);
+
+        // Construir novos botões (attach handlers diretamente para evitar múltiplos binds)
+        container.innerHTML = "";
+        data.caracteristicas.forEach((carac) => {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.className = "smart-filter-item";
+          btn.setAttribute("data-id", carac.id);
+          btn.innerHTML = "<span>" + escapeHtml(carac.nome) + "</span>";
+          if (selected.includes(String(carac.id))) {
+            btn.classList.add("active");
+            btn.style.background = "var(--primary-neon)";
+            btn.style.color = "white";
+          }
+
+          // Adicionar listener direto
+          btn.addEventListener("click", function (e) {
+            e.preventDefault();
+            this.classList.toggle("active");
+            createRippleEffect(this);
+            applyFilters();
+          });
+
+          container.appendChild(btn);
+        });
+
+        resolve();
+      })
+      .catch((err) => {
+        console.error("Erro ao buscar características:", err);
+        reject(err);
+      });
+  });
+}
+
+function escapeHtml(text) {
+  return (text + "").replace(/[&<>"'`]/g, function (m) {
+    return {
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;",
+      "`": "&#96;",
+    }[m];
   });
 }
 
@@ -332,16 +419,82 @@ function applyFilters() {
   // Mostrar loading effect
   showLoadingEffect();
 
-  // Simular delay de busca (remover em produção)
-  setTimeout(() => {
-    console.log("Buscando restaurantes com filtros:", {
-      searchTerm,
-      activeFilters: getActiveFilters(),
-    });
+  // Construir parâmetros da requisição com os filtros atuais
+  const params = new URLSearchParams();
+  if (searchTerm) params.append("q", searchTerm);
 
-    filterRestaurants();
-    hideLoadingEffect();
-  }, 500);
+  const cityFilter = document.getElementById("cityFilter");
+  if (cityFilter && cityFilter.value) params.append("cidade", cityFilter.value);
+
+  const activeSmart = Array.from(
+    document.querySelectorAll(".smart-filter-item.active")
+  )
+    .map((btn) => btn.getAttribute("data-id"))
+    .filter(Boolean);
+
+  activeSmart.forEach((id) => params.append("caracteristicas[]", id));
+  const distanceBtn = document.getElementById("distanceFilter");
+  const nearestActive = distanceBtn && distanceBtn.classList.contains("active");
+
+  function doFetch(finalParams) {
+    const url =
+      "/crud-hackaton/controller/searchController.php?" +
+      finalParams.toString();
+    console.log("Fetching", url);
+    fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
+      .then((resp) => {
+        console.log("Fetch response status", resp.status);
+        if (!resp.ok)
+          throw new Error("Erro ao buscar restaurantes: " + resp.status);
+        return resp.text();
+      })
+      .then((html) => {
+        const grid = document.getElementById("restaurantsGrid");
+        if (grid) {
+          grid.innerHTML = html;
+        }
+
+        // Atualizar URL sem recarregar
+        const newUrl =
+          window.location.pathname +
+          (finalParams.toString() ? "?" + finalParams.toString() : "");
+        try {
+          window.history.pushState({}, "", newUrl);
+        } catch (e) {
+          console.warn("pushState falhou", e);
+        }
+
+        // Reaplicar interações/efeitos aos novos elementos
+        initializeAnimations();
+        initializeBackButtons();
+      })
+      .catch((err) => {
+        console.error(err);
+      })
+      .finally(() => {
+        hideLoadingEffect();
+      });
+  }
+
+  if (nearestActive) {
+    // Se o usuário quer 'mais próximo', obter localização antes do fetch
+    getLocation()
+      .then((coords) => {
+        if (coords && coords.lat && coords.lng) {
+          params.append("lat", coords.lat);
+          params.append("lng", coords.lng);
+          params.append("nearest", "1");
+        }
+        doFetch(params);
+      })
+      .catch((err) => {
+        console.warn("Não foi possível obter localização:", err);
+        // Fazer busca sem coords
+        doFetch(params);
+      });
+  } else {
+    doFetch(params);
+  }
 }
 
 // ============================================
@@ -521,6 +674,15 @@ function initializeSearch() {
     searchBtn.addEventListener("click", function (e) {
       e.preventDefault();
       createRippleEffect(this);
+      performSearch();
+    });
+  }
+
+  // Interceptar submit nativo do formulário de busca (para prevenir reload)
+  const searchForm = document.getElementById("searchForm");
+  if (searchForm) {
+    searchForm.addEventListener("submit", function (e) {
+      e.preventDefault();
       performSearch();
     });
   }
@@ -837,7 +999,19 @@ function cancelReservation(reservationId) {
 // GEOLOCALIZAÇÃO
 // ============================================
 function getLocation() {
-  if (navigator.geolocation) {
+  return new Promise((resolve, reject) => {
+    if (cachedLocation && Date.now() - cachedLocation.ts < 5 * 60 * 1000) {
+      return resolve(cachedLocation.coords);
+    }
+
+    if (!navigator.geolocation) {
+      showNotification(
+        "Geolocalização não é suportada pelo seu navegador.",
+        "warning"
+      );
+      return reject(new Error("Geolocalização não suportada"));
+    }
+
     showNotification("Obtendo sua localização...", "info");
 
     navigator.geolocation.getCurrentPosition(
@@ -846,7 +1020,8 @@ function getLocation() {
         const lng = position.coords.longitude;
         console.log("Localização obtida:", lat, lng);
         showNotification("Localização obtida com sucesso!", "success");
-        // Usar coordenadas para filtrar restaurantes próximos
+        cachedLocation = { coords: { lat, lng }, ts: Date.now() };
+        resolve({ lat, lng });
       },
       function (error) {
         console.error("Erro ao obter localização:", error);
@@ -854,27 +1029,14 @@ function getLocation() {
           "Não foi possível obter sua localização. Verifique as permissões.",
           "warning"
         );
-      }
+        reject(error);
+      },
+      { enableHighAccuracy: false, timeout: 10000, maximumAge: 60000 }
     );
-  } else {
-    showNotification(
-      "Geolocalização não é suportada pelo seu navegador.",
-      "warning"
-    );
-  }
+  });
 }
 
-// Inicializar geolocalização quando o filtro de proximidade for selecionado
-document.addEventListener("DOMContentLoaded", function () {
-  const distanceFilter = document.getElementById("distanceFilter");
-  if (distanceFilter) {
-    distanceFilter.addEventListener("change", function () {
-      if (this.value === "nearest") {
-        getLocation();
-      }
-    });
-  }
-});
+// (Removido: listener de change redundante para distanceFilter)
 
 // ============================================
 // EFEITOS DE HOVER AVANÇADOS
@@ -907,58 +1069,63 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 async function submitReservation(event) {
-    event.preventDefault();
+  event.preventDefault();
 
-    const form = document.getElementById("reservationForm");
-    if (!form) {
-        console.error("Formulário de reserva não encontrado");
-        return;
+  const form = document.getElementById("reservationForm");
+  if (!form) {
+    console.error("Formulário de reserva não encontrado");
+    return;
+  }
+
+  const formData = new FormData(form);
+
+  // Mostrar loading
+  const submitBtn = form.querySelector('button[type="submit"]');
+  const originalText = submitBtn.textContent;
+  submitBtn.textContent = "PROCESSANDO...";
+  submitBtn.disabled = true;
+
+  try {
+    // Usar caminho absoluto baseado na estrutura do projeto
+    const controllerPath = "/crud-hackaton/controller/reservaController.php";
+    const response = await fetch(controllerPath, {
+      method: "POST",
+      body: formData,
+      headers: {
+        "X-Requested-With": "XMLHttpRequest",
+      },
+    });
+
+    // Verificar se a resposta é JSON
+    const contentType = response.headers.get("content-type");
+    if (!contentType || !contentType.includes("application/json")) {
+      const text = await response.text();
+      console.error("Resposta não é JSON:", text);
+      throw new Error(
+        "Resposta inválida do servidor. Verifique o console para mais detalhes."
+      );
     }
 
-    const formData = new FormData(form);
+    const result = await response.json();
 
-    // Mostrar loading
-    const submitBtn = form.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = "PROCESSANDO...";
-    submitBtn.disabled = true;
-
-    try {
-        // Usar caminho absoluto baseado na estrutura do projeto
-        const controllerPath = "/crud-hackaton/controller/reservaController.php";
-        const response = await fetch(controllerPath, {
-            method: "POST",
-            body: formData,
-            headers: {
-                'X-Requested-With': 'XMLHttpRequest'
-            }
-        });
-
-        // Verificar se a resposta é JSON
-        const contentType = response.headers.get("content-type");
-        if (!contentType || !contentType.includes("application/json")) {
-            const text = await response.text();
-            console.error("Resposta não é JSON:", text);
-            throw new Error("Resposta inválida do servidor. Verifique o console para mais detalhes.");
-        }
-
-        const result = await response.json();
-
-        if (result.success) {
-            showNotification("Reserva realizada com sucesso! ⚡", "success");
-            form.reset();
-            setTimeout(() => {
-                window.location.href = "reservas.php";
-            }, 1500);
-        } else {
-            showNotification("Erro: " + (result.error || "Erro ao realizar reserva"), "error");
-            submitBtn.textContent = originalText;
-            submitBtn.disabled = false;
-        }
-    } catch (error) {
-        console.error("Erro ao processar reserva:", error);
-        showNotification("Erro ao processar reserva: " + error.message, "error");
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
+    if (result.success) {
+      showNotification("Reserva realizada com sucesso! ⚡", "success");
+      form.reset();
+      setTimeout(() => {
+        window.location.href = "reservas.php";
+      }, 1500);
+    } else {
+      showNotification(
+        "Erro: " + (result.error || "Erro ao realizar reserva"),
+        "error"
+      );
+      submitBtn.textContent = originalText;
+      submitBtn.disabled = false;
     }
+  } catch (error) {
+    console.error("Erro ao processar reserva:", error);
+    showNotification("Erro ao processar reserva: " + error.message, "error");
+    submitBtn.textContent = originalText;
+    submitBtn.disabled = false;
+  }
 }

@@ -3,7 +3,20 @@
 
 <?php
 $restauranteModel = new RestauranteModel();
-$restaurantes = $restauranteModel->listarComDetalhes();
+
+// Verificar se há busca/filtro
+$texto = $_GET['q'] ?? '';
+$cidade = $_GET['cidade'] ?? '';
+$caracteristicas = isset($_GET['caracteristicas']) ? (array)$_GET['caracteristicas'] : [];
+
+if (!empty($texto) || !empty($cidade) || !empty($caracteristicas)) {
+    $restaurantes = $restauranteModel->buscar($texto, $cidade, $caracteristicas);
+} else {
+    $restaurantes = $restauranteModel->listarComDetalhes();
+}
+
+$cidades = $restauranteModel->getCidades();
+$caracteristicasDisponiveis = $restauranteModel->getCaracteristicasDisponiveis();
 $placeholderImage = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80';
 ?>
 
@@ -25,65 +38,43 @@ $placeholderImage = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c
 <div class="container">
     <div class="search-section">
         <div class="search-bar">
-            <input type="text" id="searchInput" class="search-input"
-                placeholder="🔍 Buscar por nome, cidade ou tipo de comida...">
-            <button id="searchBtn" class="search-btn">
-                BUSCAR
-            </button>
+            <form method="GET" id="searchForm" style="display: flex; gap: 0.5rem; width: 100%;">
+                <input type="text" id="searchInput" name="q" class="search-input" 
+                    placeholder="🔍 Buscar por nome, cidade ou tipo de comida..."
+                    value="<?php echo htmlspecialchars($texto); ?>">
+                <button id="searchBtn" type="button" class="search-btn">BUSCAR</button>
+            </form>
         </div>
 
         <div class="filters-container">
             <div class="filter-group">
                 <label>Filtrar por:</label>
                 <div class="filter-options">
-                    <div class="filter-chip" data-filter="name">Nome</div>
-                    <div class="filter-chip" data-filter="city">Cidade</div>
-                    <div class="filter-chip" data-filter="nearest">Mais Próximo</div>
+                    <form method="GET" id="filterForm" style="display: contents; align-items: center;">
+                        <input type="hidden" name="q" value="<?php echo htmlspecialchars($texto); ?>">
+                        <select id="cityFilter" name="cidade" class="filter-chip filter-select">
+                            <option value="">Todas as cidades</option>
+                            <?php foreach ($cidades as $cid): ?>
+                                <option value="<?php echo htmlspecialchars($cid); ?>" <?php echo $cidade === $cid ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($cid); ?>
+                                </option>
+                            <?php endforeach; ?>
+                        </select>
+                        <button id="distanceFilter" type="button" class="filter-chip" title="Encontrar restaurantes mais próximos">Mais próximo</button>
+                    </form>
                 </div>
             </div>
-
-
         </div>
 
         <div class="smart-filters">
             <h3>Filtros Inteligentes</h3>
             <div class="smart-filters-grid">
-                <div class="smart-filter-item" data-filter="vegetarian">
-                    <span>Vegetariano</span>
-                </div>
-                <div class="smart-filter-item" data-filter="vegan">
-                    <span>Vegano</span>
-                </div>
-                <div class="smart-filter-item" data-filter="gluten-free">
-                    <span>Sem Glúten</span>
-                </div>
-                <div class="smart-filter-item" data-filter="spicy">
-                    <span>Picante</span>
-                </div>
-                <div class="smart-filter-item" data-filter="romantic">
-                    <span>Romântico</span>
-                </div>
-                <div class="smart-filter-item" data-filter="family-friendly">
-                    <span>Família</span>
-                </div>
-                <div class="smart-filter-item" data-filter="pet-friendly">
-                    <span>Pet Friendly</span>
-                </div>
-                <div class="smart-filter-item" data-filter="outdoor">
-                    <span>Área Externa</span>
-                </div>
-                <div class="smart-filter-item" data-filter="live-music">
-                    <span>Música ao Vivo</span>
-                </div>
-                <div class="smart-filter-item" data-filter="parking">
-                    <span>Estacionamento</span>
-                </div>
-                <div class="smart-filter-item" data-filter="wifi">
-                    <span>Wi-Fi Grátis</span>
-                </div>
-                <div class="smart-filter-item" data-filter="delivery">
-                    <span>Delivery</span>
-                </div>
+                <?php foreach ($caracteristicasDisponiveis as $carac): ?>
+                    <button type="button" class="smart-filter-item<?php echo in_array((string)$carac['id'], array_map('strval', $caracteristicas)) ? ' active' : ''; ?>" data-id="<?php echo (int)$carac['id']; ?>" 
+                        style="<?php echo in_array((string)$carac['id'], array_map('strval', $caracteristicas)) ? 'background: var(--primary-neon); color: white;' : ''; ?>">
+                        <span><?php echo htmlspecialchars($carac['nome']); ?></span>
+                    </button>
+                <?php endforeach; ?>
             </div>
         </div>
     </div>
@@ -116,10 +107,17 @@ $placeholderImage = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c
                             <p class="restaurant-category"><?php echo htmlspecialchars($restaurante['categoria'] ?? 'Categoria não informada'); ?></p>
                             <p class="restaurant-location">📍 <?php echo htmlspecialchars($restaurante['endereco_formatado']); ?></p>
                             <p class="restaurant-description"><?php echo htmlspecialchars($descricaoCurta); ?></p>
-                            <div class="restaurant-rating">
-                                <span class="stars">★★★★★</span>
-                                <span class="rating-text">Avaliações disponíveis</span>
-                            </div>
+                            <?php if (!empty($restaurante['rating_count'])): ?>
+                                <?php $avg = number_format((float)($restaurante['rating_medio'] ?? 0), 1); $filled = (int) round($restaurante['rating_medio'] ?? 0); ?>
+                                <div class="restaurant-rating">
+                                    <span class="stars">
+                                        <?php for ($i = 1; $i <= 5; $i++): ?>
+                                            <?php echo $i <= $filled ? '★' : '☆'; ?>
+                                        <?php endfor; ?>
+                                    </span>
+                                    <span class="rating-text"><?php echo $avg; ?> (<?php echo (int)$restaurante['rating_count']; ?>)</span>
+                                </div>
+                            <?php endif; ?>
                             <?php if (!empty($caracteristicas)): ?>
                                 <div class="restaurant-features">
                                     <?php foreach (array_slice($caracteristicas, 0, 3) as $feature): ?>

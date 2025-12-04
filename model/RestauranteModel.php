@@ -27,6 +27,8 @@ class RestauranteModel
                 r.categoria,
                 r.descricao,
                 r.imagem,
+                (SELECT ROUND(AVG(rating),2) FROM avaliacoes a WHERE a.restaurante_id = r.id) AS rating_medio,
+                (SELECT COUNT(*) FROM avaliacoes a WHERE a.restaurante_id = r.id) AS rating_count,
                 e.rua,
                 e.bairro,
                 e.cidade,
@@ -51,6 +53,8 @@ class RestauranteModel
             $restaurante['caracteristicas'] = $this->normalizarCaracteristicas($restaurante['caracteristicas'] ?? '');
             $restaurante['imagem'] = $restaurante['imagem'] ?: null;
             $restaurante['endereco_formatado'] = $this->formatarEndereco($restaurante);
+            $restaurante['rating_medio'] = isset($restaurante['rating_medio']) ? (float)$restaurante['rating_medio'] : 0.0;
+            $restaurante['rating_count'] = isset($restaurante['rating_count']) ? (int)$restaurante['rating_count'] : 0;
 
             return $restaurante;
         }, $restaurantes);
@@ -245,5 +249,184 @@ class RestauranteModel
         $resultado = $stmt->fetch(PDO::FETCH_ASSOC);
 
         return $resultado['media'] ? (float) $resultado['media'] : 0;
+    }
+
+    /**
+     * Busca restaurantes com filtros por texto, cidade e características
+     */
+    public function buscar(string $texto = '', string $cidade = '', array $caracteristicas = []): array
+    {
+        // Construir SQL dinamicamente, usando EXISTS para garantir que cada característica
+        // selecionada pertença ao restaurante (AND semantics)
+        $sql = "
+            SELECT
+                r.id,
+                r.nome,
+                r.categoria,
+                r.descricao,
+                r.imagem,
+                (SELECT ROUND(AVG(rating),2) FROM avaliacoes a WHERE a.restaurante_id = r.id) AS rating_medio,
+                (SELECT COUNT(*) FROM avaliacoes a WHERE a.restaurante_id = r.id) AS rating_count,
+                e.rua,
+                e.bairro,
+                e.cidade,
+                e.estado,
+                e.cep,
+                c.telefone,
+                c.email,
+                GROUP_CONCAT(DISTINCT car.nome ORDER BY car.nome SEPARATOR ',') AS caracteristicas
+            FROM restaurantes r
+            LEFT JOIN enderecos_restaurantes e ON e.restaurante_id = r.id
+            LEFT JOIN contatos_restaurantes c ON c.restaurante_id = r.id
+            LEFT JOIN restaurante_caracteristicas rc ON rc.restaurante_id = r.id
+            LEFT JOIN caracteristicas car ON car.id = rc.caracteristica_id
+        ";
+
+        $where = [];
+        $params = [];
+
+        if (!empty($texto)) {
+            $where[] = "(r.nome LIKE :texto OR r.categoria LIKE :texto OR r.descricao LIKE :texto OR e.cidade LIKE :texto)";
+            $params[':texto'] = "%{$texto}%";
+        }
+
+        if (!empty($cidade)) {
+            $where[] = "e.cidade LIKE :cidade";
+            $params[':cidade'] = "%{$cidade}%";
+        }
+
+        // Para cada característica, adicionamos uma cláusula EXISTS garantindo que o restaurante tenha essa característica
+        if (!empty($caracteristicas)) {
+            foreach ($caracteristicas as $idx => $carId) {
+                $paramName = ':car_' . $idx;
+                $where[] = "EXISTS (SELECT 1 FROM restaurante_caracteristicas rc2 WHERE rc2.restaurante_id = r.id AND rc2.caracteristica_id = {$paramName})";
+                $params[$paramName] = (int)$carId;
+            }
+        }
+
+        if (!empty($where)) {
+            $sql .= ' WHERE ' . implode(' AND ', $where);
+        }
+
+        $sql .= " GROUP BY r.id, r.nome, r.categoria, r.imagem, e.rua, e.bairro, e.cidade, e.estado, e.cep, c.telefone, c.email
+                  ORDER BY r.nome ASC";
+
+        $stmt = $this->conn->prepare($sql);
+
+        foreach ($params as $k => $v) {
+            if (is_int($v)) {
+                $stmt->bindValue($k, $v, PDO::PARAM_INT);
+            } else {
+                $stmt->bindValue($k, $v, PDO::PARAM_STR);
+            }
+        }
+
+        $stmt->execute();
+        $restaurantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(function (array $restaurante) {
+            $restaurante['caracteristicas'] = $this->normalizarCaracteristicas($restaurante['caracteristicas'] ?? '');
+            $restaurante['imagem'] = $restaurante['imagem'] ?: null;
+            $restaurante['endereco_formatado'] = $this->formatarEndereco($restaurante);
+
+            return $restaurante;
+        }, $restaurantes);
+    }
+
+    /**
+     * Busca restaurantes por característica específica
+     */
+    public function buscarPorCaracteristica(string $caracteristicaNome): array
+    {
+        $sql = "
+            SELECT DISTINCT
+                r.id,
+                r.nome,
+                r.categoria,
+                r.descricao,
+                r.imagem,
+                e.rua,
+                e.bairro,
+                e.cidade,
+                e.estado,
+                e.cep,
+                c.telefone,
+                c.email,
+                GROUP_CONCAT(DISTINCT car.nome ORDER BY car.nome SEPARATOR ',') AS caracteristicas
+            FROM restaurantes r
+            LEFT JOIN enderecos_restaurantes e ON e.restaurante_id = r.id
+            LEFT JOIN contatos_restaurantes c ON c.restaurante_id = r.id
+            LEFT JOIN restaurante_caracteristicas rc ON rc.restaurante_id = r.id
+            LEFT JOIN caracteristicas car ON car.id = rc.caracteristica_id
+            WHERE car.nome = :nome
+            GROUP BY r.id, r.nome, r.categoria, r.imagem, e.rua, e.bairro, e.cidade, e.estado, e.cep, c.telefone, c.email
+            ORDER BY r.nome ASC
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':nome', $caracteristicaNome);
+        $stmt->execute();
+
+        $restaurantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+        return array_map(function (array $restaurante) {
+            $restaurante['caracteristicas'] = $this->normalizarCaracteristicas($restaurante['caracteristicas'] ?? '');
+            $restaurante['imagem'] = $restaurante['imagem'] ?: null;
+            $restaurante['endereco_formatado'] = $this->formatarEndereco($restaurante);
+
+            return $restaurante;
+        }, $restaurantes);
+    }
+
+    /**
+     * Retorna todas as cidades cadastradas
+     */
+    public function getCidades(): array
+    {
+        $sql = "
+            SELECT DISTINCT cidade 
+            FROM enderecos_restaurantes 
+            WHERE cidade IS NOT NULL AND cidade != '' 
+            ORDER BY cidade ASC
+        ";
+
+        $stmt = $this->conn->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_COLUMN);
+    }
+
+    /**
+     * Retorna todas as características cadastradas
+     */
+    public function getCaracteristicasDisponiveis(): array
+    {
+        $sql = "
+            SELECT id, nome 
+            FROM caracteristicas 
+            ORDER BY nome ASC
+        ";
+
+        $stmt = $this->conn->query($sql);
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Retorna características disponíveis dentro de uma cidade específica
+     */
+    public function getCaracteristicasPorCidade(string $cidade): array
+    {
+        $sql = "
+            SELECT DISTINCT car.id, car.nome
+            FROM caracteristicas car
+            INNER JOIN restaurante_caracteristicas rc ON rc.caracteristica_id = car.id
+            INNER JOIN enderecos_restaurantes e ON e.restaurante_id = rc.restaurante_id
+            WHERE e.cidade LIKE :cidade
+            ORDER BY car.nome ASC
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->bindValue(':cidade', "%{$cidade}%");
+        $stmt->execute();
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 }
