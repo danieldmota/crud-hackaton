@@ -26,6 +26,7 @@ if (!empty($_SESSION['erro'])) {
 
             <form action="/crud-hackaton/controller/loginController.php" method="POST" id="loginForm"
                 class="login-form">
+                <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_GET['redirect'] ?? ''); ?>">
                 <div class="form-group">
                     <label for="login_email">E-mail</label>
                     <input type="email" id="login_email" name="login" required placeholder="seu@email.com">

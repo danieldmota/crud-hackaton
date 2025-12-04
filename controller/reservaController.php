@@ -1,129 +1,104 @@
 <?php
-// Configurar headers para JSON e CORS se necessário
-header('Content-Type: application/json; charset=utf-8');
-
 session_start();
-require_once __DIR__ . '/../model/ReservaModel.php';
+require_once "../config/database.php";
+require_once "../model/ReservaModel.php";
+require_once __DIR__ . '/../config/auth.php';
 
-// Tratamento de erros do PHP
-error_reporting(E_ALL);
-ini_set('display_errors', 0);
+// Conexão
+$db = new Database();
+$conn = $db->conectar();
 
-try {
+// Instância do model
+$reserva = new ReservaModel($conn);
 
-    if ($_SERVER["REQUEST_METHOD"] !== "POST") {
-        throw new Exception("Método inválido para esta requisição");
+// Verifica qual ação foi chamada
+$action = $_POST['action'] ?? null;
+
+// Criar reserva
+if ($action === "create") {
+
+    header("Content-Type: application/json; charset=UTF-8");
+
+    // exigir cliente logado
+    if (empty($_SESSION['cliente_id'])) {
+        echo json_encode(["success" => false, "error" => "Autenticação necessária", "redirect" => '/crud-hackaton/view/pages/login-cliente.php']);
+        exit;
     }
-
-    // Verifica se o usuário está logado
-    if (!isset($_SESSION['id'])) {
-        throw new Exception("Você precisa estar logado para fazer uma reserva.");
-    }
-
-    // Campos obrigatórios
-    $required = ['restaurant_id', 'date', 'time', 'guests'];
-
-    foreach ($required as $campo) {
-        if (empty($_POST[$campo])) {
-            throw new Exception("O campo '{$campo}' é obrigatório.");
-        }
-        if ($campo === 'restaurant_id' && !is_numeric($_POST[$campo])) {
-            throw new Exception("ID do restaurante inválido.");
-        }
-        if ($campo === 'guests' && (!is_numeric($_POST[$campo]) || $_POST[$campo] < 1)) {
-            throw new Exception("Número de pessoas inválido.");
-        }
-    }
-
-    // Validação de data
-    $dataReserva = $_POST['date'];
-    $dataAtual = date('Y-m-d');
-
-    if ($dataReserva < $dataAtual) {
-        throw new Exception("A data da reserva não pode ser no passado.");
-    }
-
-    // Validação de horário
-    $horario = $_POST['time'];
-    if (!preg_match('/^([0-1][0-9]|2[0-3]):[0-5][0-9]$/', $horario)) {
-        throw new Exception("Horário inválido.");
-    }
-
-    // Preparação dos dados
-    $reservaModel = new ReservaModel();
 
     $data = [
-        'cliente_id' => $_SESSION['id'],
-        'restaurante_id' => $_POST['restaurant_id'],
-        'data_reserva' => $dataReserva,
-        'horario' => $horario,
-        'numero_pessoas' => (int) $_POST['guests'],
-        'pedidos_especiais' => !empty($_POST['special_requests']) ? trim($_POST['special_requests']) : null,
-        'status' => 'pendente'
+        "cliente_id"        => $_SESSION['cliente_id'],
+        "restaurante_id"    => $_POST['restaurant_id'],
+        "data_reserva"      => $_POST['date'],
+        "horario"           => $_POST['time'],
+        "numero_pessoas"    => $_POST['guests'],
+        "pedidos_especiais" => $_POST['special_requests'] ?? null,
     ];
 
-    // Cria a reserva
-    $resultado = $reservaModel->criarReserva($data);
+    $ok = $reserva->create($data);
 
-    if (is_array($resultado) && isset($resultado['error'])) {
-        throw new Exception($resultado['message']);
-    }
+    echo json_encode([
+        "success" => $ok,
+        "message" => $ok ? "Reserva criada com sucesso" : "Erro ao criar reserva"
+    ]);
 
-    if (!$resultado) {
-        throw new Exception("Erro ao realizar a reserva. Tente novamente.");
-    }
-
-    // Sucesso
-    $_SESSION['sucesso'] = "Reserva realizada com sucesso! Aguarde a confirmação do restaurante.";
-
-    // Retorna JSON para requisições AJAX
-    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-        echo json_encode([
-            'success' => true,
-            'message' => 'Reserva realizada com sucesso!'
-        ], JSON_UNESCAPED_UNICODE);
-        exit();
-    }
-
-    // Redireciona para a página de reservas do cliente
-    header("Location: ../view/pages/cliente/reservas.php");
-    exit();
-
-} catch (Exception $e) {
-    // Log do erro (opcional, para debug)
-    error_log("Erro em ReservaController: " . $e->getMessage());
-
-    // Retorna JSON para requisições AJAX
-    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-        http_response_code(400);
-        echo json_encode([
-            'success' => false,
-            'error' => $e->getMessage()
-        ], JSON_UNESCAPED_UNICODE);
-        exit();
-    }
-
-    $_SESSION['erro'] = $e->getMessage();
-
-    // Redireciona de volta para a página de detalhes
-    $restaurantId = $_POST['restaurant_id'] ?? 1;
-    header("Location: ../view/pages/cliente/detalhes.php?id=" . $restaurantId);
-    exit();
-} catch (Error $e) {
-    // Captura erros fatais do PHP
-    error_log("Erro fatal em ReservaController: " . $e->getMessage());
-
-    if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-        http_response_code(500);
-        echo json_encode([
-            'success' => false,
-            'error' => 'Erro interno do servidor. Tente novamente mais tarde.'
-        ], JSON_UNESCAPED_UNICODE);
-        exit();
-    }
-
-    $_SESSION['erro'] = 'Erro interno do servidor. Tente novamente mais tarde.';
-    $restaurantId = $_POST['restaurant_id'] ?? 1;
-    header("Location: ../view/pages/cliente/detalhes.php?id=" . $restaurantId);
-    exit();
+    exit;
 }
+
+// Atualizar reserva
+if ($action === "update") {
+
+    // exigir cliente logado
+    if (empty($_SESSION['cliente_id'])) {
+        header("Location: ../view/pages/login-cliente.php");
+        exit;
+    }
+
+    $data = [
+        "id"                => $_POST['id'],
+        "data_reserva"      => $_POST['date'],
+        "horario"           => $_POST['time'],
+        "numero_pessoas"    => $_POST['guests'],
+        "pedidos_especiais" => $_POST['special_requests'],
+        "status"            => $_POST['status']
+    ];
+
+    // garantir que o usuário seja dono da reserva
+    $existing = $reserva->getById($data['id']);
+    if (!$existing || $existing['cliente_id'] != $_SESSION['cliente_id']) {
+        header("Location: ../view/erro.php?msg=Permissão negada");
+        exit;
+    }
+
+    if ($reserva->update($data)) {
+        header("Location: ../view/sucesso.php?msg=Reserva atualizada");
+    } else {
+        header("Location: ../view/erro.php?msg=Erro ao atualizar");
+    }
+    exit;
+}
+
+// Deletar reserva
+if ($action === "delete") {
+
+    // exigir cliente logado
+    if (empty($_SESSION['cliente_id'])) {
+        header("Location: ../view/pages/login-cliente.php");
+        exit;
+    }
+
+    $id = $_POST['id'];
+    $existing = $reserva->getById($id);
+    if (!$existing || $existing['cliente_id'] != $_SESSION['cliente_id']) {
+        header("Location: ../view/erro.php?msg=Permissão negada");
+        exit;
+    }
+
+    if ($reserva->delete($id)) {
+        header("Location: ../view/sucesso.php?msg=Reserva deletada");
+    } else {
+        header("Location: ../view/erro.php?msg=Erro ao deletar");
+    }
+    exit;
+}
+
+header("Location: ../view/erro.php?msg=Ação inválida");

@@ -139,10 +139,6 @@ $placeholderImage = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c
                                     onclick="event.stopPropagation(); makeReservation(<?php echo $restaurante['id']; ?>)">
                                     Reservar Mesa
                                 </button>
-                                <button class="btn btn-secondary btn-small"
-                                    onclick="event.stopPropagation(); viewMenu(<?php echo $restaurante['id']; ?>)">
-                                    Ver Cardápio
-                                </button>
                             </div>
                         </div>
                     </div>

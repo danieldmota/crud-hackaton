@@ -46,13 +46,22 @@ try {
             throw new Exception("E-mail ou senha incorretos.");
         }
 
-        // Login bem sucedido → redireciona cliente
-        $_SESSION['id'] = $usuarioLogin->id;
+        // Login bem sucedido → setar sessões e redirecionar cliente
+        $_SESSION['id'] = $usuarioLogin->id; // compatibilidade legada
+        $_SESSION['cliente_id'] = $usuarioLogin->id;
+        $_SESSION['cliente_nome'] = $usuarioLogin->nome ?? '';
+        $_SESSION['user_type'] = 'cliente';
         $_SESSION['loginTentativas'] = 0;
         $_SESSION['sucesso'] = "Login realizado com sucesso!";
         unset($_SESSION['loginBloqueado']);
 
-        header('Location: ../view/pages/cliente/home.php');
+        // Redirecionar para a URL de retorno se fornecida
+        $redirect = $_POST['redirect'] ?? '';
+        if (!empty($redirect)) {
+            header('Location: ' . $redirect);
+        } else {
+            header('Location: ../view/pages/cliente/home.php');
+        }
         exit();
     }
 
@@ -68,13 +77,21 @@ try {
             throw new Exception("CNPJ ou senha incorretos.");
         }
 
-        // Login bem sucedido → redireciona restaurante
-        $_SESSION['id'] = $usuarioLogin->id;
+        // Login bem sucedido → setar sessões e redirecionar restaurante
+        $_SESSION['id'] = $usuarioLogin->id; // compatibilidade legada
+        $_SESSION['restaurante_id'] = $usuarioLogin->id;
+        $_SESSION['restaurante_nome'] = $usuarioLogin->nome ?? '';
+        $_SESSION['user_type'] = 'restaurante';
         $_SESSION['loginTentativas'] = 0;
         $_SESSION['sucesso'] = "Login realizado com sucesso!";
         unset($_SESSION['loginBloqueado']);
 
-        header('Location: ../view/pages/restaurante/dashboard.php');
+        $redirect = $_POST['redirect'] ?? '';
+        if (!empty($redirect)) {
+            header('Location: ' . $redirect);
+        } else {
+            header('Location: ../view/pages/restaurante/dashboard.php');
+        }
         exit();
     }
 

@@ -1,4 +1,11 @@
 <?php include_once __DIR__ . '/../components/header.php'; ?>
+<?php require_once __DIR__ . '/../../model/RestauranteModel.php'; ?>
+
+<?php
+$restauranteModel = new RestauranteModel();
+$restaurantes = $restauranteModel->listarComDetalhes();
+$placeholderImage = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?auto=format&fit=crop&w=1200&q=80';
+?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
 
@@ -84,110 +91,51 @@
     <section class="restaurants-section">
         <h2 class="section-title">Restaurantes Disponíveis</h2>
         <div class="restaurants-grid" id="restaurantsGrid">
-            <!-- Exemplo de restaurantes (será preenchido dinamicamente) -->
-            <div class="restaurant-card" data-href="detalhes.php?id=1">
-                <div class="restaurant-image"
-                    style="background-image: url('https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
-                </div>
-                <div class="restaurant-info">
-                    <h3 class="restaurant-name">La Bella Italia</h3>
-                    <p class="restaurant-category">Italiana</p>
-                    <p class="restaurant-location">📍 Rua das Flores, 123 - São Paulo, SP</p>
-                    <div class="restaurant-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-text">4.8 (234 avaliações)</span>
+            <?php if (empty($restaurantes)): ?>
+                <p style="color: var(--text-secondary); text-align:center; width: 100%;">
+                    Nenhum restaurante cadastrado no momento.
+                </p>
+            <?php else: ?>
+                <?php foreach ($restaurantes as $restaurante): ?>
+                    <?php
+                    $imagem = $restaurante['imagem']
+                        ? htmlspecialchars($restaurante['imagem'])
+                        : $placeholderImage;
+                    $descricaoCurta = $restaurante['descricao']
+                        ? mb_strimwidth($restaurante['descricao'], 0, 120, '...')
+                        : 'Descrição não informada ainda.';
+                    $caracteristicas = $restaurante['caracteristicas'];
+                    $rating = 4.5; // Placeholder
+                    ?>
+                    <div class="restaurant-card" data-href="detalhes-publico.php?id=<?php echo $restaurante['id']; ?>">
+                        <div class="restaurant-image"
+                            style="background-image: url('<?php echo $imagem; ?>');">
+                        </div>
+                        <div class="restaurant-info">
+                            <h3 class="restaurant-name"><?php echo htmlspecialchars($restaurante['nome']); ?></h3>
+                            <p class="restaurant-category"><?php echo htmlspecialchars($restaurante['categoria'] ?? 'Categoria não informada'); ?></p>
+                            <p class="restaurant-location">📍 <?php echo htmlspecialchars($restaurante['endereco_formatado']); ?></p>
+                            <p class="restaurant-description"><?php echo htmlspecialchars($descricaoCurta); ?></p>
+                            <div class="restaurant-rating">
+                                <span class="stars">★★★★★</span>
+                                <span class="rating-text">Avaliações disponíveis</span>
+                            </div>
+                            <?php if (!empty($caracteristicas)): ?>
+                                <div class="restaurant-features">
+                                    <?php foreach (array_slice($caracteristicas, 0, 3) as $feature): ?>
+                                        <span class="feature-badge"><?php echo htmlspecialchars($feature); ?></span>
+                                    <?php endforeach; ?>
+                                </div>
+                            <?php endif; ?>
+                            <div class="restaurant-actions">
+                                <a href="detalhes-publico.php?id=<?php echo $restaurante['id']; ?>" class="btn btn-secondary btn-small">
+                                    Ver Detalhes
+                                </a>
+                            </div>
+                        </div>
                     </div>
-                    <div class="restaurant-features">
-                        <span class="feature-badge">🥗 Vegetariano</span>
-                        <span class="feature-badge">🌳 Área Externa</span>
-                        <span class="feature-badge">🅿️ Estacionamento</span>
-                    </div>
-                    <div class="restaurant-actions">
-                        <button class="btn btn-primary btn-small"
-                            onclick="event.stopPropagation(); makeReservation(1)">Reservar Mesa</button>
-                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(1)">Ver
-                            Cardápio</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="restaurant-card" data-href="detalhes.php?id=2">
-                <div class="restaurant-image"
-                    style="background-image: url('https://images.unsplash.com/photo-1579952363873-27f3bade9f55?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
-                </div>
-                <div class="restaurant-info">
-                    <h3 class="restaurant-name">Sushi Master</h3>
-                    <p class="restaurant-category">Japonesa</p>
-                    <p class="restaurant-location">📍 Av. Paulista, 456 - São Paulo, SP</p>
-                    <div class="restaurant-rating">
-                        <span class="stars">★★★★☆</span>
-                        <span class="rating-text">4.6 (189 avaliações)</span>
-                    </div>
-                    <div class="restaurant-features">
-                        <span class="feature-badge">🌱 Vegano</span>
-                        <span class="feature-badge">🚚 Delivery</span>
-                        <span class="feature-badge">📶 Wi-Fi</span>
-                    </div>
-                    <div class="restaurant-actions">
-                        <button class="btn btn-primary btn-small"
-                            onclick="event.stopPropagation(); makeReservation(2)">Reservar Mesa</button>
-                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(2)">Ver
-                            Cardápio</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="restaurant-card" data-href="detalhes.php?id=3">
-                <div class="restaurant-image"
-                    style="background-image: url('https://images.unsplash.com/photo-1555939594-58d7cb561ad1?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
-                </div>
-                <div class="restaurant-info">
-                    <h3 class="restaurant-name">Churrascaria Gaúcha</h3>
-                    <p class="restaurant-category">Brasileira</p>
-                    <p class="restaurant-location">📍 Rua Augusta, 789 - São Paulo, SP</p>
-                    <div class="restaurant-rating">
-                        <span class="stars">★★★★★</span>
-                        <span class="rating-text">4.9 (312 avaliações)</span>
-                    </div>
-                    <div class="restaurant-features">
-                        <span class="feature-badge">👨‍👩‍👧‍👦 Família</span>
-                        <span class="feature-badge">🎵 Música ao Vivo</span>
-                        <span class="feature-badge">🅿️ Estacionamento</span>
-                    </div>
-                    <div class="restaurant-actions">
-                        <button class="btn btn-primary btn-small"
-                            onclick="event.stopPropagation(); makeReservation(3)">Reservar Mesa</button>
-                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(3)">Ver
-                            Cardápio</button>
-                    </div>
-                </div>
-            </div>
-
-            <div class="restaurant-card" data-href="detalhes.php?id=4">
-                <div class="restaurant-image"
-                    style="background-image: url('https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?ixlib=rb-4.0.3&auto=format&fit=crop&w=2070&q=80');">
-                </div>
-                <div class="restaurant-info">
-                    <h3 class="restaurant-name">Café Parisiense</h3>
-                    <p class="restaurant-category">Francesa</p>
-                    <p class="restaurant-location">📍 Rua Oscar Freire, 321 - São Paulo, SP</p>
-                    <div class="restaurant-rating">
-                        <span class="stars">★★★★☆</span>
-                        <span class="rating-text">4.7 (156 avaliações)</span>
-                    </div>
-                    <div class="restaurant-features">
-                        <span class="feature-badge">💕 Romântico</span>
-                        <span class="feature-badge">🌳 Área Externa</span>
-                        <span class="feature-badge">📶 Wi-Fi</span>
-                    </div>
-                    <div class="restaurant-actions">
-                        <button class="btn btn-primary btn-small"
-                            onclick="event.stopPropagation(); makeReservation(4)">Reservar Mesa</button>
-                        <button class="btn btn-secondary btn-small" onclick="event.stopPropagation(); viewMenu(4)">Ver
-                            Cardápio</button>
-                    </div>
-                </div>
-            </div>
+                <?php endforeach; ?>
+            <?php endif; ?>
         </div>
     </section>
 </div>

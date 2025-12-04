@@ -1,8 +1,8 @@
 <?php
 $restaurantId = $_GET['id'] ?? 1;
-include_once __DIR__ . '/../../components/header.php';
+include_once __DIR__ . '/../components/header.php';
 
-require_once __DIR__ . '/../../../model/RestauranteModel.php';
+require_once __DIR__ . '/../../model/RestauranteModel.php';
 
 $restauranteModel = new RestauranteModel();
 $restaurante = $restauranteModel->getDetalhesCompletos((int)$restaurantId);
@@ -12,13 +12,8 @@ if (!$restaurante) {
 }
 
 ?>
-<?php
-if (!isset($restaurantId)) {
-    die("Erro: ID do restaurante não definido.");
-}
-?>
 
-<link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/style.css">
 
 <div class="container">
     <button class="btn-back" onclick="goBack()">
@@ -154,63 +149,22 @@ if (!isset($restaurantId)) {
                 <div>
                     <div class="reservation-form">
                         <h3 style="margin-bottom: 1.5rem;">Fazer Reserva</h3>
-                        <?php if (empty($_SESSION['cliente_id'])): ?>
-                            <p>Para fazer uma reserva é necessário estar logado.</p>
+                        <div style="padding: 2rem; text-align: center; background: rgba(255, 107, 53, 0.1); border-radius: 0.5rem;">
+                            <i style="font-size: 3rem;">🔐</i>
+                            <p style="margin-top: 1rem; color: var(--text-secondary); line-height: 1.6;">
+                                Para fazer uma reserva, é necessário estar logado.
+                            </p>
                             <?php
                                 $current = $_SERVER['REQUEST_URI'] ?? '/crud-hackaton/';
                                 $loginUrl = '/crud-hackaton/view/pages/login-cliente.php?redirect=' . urlencode($current);
                             ?>
-                            <a href="<?php echo $loginUrl; ?>" class="btn btn-primary" style="width:100%;">Entrar para Reservar</a>
-                        <?php else: ?>
-                            <form id="reservationForm" action="../../controller/reservaController.php" method="POST" onsubmit="submitReservation(event)">
-                                <input type="hidden" name="restaurant_id" value="<?php echo $restaurantId; ?>">
-                                <input type="hidden" name="action" value="create">
-
-                                <div class="form-group">
-                                    <label for="date">Data:</label>
-                                    <input type="date" id="date" name="date" required min="<?php echo date('Y-m-d'); ?>">
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="time">Horário:</label>
-                                    <select id="time" name="time" required>
-                                        <option value="">Selecione um horário</option>
-                                        <option value="18:00">18:00</option>
-                                        <option value="18:30">18:30</option>
-                                        <option value="19:00">19:00</option>
-                                        <option value="19:30">19:30</option>
-                                        <option value="20:00">20:00</option>
-                                        <option value="20:30">20:30</option>
-                                        <option value="21:00">21:00</option>
-                                        <option value="21:30">21:30</option>
-                                        <option value="22:00">22:00</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="guests">Número de Pessoas:</label>
-                                    <select id="guests" name="guests" required>
-                                        <option value="">Selecione</option>
-                                        <option value="1">1 pessoa</option>
-                                        <option value="2">2 pessoas</option>
-                                        <option value="3">3 pessoas</option>
-                                        <option value="4">4 pessoas</option>
-                                        <option value="5">5 pessoas</option>
-                                        <option value="6">6 pessoas</option>
-                                        <option value="7">7 pessoas</option>
-                                        <option value="8">8 ou mais pessoas</option>
-                                    </select>
-                                </div>
-
-                                <div class="form-group">
-                                    <label for="special_requests">Pedidos Especiais (opcional):</label>
-                                    <textarea id="special_requests" name="special_requests" placeholder="Ex: Mesa perto da janela, aniversário, restrições alimentares..."></textarea>
-                                </div>
-
-                                <button type="submit" class="btn btn-primary" style="width: 100%;">CONFIRMAR
-                                    RESERVA</button>
-                            </form>
-                        <?php endif; ?>
+                            <a href="<?php echo $loginUrl; ?>" class="btn btn-primary" style="width:100%; margin-top: 1.5rem;">
+                                Fazer Login
+                            </a>
+                            <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
+                                Não tem conta? <a href="cadastro-cliente.php" style="color: var(--primary-neon); font-weight: 600;">Cadastre-se aqui</a>
+                            </p>
+                        </div>
                     </div>
 
                     <div class="details-section" style="margin-top: 2rem;">
@@ -227,10 +181,6 @@ if (!isset($restaurantId)) {
     </div>
 </div>
 
-<?php include_once __DIR__ . '/../../components/footer.php'; ?>
+<?php include_once __DIR__ . '/../components/footer.php'; ?>
 
-<script src="../../assets/js/main.js"></script>
-<script>
-    // Definir data mínima como hoje
-    document.getElementById('date').min = new Date().toISOString().split('T')[0];
-</script>
+<script src="../assets/js/main.js"></script>
