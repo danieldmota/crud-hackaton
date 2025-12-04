@@ -131,6 +131,22 @@ CREATE TABLE avaliacoes (
     FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE SET NULL
 );
 
+-- Estados
+CREATE TABLE estados (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    sigla CHAR(2) NOT NULL,
+    nome VARCHAR(50) NOT NULL
+);
+
+CREATE TABLE formas_pagamento (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(50) NOT NULL UNIQUE
+);
+
+INSERT INTO formas_pagamento (nome) VALUES
+('Dinheiro'), ('Cartão de Crédito'), ('Cartão de Débito'), ('PIX'), ('Vale Alimentação');
+
+
 -- Inserir dados de teste
 INSERT INTO clientes (nome, email, telefone, cpf, senha) VALUES
 ('Maria Silva', 'maria@email.com', '11987654321', '12345678901', SHA2('senha123', 256)),
@@ -188,3 +204,12 @@ INSERT INTO avaliacoes (restaurante_id, cliente_id, nome_cliente, rating, coment
 (1, 2, 'João Santos', 4, 'Ótimo restaurante! A pizza estava perfeita e o serviço foi rápido. O único ponto negativo foi a espera para conseguir uma mesa, mas valeu a pena.', '2024-01-10 19:45:00'),
 (1, 3, 'Ana Costa', 5, 'Melhor restaurante italiano da cidade! O risotto estava divino e o ambiente é perfeito para um jantar romântico. Recomendo muito!', '2024-01-05 21:15:00');
 
+-- Estados
+INSERT INTO estados (sigla, nome) VALUES
+('AC','Acre'), ('AL','Alagoas'), ('AP','Amapá'), ('AM','Amazonas'),
+('BA','Bahia'), ('CE','Ceará'), ('DF','Distrito Federal'), ('ES','Espírito Santo'),
+('GO','Goiás'), ('MA','Maranhão'), ('MT','Mato Grosso'), ('MS','Mato Grosso do Sul'),
+('MG','Minas Gerais'), ('PA','Pará'), ('PB','Paraíba'), ('PR','Paraná'),
+('PE','Pernambuco'), ('PI','Piauí'), ('RJ','Rio de Janeiro'), ('RN','Rio Grande do Norte'),
+('RS','Rio Grande do Sul'), ('RO','Rondônia'), ('RR','Roraima'), ('SC','Santa Catarina'),
+('SP','São Paulo'), ('SE','Sergipe'), ('TO','Tocantins');
