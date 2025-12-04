@@ -2,6 +2,15 @@
 $restaurantId = $_GET['id'] ?? 1;
 include_once __DIR__ . '/../../components/header.php';
 
+require_once __DIR__ . '/../../../model/RestauranteModel.php';
+
+$restauranteModel = new RestauranteModel();
+$restaurante = $restauranteModel->getDetalhesCompletos((int)$restaurantId);
+
+if (!$restaurante) {
+    die("Erro: Restaurante não encontrado.");
+}
+
 ?>
 <?php
 if (!isset($restaurantId)) {
@@ -18,11 +27,16 @@ if (!isset($restaurantId)) {
     <div class="restaurant-details">
         <div class="restaurant-header">
             <div class="restaurant-header-content">
-                <h1>La Bella Italia</h1>
-                <p class="restaurant-category">Culinária Italiana Autêntica</p>
+                <h1><?php echo htmlspecialchars($restaurante['nome']); ?></h1>
+                <p class="restaurant-category"><?php echo htmlspecialchars($restaurante['categoria']); ?></p>
                 <div class="restaurant-rating" style="justify-content: center; margin-top: 1rem;">
-                    <span class="stars">★★★★★</span>
-                    <span class="rating-text" style="color: white;">4.8 (234 avaliações)</span>
+                    <span class="stars"><?php 
+                        $rating = (int)$restaurante['rating_medio'];
+                        for ($i = 0; $i < 5; $i++) {
+                            echo $i < $rating ? '★' : '☆';
+                        }
+                    ?></span>
+                    <span class="rating-text" style="color: white;"><?php echo number_format($restaurante['rating_medio'], 1, ',', '.'); ?> (<?php echo count($restaurante['avaliacoes']); ?> avaliações)</span>
                 </div>
             </div>
         </div>
@@ -33,13 +47,7 @@ if (!isset($restaurantId)) {
                     <div class="details-section">
                         <h3>📋 Sobre o Restaurante</h3>
                         <p style="line-height: 1.8; color: var(--text-secondary);">
-                            O La Bella Italia oferece uma experiência gastronômica única com pratos autênticos da
-                            culinária italiana.
-                            Nossa equipe de chefs traz receitas tradicionais passadas de geração em geração, preparadas
-                            com ingredientes
-                            frescos e selecionados. Ambiente acolhedor e sofisticado, perfeito para jantares românticos,
-                            encontros com
-                            amigos ou celebrações especiais.
+                            <?php echo nl2br(htmlspecialchars($restaurante['descricao'])); ?>
                         </p>
                     </div>
 
@@ -52,93 +60,46 @@ if (!isset($restaurantId)) {
                     <div id="menu" class="tab-content active">
                         <h3 style="margin-bottom: 1.5rem;">Cardápio</h3>
                         <div class="menu-grid">
-                            <div class="menu-item">
-                                <h4 class="menu-item-name">Spaghetti Carbonara</h4>
-                                <p class="menu-item-description">Massa artesanal com bacon, ovos, queijo parmesão e
-                                    pimenta preta</p>
-                                <p class="menu-item-price">R$ 45,90</p>
-                            </div>
-                            <div class="menu-item">
-                                <h4 class="menu-item-name">Risotto de Camarão</h4>
-                                <p class="menu-item-description">Arroz arbóreo cremoso com camarões frescos e ervas</p>
-                                <p class="menu-item-price">R$ 58,90</p>
-                            </div>
-                            <div class="menu-item">
-                                <h4 class="menu-item-name">Pizza Margherita</h4>
-                                <p class="menu-item-description">Massa fina, molho de tomate, mussarela de búfala e
-                                    manjericão</p>
-                                <p class="menu-item-price">R$ 42,90</p>
-                            </div>
-                            <div class="menu-item">
-                                <h4 class="menu-item-name">Lasagna à Bolonhesa</h4>
-                                <p class="menu-item-description">Camadas de massa, molho bolonhesa, queijo e bechamel
-                                </p>
-                                <p class="menu-item-price">R$ 52,90</p>
-                            </div>
-                            <div class="menu-item">
-                                <h4 class="menu-item-name">Osso Buco</h4>
-                                <p class="menu-item-description">Vitela cozida lentamente com legumes e gremolata</p>
-                                <p class="menu-item-price">R$ 68,90</p>
-                            </div>
-                            <div class="menu-item">
-                                <h4 class="menu-item-name">Tiramisu</h4>
-                                <p class="menu-item-description">Sobremesa tradicional italiana com café e mascarpone
-                                </p>
-                                <p class="menu-item-price">R$ 24,90</p>
-                            </div>
+                            <?php foreach ($restaurante['cardapio'] as $categoria => $itens): ?>
+                                <?php foreach ($itens as $item): ?>
+                                    <div class="menu-item">
+                                        <h4 class="menu-item-name"><?php echo htmlspecialchars($item['nome']); ?></h4>
+                                        <p class="menu-item-description"><?php echo htmlspecialchars($item['descricao']); ?></p>
+                                        <p class="menu-item-price">R$ <?php echo number_format($item['preco'], 2, ',', '.'); ?></p>
+                                    </div>
+                                <?php endforeach; ?>
+                            <?php endforeach; ?>
                         </div>
                     </div>
 
                     <div id="reviews" class="tab-content">
                         <h3 style="margin-bottom: 1.5rem;">⭐ Avaliações</h3>
-                        <div class="review-card">
-                            <div class="review-header">
-                                <div>
-                                    <div class="reviewer-name">Maria Silva</div>
-                                    <div class="review-date">15 de Janeiro, 2024</div>
+                        <?php if (count($restaurante['avaliacoes']) > 0): ?>
+                            <?php foreach ($restaurante['avaliacoes'] as $avaliacao): ?>
+                                <div class="review-card">
+                                    <div class="review-header">
+                                        <div>
+                                            <div class="reviewer-name"><?php echo htmlspecialchars($avaliacao['nome_cliente']); ?></div>
+                                            <div class="review-date"><?php echo date('d \d\e F, Y', strtotime($avaliacao['data_criacao'])); ?></div>
+                                        </div>
+                                        <div class="review-rating">
+                                            <span class="stars">
+                                                <?php 
+                                                    for ($i = 0; $i < 5; $i++) {
+                                                        echo $i < $avaliacao['rating'] ? '★' : '☆';
+                                                    }
+                                                ?>
+                                            </span>
+                                        </div>
+                                    </div>
+                                    <p class="review-text">
+                                        <?php echo htmlspecialchars($avaliacao['comentario']); ?>
+                                    </p>
                                 </div>
-                                <div class="review-rating">
-                                    <span class="stars">★★★★★</span>
-                                </div>
-                            </div>
-                            <p class="review-text">
-                                Experiência incrível! A comida estava deliciosa, o ambiente é acolhedor e o atendimento
-                                foi impecável.
-                                Definitivamente voltarei!
-                            </p>
-                        </div>
-                        <div class="review-card">
-                            <div class="review-header">
-                                <div>
-                                    <div class="reviewer-name">João Santos</div>
-                                    <div class="review-date">10 de Janeiro, 2024</div>
-                                </div>
-                                <div class="review-rating">
-                                    <span class="stars">★★★★☆</span>
-                                </div>
-                            </div>
-                            <p class="review-text">
-                                Ótimo restaurante! A pizza estava perfeita e o serviço foi rápido. O único ponto
-                                negativo foi a espera
-                                para conseguir uma mesa, mas valeu a pena.
-                            </p>
-                        </div>
-                        <div class="review-card">
-                            <div class="review-header">
-                                <div>
-                                    <div class="reviewer-name">Ana Costa</div>
-                                    <div class="review-date">5 de Janeiro, 2024</div>
-                                </div>
-                                <div class="review-rating">
-                                    <span class="stars">★★★★★</span>
-                                </div>
-                            </div>
-                            <p class="review-text">
-                                Melhor restaurante italiano da cidade! O risotto estava divino e o ambiente é perfeito
-                                para um jantar
-                                romântico. Recomendo muito!
-                            </p>
-                        </div>
+                            <?php endforeach; ?>
+                        <?php else: ?>
+                            <p>Nenhuma avaliação disponível.</p>
+                        <?php endif; ?>
                     </div>
 
                     <div id="info" class="tab-content">
@@ -148,45 +109,42 @@ if (!isset($restaurantId)) {
                                 <i>📍</i>
                                 <div>
                                     <strong>Endereço:</strong><br>
-                                    Rua das Flores, 123 - Centro<br>
-                                    São Paulo, SP - CEP: 01234-567
+                                    <?php echo htmlspecialchars($restaurante['rua'] ?? ''); ?><br>
+                                    <?php echo htmlspecialchars($restaurante['bairro'] ?? ''); ?><br>
+                                    <?php echo htmlspecialchars($restaurante['cidade'] ?? ''); ?>, <?php echo htmlspecialchars($restaurante['estado'] ?? ''); ?> - CEP: <?php echo htmlspecialchars($restaurante['cep'] ?? ''); ?>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <i>🕐</i>
                                 <div>
                                     <strong>Horário de Funcionamento:</strong><br>
-                                    Segunda a Quinta: 18:00 - 23:00<br>
-                                    Sexta e Sábado: 18:00 - 00:00<br>
-                                    Domingo: 12:00 - 22:00
+                                    <?php foreach ($restaurante['horarios'] as $horario): ?>
+                                        <?php echo htmlspecialchars($horario['dia_semana']); ?>: <?php echo date('H:i', strtotime($horario['hora_abertura'])); ?> - <?php echo date('H:i', strtotime($horario['hora_fechamento'])); ?><br>
+                                    <?php endforeach; ?>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <i>📞</i>
                                 <div>
                                     <strong>Telefone:</strong><br>
-                                    (11) 3456-7890
+                                    <?php echo htmlspecialchars($restaurante['telefone'] ?? 'Não informado'); ?>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <i>🌐</i>
                                 <div>
                                     <strong>Website:</strong><br>
-                                    www.labellaitalia.com.br
+                                    <?php echo htmlspecialchars($restaurante['website'] ?? 'Não informado'); ?>
                                 </div>
                             </div>
                             <div class="info-item">
                                 <i>💳</i>
                                 <div>
                                     <strong>Formas de Pagamento:</strong><br>
-                                    Dinheiro, Cartão de Crédito/Débito, PIX
-                                </div>
-                            </div>
-                            <div class="info-item">
-                                <i>🚗</i>
-                                <div>
-                                    <strong>Estacionamento:</strong><br>
-                                    Valet disponível (R$ 15,00)
+                                    <?php 
+                                        $pagamentos = array_column($restaurante['pagamentos'], 'nome');
+                                        echo !empty($pagamentos) ? htmlspecialchars(implode(', ', $pagamentos)) : 'Não informado';
+                                    ?>
                                 </div>
                             </div>
                         </div>
@@ -250,12 +208,9 @@ if (!isset($restaurantId)) {
                     <div class="details-section" style="margin-top: 2rem;">
                         <h3>Características</h3>
                         <div style="display: flex; flex-wrap: wrap; gap: 0.5rem; margin-top: 1rem;">
-                            <span class="feature-badge">🥗 Vegetariano</span>
-                            <span class="feature-badge">🌳 Área Externa</span>
-                            <span class="feature-badge">🅿️ Estacionamento</span>
-                            <span class="feature-badge">💕 Romântico</span>
-                            <span class="feature-badge">📶 Wi-Fi Grátis</span>
-                            <span class="feature-badge">🎵 Música Ambiente</span>
+                            <?php foreach ($restaurante['caracteristicas'] as $carac): ?>
+                                <span class="feature-badge"><?php echo htmlspecialchars($carac['nome']); ?></span>
+                            <?php endforeach; ?>
                         </div>
                     </div>
                 </div>

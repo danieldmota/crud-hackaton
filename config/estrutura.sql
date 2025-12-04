@@ -119,7 +119,72 @@ FOREIGN KEY (cliente_id) REFERENCES clientes(id),
 FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id)
 );
 
-select * from reservas;
+CREATE TABLE avaliacoes (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    restaurante_id INT NOT NULL,
+    cliente_id INT,
+    nome_cliente VARCHAR(150) NOT NULL,
+    rating INT NOT NULL CHECK(rating >= 1 AND rating <= 5),
+    comentario TEXT NOT NULL,
+    data_criacao DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (restaurante_id) REFERENCES restaurantes(id) ON DELETE CASCADE,
+    FOREIGN KEY (cliente_id) REFERENCES clientes(id) ON DELETE SET NULL
+);
 
-select * from restaurantes;
+-- Inserir dados de teste
+INSERT INTO clientes (nome, email, telefone, cpf, senha) VALUES
+('Maria Silva', 'maria@email.com', '11987654321', '12345678901', SHA2('senha123', 256)),
+('João Santos', 'joao@email.com', '11987654322', '12345678902', SHA2('senha123', 256)),
+('Ana Costa', 'ana@email.com', '11987654323', '12345678903', SHA2('senha123', 256));
+
+INSERT INTO restaurantes (nome, cnpj, categoria, capacidade, descricao, imagem) VALUES
+('La Bella Italia', '12.345.678/0001-90', 'Italiana', 80, 'O La Bella Italia oferece uma experiência gastronômica única com pratos autênticos da culinária italiana. Nossa equipe de chefs traz receitas tradicionais passadas de geração em geração, preparadas com ingredientes frescos e selecionados. Ambiente acolhedor e sofisticado, perfeito para jantares românticos, encontros com amigos ou celebrações especiais.', NULL);
+
+INSERT INTO enderecos_restaurantes (restaurante_id, rua, bairro, cidade, estado, cep) VALUES
+(1, 'Rua das Flores', 'Centro', 'São Paulo', 'SP', '01234-567');
+
+INSERT INTO contatos_restaurantes (restaurante_id, telefone, email, website) VALUES
+(1, '(11) 3456-7890', 'contato@labellaitalia.com.br', 'www.labellaitalia.com.br');
+
+INSERT INTO horarios_funcionamento (restaurante_id, dia_semana, hora_abertura, hora_fechamento, ativo) VALUES
+(1, 'Segunda', '18:00', '23:00', 1),
+(1, 'Terça', '18:00', '23:00', 1),
+(1, 'Quarta', '18:00', '23:00', 1),
+(1, 'Quinta', '18:00', '23:00', 1),
+(1, 'Sexta', '18:00', '00:00', 1),
+(1, 'Sábado', '18:00', '00:00', 1),
+(1, 'Domingo', '12:00', '22:00', 1);
+
+INSERT INTO caracteristicas (nome) VALUES
+('Vegetariano'),
+('Área Externa'),
+('Estacionamento'),
+('Romântico'),
+('Wi-Fi Grátis'),
+('Música Ambiente');
+
+INSERT INTO restaurante_caracteristicas (restaurante_id, caracteristica_id) VALUES
+(1, 1), (1, 2), (1, 3), (1, 4), (1, 5), (1, 6);
+
+INSERT INTO formas_pagamento (nome) VALUES
+('Dinheiro'),
+('Cartão de Crédito'),
+('Cartão de Débito'),
+('PIX');
+
+INSERT INTO restaurante_pagamentos (restaurante_id, pagamento_id) VALUES
+(1, 1), (1, 2), (1, 3), (1, 4);
+
+INSERT INTO cardapio_itens (restaurante_id, categoria, nome, descricao, preco, disponivel) VALUES
+(1, 'pratos', 'Spaghetti Carbonara', 'Massa artesanal com bacon, ovos, queijo parmesão e pimenta preta', 45.90, 1),
+(1, 'pratos', 'Risotto de Camarão', 'Arroz arbóreo cremoso com camarões frescos e ervas', 58.90, 1),
+(1, 'pratos', 'Pizza Margherita', 'Massa fina, molho de tomate, mussarela de búfala e manjericão', 42.90, 1),
+(1, 'pratos', 'Lasagna à Bolonhesa', 'Camadas de massa, molho bolonhesa, queijo e bechamel', 52.90, 1),
+(1, 'pratos', 'Osso Buco', 'Vitela cozida lentamente com legumes e gremolata', 68.90, 1),
+(1, 'sobremesas', 'Tiramisu', 'Sobremesa tradicional italiana com café e mascarpone', 24.90, 1);
+
+INSERT INTO avaliacoes (restaurante_id, cliente_id, nome_cliente, rating, comentario, data_criacao) VALUES
+(1, 1, 'Maria Silva', 5, 'Experiência incrível! A comida estava deliciosa, o ambiente é acolhedor e o atendimento foi impecável. Definitivamente voltarei!', '2024-01-15 20:30:00'),
+(1, 2, 'João Santos', 4, 'Ótimo restaurante! A pizza estava perfeita e o serviço foi rápido. O único ponto negativo foi a espera para conseguir uma mesa, mas valeu a pena.', '2024-01-10 19:45:00'),
+(1, 3, 'Ana Costa', 5, 'Melhor restaurante italiano da cidade! O risotto estava divino e o ambiente é perfeito para um jantar romântico. Recomendo muito!', '2024-01-05 21:15:00');
 
