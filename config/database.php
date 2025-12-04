@@ -3,8 +3,8 @@
 class Database
 {
     private $host = "localhost";
-    private $port = "3307";
-    private $dbName = "route2eat"; // nome do banco de dados
+    private $port = "3306";
+    private $dbName = "route2eat";
     private $user = "root";
     private $password = "";
 

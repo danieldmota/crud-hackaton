@@ -44,40 +44,7 @@ if ($action === "create") {
     exit;
 }
 
-// Atualizar reserva
-if ($action === "update") {
-
-    // exigir cliente logado
-    if (empty($_SESSION['cliente_id'])) {
-        header("Location: ../view/pages/login-cliente.php");
-        exit;
-    }
-
-    $data = [
-        "id"                => $_POST['id'],
-        "data_reserva"      => $_POST['date'],
-        "horario"           => $_POST['time'],
-        "numero_pessoas"    => $_POST['guests'],
-        "pedidos_especiais" => $_POST['special_requests'],
-        "status"            => $_POST['status']
-    ];
-
-    // garantir que o usuário seja dono da reserva
-    $existing = $reserva->getById($data['id']);
-    if (!$existing || $existing['cliente_id'] != $_SESSION['cliente_id']) {
-        header("Location: ../view/erro.php?msg=Permissão negada");
-        exit;
-    }
-
-    if ($reserva->update($data)) {
-        header("Location: ../view/sucesso.php?msg=Reserva atualizada");
-    } else {
-        header("Location: ../view/erro.php?msg=Erro ao atualizar");
-    }
-    exit;
-}
-
-// Deletar reserva
+// Cancelar reserva
 if ($action === "delete") {
 
     // exigir cliente logado

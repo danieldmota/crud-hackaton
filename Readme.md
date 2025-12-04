@@ -1,62 +1,71 @@
-# CRUD Hackaton — Guia de instalação e execução
+# 🍽️ Route2Eat — Sistema de Gestão de Reservas de Restaurantes
 
-Este README descreve passo a passo como configurar e executar o projeto `crud-hackaton` localmente (Windows + XAMPP). As instruções foram escritas para um ambiente de desenvolvimento local usando XAMPP (Apache + MySQL) e PHP com PDO.
+O **Route2Eat** tem como objetivo facilitar a vida do turista, permitindo que encontre restaurantes próximos de acordo com seus gostos pessoais, além de possibilitar reservas diretamente na plataforma.
 
-**Resumo rápido**
+---
 
-- Requisitos: XAMPP (Apache + MySQL), PHP >= 7.4 (PDO/MySQL habilitado)
-- Colocar projeto em `C:\xampp\htdocs\crud-hackaton`
-- Importar `config/estrutura.sql` no MySQL
-- Ajustar credenciais em `config/database.php`
-- Abrir no navegador: `http://localhost/crud-hackaton` e testar `detalhes.php?id=1`
+## 🚀 Como rodar o projeto
 
-## Passo a passo detalhado
+### 1️⃣ Clonar o projeto
+Clone o repositório diretamente no diretório `htdocs` do XAMPP:
 
-1. Requisitos
 
-- XAMPP (recomendo versão estável atual). Baixe em: https://www.apachefriends.org/
-- PHP: certifique-se que sua instalação do XAMPP tem PHP >= 7.4.
+### 2️⃣ Iniciar serviços
+- Abra o **XAMPP**
+- Inicie **Apache** e **MySQL**
 
-2. Copiar o projeto para a pasta do servidor
+### 3️⃣ Criar o banco de dados
+Execute no **phpMyAdmin** ou MySQL Workbench:
 
-- Coloque a pasta do projeto dentro da pasta do Apache (ex.: `C:\xampp\htdocs\crud-hackaton`).
+1. O arquivo **tables.sql** → cria banco e tabelas  
+2. O arquivo **inserts.sql** → popula dados de teste
 
-3. Verificar o arquivo `config/database.php`
+### 4️⃣ Acessar o sistema
+Abra no navegador:
+`http://localhost/crud-hackaton/view/pages`
+---
 
-- Abra `config/database.php` e ajuste as credenciais do banco de dados (host, usuário, senha, nome do banco). Exemplo comum em XAMPP:
+## 🧪 Testes
 
-4. Importar o esquema / dados do banco
+O sistema possui login separado para **cliente** e **restaurante**.  
+Você precisará criar manualmente os cadastros para testar.
 
-- O arquivo com o esquema e dados de teste está em: `config/estrutura.sql`.
-- Você pode importar pelo phpMyAdmin:
+### ▶️ Cadastro recomendado para testes pra nao esquecer dps
 
-  - Abra `http://localhost/phpmyadmin`
-  - Clique em "Importar" e selecione `config/estrutura.sql`.
+#### 👤 Cliente  
+- **email:** `teste@gmail.com`  
+- **senha:** `12345678`
 
-- Ou, pela linha de comando PowerShell (exemplo):
+#### 🍽️ Restaurante  
+- **CNPJ:** `11111111111111`  
+- **senha:** `12345678`
 
-```powershell
-# Opcional: ajuste o caminho do mysql se não estiver no PATH
-# Exemplo com mysql do XAMPP
-"C:\xampp\mysql\bin\mysql.exe" -u root -p < "C:\xampp\htdocs\crud-hackaton\config\estrutura.sql"
-# Quando solicitado, digite a senha do MySQL (em XAMPP padrão é vazio, apenas pressione Enter).
-```
+> ⚠️ Restaurante faz login com **CNPJ**, não com email.
 
-OBS: `estrutura.sql` já contém `CREATE DATABASE route2eat; USE route2eat;` e instruções de INSERT com dados de exemplo.
+---
 
-7. Iniciar o servidor
+## 📅 Como testar o fluxo de reserva
 
-- Abra o `XAMPP Control Panel` e inicie `Apache` e `MySQL`.
+1. **Crie um perfil de restaurante**  
+   Faça login usando o CNPJ cadastrado.
 
-8. Testar a aplicação
+2. **Crie um perfil de cliente**  
+   Faça login usando email e senha.
 
-- Acesse no navegador:
-  - Página principal: `http://localhost/crud-hackaton/view/pages` (ou `index.php` do projeto)
-  - Realizar cadastro pra acessar funcionalidades
+3. **Realize uma reserva**  
+   - Logado como cliente, selecione o restaurante que você cadastrou  
+   - Preencha a reserva com data, horário e número de pessoas
 
-9. Pontos de verificação / Troubleshooting
+4. **Acesse como restaurante**  
+   - Entre com o CNPJ e senha  
+   - A reserva aparecerá na sua lista pendente  
+   - Aceite ou recuse a reserva
 
-- Erro de conexão com banco (PDOException):
-  - Verifique `config/database.php` (host, usuário, senha, nome do DB)
-  - Verifique se o MySQL está rodando no XAMPP
-  - Verifique se `pdo_mysql` está habilitado no `php.ini` e reinicie o Apache
+---
+
+## 📌 Observações importantes
+
+- Caso ocorra erro ao logar, certifique-se que:
+  - A senha foi cadastrada corretamente
+  - O usuário está fazendo login no formulário correto (cliente ou restaurante)
+- Todos os scripts SQL devem ser executados antes do primeiro acesso

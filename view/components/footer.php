@@ -1,6 +1,6 @@
 <footer class="footer">
     <div class="container">
-        <p>&copy; 2025 Route2Eat. Todos os direitos reservados. Powered by NextGen Technology</p>
+        <p>&copy; 2025 Route2Eat. Allan, Ariel, Bruna, Caio, Daniel e Vitor Bueno</p>
     </div>
 </footer>
 

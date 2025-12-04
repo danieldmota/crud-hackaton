@@ -32,7 +32,7 @@ $clienteId = $_SESSION['cliente_id'] ?? null;
             $reservas = $reservaModel->getByCliente($clienteId);
 
             if (empty($reservas)) {
-                echo '<div class="empty-state">\n                    <i>📅</i>\n                    <h3>Nenhuma reserva encontrada</h3>\n                    <p>Você ainda não fez nenhuma reserva. Que tal explorar nossos restaurantes?</p>\n                    <a href="../home.php" class="btn btn-primary" style="margin-top: 1rem;">Explorar Restaurantes</a>\n                </div>';
+                echo '<div class="empty-state">                    <i>📅</i>                    <h3>Nenhuma reserva encontrada</h3>                    <p>Você ainda não fez nenhuma reserva. Que tal explorar nossos restaurantes?</p>                                    </div>';
             } else {
                 foreach ($reservas as $r) {
                     $status = htmlspecialchars($r['status'] ?? 'pendente');
