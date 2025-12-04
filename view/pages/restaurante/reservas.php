@@ -1,4 +1,37 @@
-<?php include_once __DIR__ . '/../../components/header.php'; ?>
+<?php 
+include_once __DIR__ . '/../../components/header.php';
+require_once __DIR__ . '/../../../config/database.php';
+require_once __DIR__ . '/../../../model/ReservaModel.php';
+
+// Verificar se restaurante está logado
+if (empty($_SESSION['restaurante_id'])) {
+    header('Location: ../../pages/login-restaurante.php');
+    exit();
+}
+
+$restaurante_id = $_SESSION['restaurante_id'];
+
+// Conectar ao banco e buscar reservas
+$db = new Database();
+$conn = $db->conectar();
+$reservaModel = new ReservaModel($conn);
+$reservas = $reservaModel->getByRestaurante($restaurante_id);
+
+// Mapear status para português
+$statusMap = [
+    'pendente' => 'Pendente',
+    'confirmada' => 'Confirmada',
+    'cancelada' => 'Cancelada',
+    'concluida' => 'Concluída'
+];
+
+$statusClassMap = [
+    'pendente' => 'status-pending',
+    'confirmada' => 'status-confirmed',
+    'cancelada' => 'status-cancelled',
+    'concluida' => 'status-confirmed'
+];
+?>
 
 <link rel="stylesheet" href="../../assets/css/style.css">
 
@@ -13,6 +46,7 @@
     <button class="btn-back" onclick="goBack()">
         Voltar
     </button>
+    
     <!-- Filtros de Reservas -->
     <div class="dashboard-section" style="margin-bottom: 2rem;">
         <div class="filters-container" style="margin: 0;">
@@ -20,150 +54,70 @@
                 <label>Filtrar por:</label>
                 <div class="filter-options">
                     <div class="filter-chip active" data-filter="all" onclick="filterReservations('all')">Todas</div>
-                    <div class="filter-chip" data-filter="pending" onclick="filterReservations('pending')">Pendentes</div>
-                    <div class="filter-chip" data-filter="confirmed" onclick="filterReservations('confirmed')">Confirmadas</div>
-                    <div class="filter-chip" data-filter="cancelled" onclick="filterReservations('cancelled')">Canceladas</div>
+                    <div class="filter-chip" data-filter="pendente" onclick="filterReservations('pendente')">Pendentes</div>
+                    <div class="filter-chip" data-filter="confirmada" onclick="filterReservations('confirmada')">Confirmadas</div>
+                    <div class="filter-chip" data-filter="cancelada" onclick="filterReservations('cancelada')">Canceladas</div>
                 </div>
-            </div>
-
-            <div class="filter-group">
-                <label>Período:</label>
-                <select id="periodFilter" class="filter-select" onchange="filterReservations('all')">
-                    <option value="today">Hoje</option>
-                    <option value="week" selected>Esta Semana</option>
-                    <option value="month">Este Mês</option>
-                    <option value="all">Todas</option>
-                </select>
             </div>
         </div>
     </div>
 
     <!-- Lista de Reservas -->
     <div class="reservations-list">
-        <!-- Reserva Pendente -->
-        <div class="reservation-card" data-status="pending">
-            <div class="reservation-header">
-                <div>
-                    <h3 class="reservation-restaurant">Maria Silva</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Mesa 3 - 6 pessoas</p>
-                </div>
-                <span class="reservation-status status-pending">Pendente</span>
+        <?php if (empty($reservas)): ?>
+            <div style="text-align: center; padding: 3rem 2rem; color: var(--text-secondary);">
+                <p style="font-size: 1.2rem;">Ainda não há reservas disponíveis</p>
             </div>
-            <div class="reservation-details">
-                <div class="reservation-detail-item">
-                    <span><strong>Data:</strong> Hoje, 20 de Janeiro, 2024</span>
+        <?php else: ?>
+            <?php foreach ($reservas as $reserva): ?>
+                <?php
+                $status = strtolower($reserva['status'] ?? 'pendente');
+                $statusTexto = $statusMap[$status] ?? 'Pendente';
+                $statusClass = $statusClassMap[$status] ?? 'status-pending';
+                $dataFormatada = date('d \d\e F \d\e Y', strtotime($reserva['data_reserva']));
+                $opacidade = $status === 'cancelada' ? 'opacity: 0.7;' : '';
+                ?>
+                <div class="reservation-card" data-status="<?php echo htmlspecialchars($status); ?>" style="<?php echo $opacidade; ?>">
+                    <div class="reservation-header">
+                        <div>
+                            <h3 class="reservation-restaurant"><?php echo htmlspecialchars($reserva['cliente_nome'] ?? 'Cliente'); ?></h3>
+                            <p style="color: var(--text-secondary); margin-top: 0.5rem;"><?php echo htmlspecialchars($reserva['numero_pessoas']); ?> pessoa(s)</p>
+                        </div>
+                        <span class="reservation-status <?php echo $statusClass; ?>"><?php echo $statusTexto; ?></span>
+                    </div>
+                    <div class="reservation-details">
+                        <div class="reservation-detail-item">
+                            <span><strong>Data:</strong> <?php echo $dataFormatada; ?></span>
+                        </div>
+                        <div class="reservation-detail-item">
+                            <span><strong>Horário:</strong> <?php echo htmlspecialchars($reserva['horario']); ?></span>
+                        </div>
+                        <div class="reservation-detail-item">
+                            <span><strong>Telefone:</strong> <?php echo htmlspecialchars($reserva['cliente_telefone'] ?? 'Não informado'); ?></span>
+                        </div>
+                        <div class="reservation-detail-item">
+                            <span><strong>E-mail:</strong> <?php echo htmlspecialchars($reserva['cliente_email'] ?? 'Não informado'); ?></span>
+                        </div>
+                    </div>
+                    <?php if (!empty($reserva['pedidos_especiais'])): ?>
+                        <div class="reservation-details" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--dark-border);">
+                            <div class="reservation-detail-item" style="width: 100%;">
+                                <span><strong>Observações:</strong> <?php echo htmlspecialchars($reserva['pedidos_especiais']); ?></span>
+                            </div>
+                        </div>
+                    <?php endif; ?>
+                    <div class="reservation-actions">
+                        <?php if ($status === 'pendente'): ?>
+                            <button class="btn btn-primary" onclick="confirmReservation(<?php echo $reserva['id']; ?>)">Confirmar</button>
+                            <button class="btn btn-secondary" style="background: rgba(255, 68, 68, 0.2); color: #ff4444; border-color: #ff4444;" onclick="cancelReservation(<?php echo $reserva['id']; ?>)">Cancelar</button>
+                        <?php elseif ($status === 'confirmada'): ?>
+                            <button class="btn btn-secondary" onclick="contactCustomer(<?php echo $reserva['id']; ?>)">Contatar Cliente</button>
+                            <button class="btn btn-secondary" style="background: rgba(255, 68, 68, 0.2); color: #ff4444; border-color: #ff4444;" onclick="cancelReservation(<?php echo $reserva['id']; ?>)">Cancelar</button>
+                        <?php endif; ?>
+                    </div>
                 </div>
-                <div class="reservation-detail-item">
-                    <span><strong>Horário:</strong> 20:00</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>Telefone:</strong> (11) 98765-4321</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>E-mail:</strong> maria.silva@email.com</span>
-                </div>
-            </div>
-            <div class="reservation-details" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--dark-border);">
-                <div class="reservation-detail-item" style="width: 100%;">
-                    <span><strong>Observações:</strong> Aniversário - mesa perto da janela</span>
-                </div>
-            </div>
-            <div class="reservation-actions">
-                <button class="btn btn-primary" onclick="confirmReservation(1)">Confirmar</button>
-                <button class="btn btn-secondary" onclick="viewReservationDetails(1)">Ver Detalhes</button>
-                <button class="btn btn-secondary" style="background: rgba(255, 68, 68, 0.2); color: #ff4444; border-color: #ff4444;" onclick="cancelReservation(1)">Cancelar</button>
-            </div>
-        </div>
-
-        <!-- Reserva Confirmada -->
-        <div class="reservation-card" data-status="confirmed">
-            <div class="reservation-header">
-                <div>
-                    <h3 class="reservation-restaurant">João Santos</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Mesa 2 - 2 pessoas</p>
-                </div>
-                <span class="reservation-status status-confirmed">Confirmada</span>
-            </div>
-            <div class="reservation-details">
-                <div class="reservation-detail-item">
-                    <span><strong>Data:</strong> Hoje, 20 de Janeiro, 2024</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>Horário:</strong> 19:30</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>Telefone:</strong> (11) 97654-3210</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>E-mail:</strong> joao.santos@email.com</span>
-                </div>
-            </div>
-            <div class="reservation-actions">
-                <button class="btn btn-secondary" onclick="viewReservationDetails(2)">Ver Detalhes</button>
-                <button class="btn btn-secondary" onclick="contactCustomer(2)">Contatar Cliente</button>
-                <button class="btn btn-secondary" style="background: rgba(255, 68, 68, 0.2); color: #ff4444; border-color: #ff4444;" onclick="cancelReservation(2)">Cancelar</button>
-            </div>
-        </div>
-
-        <!-- Reserva Confirmada (outra) -->
-        <div class="reservation-card" data-status="confirmed">
-            <div class="reservation-header">
-                <div>
-                    <h3 class="reservation-restaurant">Ana Costa</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Mesa 6 - 8 pessoas</p>
-                </div>
-                <span class="reservation-status status-confirmed">Confirmada</span>
-            </div>
-            <div class="reservation-details">
-                <div class="reservation-detail-item">
-                    <span><strong>Data:</strong> 22 de Janeiro, 2024</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>Horário:</strong> 20:00</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>Telefone:</strong> (11) 96543-2109</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>E-mail:</strong> ana.costa@email.com</span>
-                </div>
-            </div>
-            <div class="reservation-details" style="margin-top: 1rem; padding-top: 1rem; border-top: 1px solid var(--dark-border);">
-                <div class="reservation-detail-item" style="width: 100%;">
-                    <span><strong>Observações:</strong> Reunião de negócios - área mais reservada</span>
-                </div>
-            </div>
-            <div class="reservation-actions">
-                <button class="btn btn-secondary" onclick="viewReservationDetails(3)">Ver Detalhes</button>
-                <button class="btn btn-secondary" onclick="contactCustomer(3)">Contatar Cliente</button>
-                <button class="btn btn-secondary" style="background: rgba(255, 68, 68, 0.2); color: #ff4444; border-color: #ff4444;" onclick="cancelReservation(3)">Cancelar</button>
-            </div>
-        </div>
-
-        <!-- Reserva Cancelada -->
-        <div class="reservation-card" data-status="cancelled" style="opacity: 0.7;">
-            <div class="reservation-header">
-                <div>
-                    <h3 class="reservation-restaurant">Pedro Oliveira</h3>
-                    <p style="color: var(--text-secondary); margin-top: 0.5rem;">Mesa 1 - 4 pessoas</p>
-                </div>
-                <span class="reservation-status status-cancelled">Cancelada</span>
-            </div>
-            <div class="reservation-details">
-                <div class="reservation-detail-item">
-                    <span><strong>Data:</strong> 18 de Janeiro, 2024</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>Horário:</strong> 19:00</span>
-                </div>
-                <div class="reservation-detail-item">
-                    <span><strong>Cancelado em:</strong> 17/01/2024</span>
-                </div>
-            </div>
-            <div class="reservation-actions">
-                <button class="btn btn-secondary" onclick="viewReservationDetails(4)">Ver Detalhes</button>
-            </div>
-        </div>
+            <?php endforeach; ?>
+        <?php endif; ?>
     </div>
 </div>
 
@@ -183,7 +137,7 @@ function filterReservations(status) {
     cards.forEach(card => {
         if (status === 'all') {
             card.style.display = 'block';
-            card.style.opacity = card.dataset.status === 'cancelled' ? '0.7' : '1';
+            card.style.opacity = card.dataset.status === 'cancelada' ? '0.7' : '1';
         } else {
             if (card.dataset.status === status) {
                 card.style.display = 'block';
@@ -197,6 +151,7 @@ function filterReservations(status) {
 
 function confirmReservation(id) {
     if (confirm('Confirmar esta reserva?')) {
+        // Aqui você faria uma requisição AJAX para confirmar no backend
         alert('Reserva confirmada com sucesso!');
         location.reload();
     }
@@ -204,17 +159,54 @@ function confirmReservation(id) {
 
 function cancelReservation(id) {
     if (confirm('Tem certeza que deseja cancelar esta reserva?')) {
+        // Aqui você faria uma requisição AJAX para cancelar no backend
         alert('Reserva cancelada com sucesso!');
         location.reload();
     }
 }
 
-function viewReservationDetails(id) {
-    alert('Detalhes da reserva #' + id);
-}
-
 function contactCustomer(id) {
     alert('Abrindo opções de contato para o cliente da reserva #' + id);
 }
-</script>
+    function updateReservationStatus(id, action) {
+        const formData = new FormData();
+        formData.append('reserva_id', id);
+        formData.append('action', action);
 
+        fetch('/crud-hackaton/controller/reservaStatusController.php', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.success) {
+                showNotification(data.message, 'success');
+                setTimeout(() => {
+                    location.reload();
+                }, 1000);
+            } else {
+                showNotification('Erro: ' + data.message, 'error');
+            }
+        })
+        .catch(error => {
+            console.error('Erro:', error);
+            showNotification('Erro ao atualizar reserva', 'error');
+        });
+    }
+
+    function confirmReservation(id) {
+        if (confirm('Confirmar esta reserva?')) {
+            updateReservationStatus(id, 'confirm');
+        }
+    }
+
+    function cancelReservation(id) {
+        if (confirm('Tem certeza que deseja cancelar esta reserva?')) {
+            updateReservationStatus(id, 'cancel');
+        }
+    }
+
+    function contactCustomer(id) {
+        alert('Abrindo opções de contato para o cliente da reserva #' + id);
+    }
+</script>

@@ -1,5 +1,36 @@
 <?php include_once __DIR__ . '/../../components/header.php'; ?>
 
+<?php
+require_once __DIR__ . '/../../../config/database.php';
+require_once __DIR__ . '/../../../model/ReservaModel.php';
+require_once __DIR__ . '/../../../model/RestauranteModel.php';
+
+// Verifica autenticação do restaurante
+if (empty($_SESSION['restaurante_id'])) {
+    header('Location: ../../pages/login-restaurante.php');
+    exit();
+}
+
+$restauranteId = (int) $_SESSION['restaurante_id'];
+
+$db = new Database();
+$conn = $db->conectar();
+$reservaModel = new ReservaModel($conn);
+$restauranteModel = new RestauranteModel();
+
+$reservas = $reservaModel->getByRestaurante($restauranteId);
+$detalhes = $restauranteModel->getDetalhesCompletos($restauranteId) ?: [];
+
+// Calcular estatísticas via consultas SQL (mais preciso)
+$today = date('Y-m-d');
+$currentYear = (int) date('Y');
+$currentMonth = (int) date('m');
+$reservasHoje = $reservaModel->countByRestauranteOnDate($restauranteId, $today, ['confirmada','confirmado']);
+$reservasMes = $reservaModel->countByRestauranteInMonth($restauranteId, $currentYear, $currentMonth, ['confirmada','confirmado']);
+
+$ratingMedio = isset($detalhes['rating_medio']) ? (float)$detalhes['rating_medio'] : 0.0;
+?>
+
 <link rel="stylesheet" href="../../assets/css/style.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
@@ -12,52 +43,26 @@
 <div class="container">
     <div class="dashboard-grid">
         <!-- Estatísticas -->
-        <div class="dashboard-section">
+        <!-- <div class="dashboard-section">
             <h3 class="section-title-form">Estatísticas</h3>
             <div class="stats-grid">
                 <div class="stat-card">
-                    <div class="stat-value">24</div>
+                    <div class="stat-value"><?php echo htmlspecialchars($reservasHoje); ?></div>
                     <div class="stat-label">Reservas Hoje</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">156</div>
+                    <div class="stat-value"><?php echo htmlspecialchars($reservasMes); ?></div>
                     <div class="stat-label">Reservas Este Mês</div>
                 </div>
                 <div class="stat-card">
-                    <div class="stat-value">4.8</div>
+                    <div class="stat-value"><?php echo $ratingMedio > 0 ? htmlspecialchars(number_format($ratingMedio, 2)) : '—'; ?></div>
                     <div class="stat-label">Avaliação Média</div>
                 </div>
-                <div class="stat-card">
-                    <div class="stat-value">89%</div>
-                    <div class="stat-label">Ocupação</div>
-                </div>
             </div>
-        </div>
+        </div> -->
 
         <!-- Reservas Recentes -->
-        <div class="dashboard-section">
-            <h3 class="section-title-form">Reservas Recentes</h3>
-            <div class="reservations-list">
-                <div class="reservation-card">
-                    <div class="reservation-header">
-                        <div>
-                            <div class="reservation-restaurant">João Silva</div>
-                            <div style="color: var(--text-secondary); font-size: 0.9rem;">2 pessoas</div>
-                        </div>
-                        <span class="reservation-status status-confirmed">Confirmada</span>
-                    </div>
-                    <div class="reservation-details">
-                        <div class="reservation-detail-item">
-                            <span>Hoje às 19:30</span>
-                        </div>
-                    </div>
-                    <div class="reservation-actions">
-                        <button class="btn btn-secondary btn-small">Ver Detalhes</button>
-                        <button class="btn btn-primary btn-small">Confirmar</button>
-                    </div>
-                </div>
-            </div>
-        </div>
+        
 
         <!-- Ações Rápidas -->
         <div class="dashboard-section">
@@ -66,10 +71,6 @@
                 <a href="editar-perfil.php" class="action-btn">
                     <span class="action-icon">⚙</span>
                     <span>Editar Perfil</span>
-                </a>
-                <a href="gerenciar-mesa.php" class="action-btn">
-                    <span class="action-icon">🪑</span>
-                    <span>Gerenciar Mesas</span>
                 </a>
                 <a href="cardapio.php" class="action-btn">
                     <span class="action-icon">📋</span>

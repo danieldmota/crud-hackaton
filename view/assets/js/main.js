@@ -440,14 +440,20 @@ function applyFilters() {
     const url =
       "/crud-hackaton/controller/searchController.php?" +
       finalParams.toString();
-    console.log("Fetching", url);
+    console.log("applyFilters() -> Fetching", url, "params:", finalParams.toString());
     fetch(url, { headers: { "X-Requested-With": "XMLHttpRequest" } })
-      .then((resp) => {
-        console.log("Fetch response status", resp.status);
-        if (!resp.ok)
-          throw new Error("Erro ao buscar restaurantes: " + resp.status);
-        return resp.text();
-      })
+      .then((resp) =>
+        resp.text().then((text) => {
+          console.log("Fetch response status", resp.status, "body:", text);
+          if (!resp.ok) {
+            console.error("Server error body:", text);
+            throw new Error(
+              "Erro ao buscar restaurantes: " + resp.status + " — " + (text || "No response body")
+            );
+          }
+          return text;
+        })
+      )
       .then((html) => {
         const grid = document.getElementById("restaurantsGrid");
         if (grid) {
@@ -670,8 +676,11 @@ function initializeSearch() {
   const searchBtn = document.getElementById("searchBtn");
   const searchInput = document.getElementById("searchInput");
 
+  console.log("initializeSearch() chamado. searchBtn:", searchBtn, "searchInput:", searchInput);
+
   if (searchBtn) {
     searchBtn.addEventListener("click", function (e) {
+      console.log("searchBtn clicado");
       e.preventDefault();
       createRippleEffect(this);
       performSearch();
@@ -682,8 +691,9 @@ function initializeSearch() {
   const searchForm = document.getElementById("searchForm");
   if (searchForm) {
     searchForm.addEventListener("submit", function (e) {
+      console.log("searchForm submit");
       e.preventDefault();
-      performSearch();
+      applyFilters();
     });
   }
 
@@ -691,6 +701,7 @@ function initializeSearch() {
     // Busca em tempo real enquanto digita
     let searchTimeout;
     searchInput.addEventListener("input", function () {
+      console.log("searchInput input:", this.value);
       clearTimeout(searchTimeout);
       searchTimeout = setTimeout(() => {
         applyFilters();
@@ -698,6 +709,7 @@ function initializeSearch() {
     });
 
     searchInput.addEventListener("keypress", function (e) {
+      console.log("searchInput keypress:", e.key);
       if (e.key === "Enter") {
         e.preventDefault();
         performSearch();

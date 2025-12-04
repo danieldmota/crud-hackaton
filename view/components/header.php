@@ -33,7 +33,12 @@ $is_client_area = strpos($current_path, '/cliente/') !== false;
                 <ul class="nav-menu">
                     <?php if ($is_restaurant_area): ?>
                         <li><a href="dashboard.php">DASHBOARD</a></li>
-                        <li><a href="../login-cliente.php">ÁREA DO CLIENTE</a></li>
+                        <?php if (!empty($_SESSION['restaurante_nome'])): ?>
+                            <li><span class="nav-user">Olá, <?php echo htmlspecialchars($_SESSION['restaurante_nome']); ?></span></li>
+                            <li><a href="/crud-hackaton/controller/logout.php" class="btn btn-outline">Sair</a></li>
+                        <?php else: ?>
+                            <li><a href="../login-restaurante.php" class="btn btn-outline">Entrar</a></li>
+                        <?php endif; ?>
                     <?php elseif ($is_client_area): ?>
                         <li><a href="home.php">INÍCIO</a></li>
                         <li><a href="reservas.php">MINHAS RESERVAS</a></li>

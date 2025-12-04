@@ -1,5 +1,25 @@
 <?php include_once __DIR__ . '/../../components/header.php'; ?>
 
+<?php
+require_once __DIR__ . '/../../../config/database.php';
+require_once __DIR__ . '/../../../model/RestauranteModel.php';
+
+// Verifica autenticação do restaurante
+if (empty($_SESSION['restaurante_id'])) {
+    header('Location: ../../pages/login-restaurante.php');
+    exit();
+}
+
+$restauranteId = (int) $_SESSION['restaurante_id'];
+$restModel = new RestauranteModel();
+$detalhes = $restModel->getDetalhesCompletos($restauranteId) ?: [];
+
+// flash messages
+$flashSuccess = $_SESSION['flash_success'] ?? null;
+$flashError = $_SESSION['flash_error'] ?? null;
+unset($_SESSION['flash_success'], $_SESSION['flash_error']);
+?>
+
 <link rel="stylesheet" href="../../assets/css/style.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
@@ -14,7 +34,14 @@
         Voltar
     </button>
     <div class="registration-form-container">
-        <form id="editProfileForm" class="registration-form" enctype="multipart/form-data">
+        <?php if ($flashSuccess): ?>
+            <div class="alert success"><?php echo htmlspecialchars($flashSuccess); ?></div>
+        <?php endif; ?>
+        <?php if ($flashError): ?>
+            <div class="alert error"><?php echo htmlspecialchars($flashError); ?></div>
+        <?php endif; ?>
+
+        <form id="editProfileForm" class="registration-form" enctype="multipart/form-data" method="post" action="../../../controller/AtualizarRestauranteController.php">
             
             <!-- Dados do Restaurante -->
             <div class="form-section">
@@ -23,12 +50,12 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="restaurant_name">Nome do Restaurante *</label>
-                        <input type="text" id="restaurant_name" name="restaurant_name" required value="La Bella Italia" placeholder="Ex: La Bella Italia">
+                        <input type="text" id="restaurant_name" name="restaurant_name" required value="<?php echo htmlspecialchars($detalhes['nome'] ?? ''); ?>" placeholder="Ex: La Bella Italia">
                     </div>
                     
                     <div class="form-group">
                         <label for="cnpj">CNPJ *</label>
-                        <input type="text" id="cnpj" name="cnpj" required value="12.345.678/0001-90" placeholder="00.000.000/0000-00" maxlength="18" readonly style="opacity: 0.7;">
+                        <input type="text" id="cnpj" name="cnpj" required value="<?php echo htmlspecialchars($detalhes['cnpj'] ?? ''); ?>" placeholder="00.000.000/0000-00" maxlength="18" readonly>
                         <small style="color: var(--text-secondary); font-size: 0.9rem;">CNPJ não pode ser alterado</small>
                     </div>
                 </div>
@@ -37,36 +64,41 @@
                     <div class="form-group">
                         <label for="category">Categoria *</label>
                         <select id="category" name="category" required>
-                            <option value="italiana" selected>Italiana</option>
-                            <option value="japonesa">Japonesa</option>
-                            <option value="brasileira">Brasileira</option>
-                            <option value="francesa">Francesa</option>
-                            <option value="mexicana">Mexicana</option>
-                            <option value="asiatica">Asiática</option>
-                            <option value="pizzaria">Pizzaria</option>
-                            <option value="churrascaria">Churrascaria</option>
-                            <option value="fast-food">Fast Food</option>
-                            <option value="vegetariana">Vegetariana</option>
-                            <option value="vegana">Vegana</option>
-                            <option value="outro">Outro</option>
+                            <?php $cat = strtolower($detalhes['categoria'] ?? ''); ?>
+                            <option value="italiana" <?php echo $cat === 'italiana' ? 'selected' : ''; ?>>Italiana</option>
+                            <option value="japonesa" <?php echo $cat === 'japonesa' ? 'selected' : ''; ?>>Japonesa</option>
+                            <option value="brasileira" <?php echo $cat === 'brasileira' ? 'selected' : ''; ?>>Brasileira</option>
+                            <option value="francesa" <?php echo $cat === 'francesa' ? 'selected' : ''; ?>>Francesa</option>
+                            <option value="mexicana" <?php echo $cat === 'mexicana' ? 'selected' : ''; ?>>Mexicana</option>
+                            <option value="asiatica" <?php echo $cat === 'asiatica' ? 'selected' : ''; ?>>Asiática</option>
+                            <option value="pizzaria" <?php echo $cat === 'pizzaria' ? 'selected' : ''; ?>>Pizzaria</option>
+                            <option value="churrascaria" <?php echo $cat === 'churrascaria' ? 'selected' : ''; ?>>Churrascaria</option>
+                            <option value="fast-food" <?php echo $cat === 'fast-food' ? 'selected' : ''; ?>>Fast Food</option>
+                            <option value="vegetariana" <?php echo $cat === 'vegetariana' ? 'selected' : ''; ?>>Vegetariana</option>
+                            <option value="vegana" <?php echo $cat === 'vegana' ? 'selected' : ''; ?>>Vegana</option>
+                            <option value="outro" <?php echo (!in_array($cat, ['italiana','japonesa','brasileira','francesa','mexicana','asiatica','pizzaria','churrascaria','fast-food','vegetariana','vegana'])) ? 'selected' : ''; ?>>Outro</option>
                         </select>
                     </div>
 
                     <div class="form-group">
                         <label for="capacity">Capacidade (número de lugares) *</label>
-                        <input type="number" id="capacity" name="capacity" required min="1" value="50" placeholder="Ex: 50">
+                        <input type="number" id="capacity" name="capacity" required min="1" value="<?php echo htmlspecialchars($detalhes['capacidade'] ?? ''); ?>" placeholder="Ex: 50">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="description">Descrição do Restaurante *</label>
-                    <textarea id="description" name="description" required rows="4" placeholder="Descreva seu restaurante, especialidades, ambiente...">O La Bella Italia oferece uma experiência gastronômica única com pratos autênticos da culinária italiana. Nossa equipe de chefs traz receitas tradicionais passadas de geração em geração, preparadas com ingredientes frescos e selecionados.</textarea>
+                    <textarea id="description" name="description" required rows="4" placeholder="Descreva seu restaurante, especialidades, ambiente..."><?php echo htmlspecialchars($detalhes['descricao'] ?? ''); ?></textarea>
                 </div>
 
                 <div class="form-group">
                     <label for="restaurant_image">Foto do Restaurante</label>
                     <div style="margin-bottom: 1rem;">
-                        <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Foto atual" style="width: 200px; height: 150px; object-fit: cover; border-radius: 12px; border: 2px solid var(--dark-border);">
+                        <?php if (!empty($detalhes['imagem'])): ?>
+                            <img src="<?php echo htmlspecialchars($detalhes['imagem']); ?>" alt="Foto atual" style="width: 200px; height: 150px; object-fit: cover; border-radius: 12px; border: 2px solid var(--dark-border);">
+                        <?php else: ?>
+                            <img src="https://images.unsplash.com/photo-1414235077428-338989a2e8c0?ixlib=rb-4.0.3&auto=format&fit=crop&w=500&q=80" alt="Foto atual" style="width: 200px; height: 150px; object-fit: cover; border-radius: 12px; border: 2px solid var(--dark-border);">
+                        <?php endif; ?>
                     </div>
                     <input type="file" id="restaurant_image" name="restaurant_image" accept="image/*" class="file-input">
                     <small style="color: var(--text-secondary); font-size: 0.9rem;">Formatos aceitos: JPG, PNG (máx. 5MB)</small>
@@ -80,42 +112,66 @@
                 <div class="form-row">
                     <div class="form-group" style="flex: 2;">
                         <label for="address">Rua/Avenida *</label>
-                        <input type="text" id="address" name="address" required value="Rua das Flores, 123" placeholder="Ex: Rua das Flores, 123">
+                        <input type="text" id="address" name="address" required value="<?php echo htmlspecialchars($detalhes['rua'] ?? ''); ?>" placeholder="Ex: Rua das Flores, 123">
                     </div>
                     
                     <div class="form-group">
                         <label for="neighborhood">Bairro *</label>
-                        <input type="text" id="neighborhood" name="neighborhood" required value="Centro" placeholder="Ex: Centro">
+                        <input type="text" id="neighborhood" name="neighborhood" required value="<?php echo htmlspecialchars($detalhes['bairro'] ?? ''); ?>" placeholder="Ex: Centro">
                     </div>
                 </div>
 
                 <div class="form-row">
                     <div class="form-group">
                         <label for="city">Cidade *</label>
-                        <input type="text" id="city" name="city" required value="São Paulo" placeholder="Ex: São Paulo">
+                        <input type="text" id="city" name="city" required value="<?php echo htmlspecialchars($detalhes['cidade'] ?? ''); ?>" placeholder="Ex: São Paulo">
                     </div>
                     
                     <div class="form-group">
                         <label for="state">Estado *</label>
                         <select id="state" name="state" required>
                             <option value="">Selecione o estado</option>
-                            <option value="SP" selected>São Paulo</option>
-                            <option value="RJ">Rio de Janeiro</option>
-                            <option value="MG">Minas Gerais</option>
-                            <option value="RS">Rio Grande do Sul</option>
-                            <option value="PR">Paraná</option>
-                            <option value="SC">Santa Catarina</option>
-                            <option value="BA">Bahia</option>
-                            <option value="GO">Goiás</option>
-                            <option value="PE">Pernambuco</option>
-                            <option value="CE">Ceará</option>
-                            <option value="DF">Distrito Federal</option>
+                            <?php 
+                            $estados = [
+                                'AC' => 'Acre',
+                                'AL' => 'Alagoas',
+                                'AP' => 'Amapá',
+                                'AM' => 'Amazonas',
+                                'BA' => 'Bahia',
+                                'CE' => 'Ceará',
+                                'DF' => 'Distrito Federal',
+                                'ES' => 'Espírito Santo',
+                                'GO' => 'Goiás',
+                                'MA' => 'Maranhão',
+                                'MT' => 'Mato Grosso',
+                                'MS' => 'Mato Grosso do Sul',
+                                'MG' => 'Minas Gerais',
+                                'PA' => 'Pará',
+                                'PB' => 'Paraíba',
+                                'PR' => 'Paraná',
+                                'PE' => 'Pernambuco',
+                                'PI' => 'Piauí',
+                                'RJ' => 'Rio de Janeiro',
+                                'RN' => 'Rio Grande do Norte',
+                                'RS' => 'Rio Grande do Sul',
+                                'RO' => 'Rondônia',
+                                'RR' => 'Roraima',
+                                'SC' => 'Santa Catarina',
+                                'SP' => 'São Paulo',
+                                'SE' => 'Sergipe',
+                                'TO' => 'Tocantins'
+                            ];
+                            $estadoAtual = $detalhes['estado'] ?? '';
+                            foreach ($estados as $sigla => $nome):
+                            ?>
+                                <option value="<?php echo $sigla; ?>" <?php echo ($estadoAtual === $sigla) ? 'selected' : ''; ?>><?php echo $nome; ?></option>
+                            <?php endforeach; ?>
                         </select>
                     </div>
                     
                     <div class="form-group">
                         <label for="zipcode">CEP *</label>
-                        <input type="text" id="zipcode" name="zipcode" required value="01234-567" placeholder="00000-000" maxlength="9">
+                        <input type="text" id="zipcode" name="zipcode" required value="<?php echo htmlspecialchars($detalhes['cep'] ?? ''); ?>" placeholder="00000-000" maxlength="9">
                     </div>
                 </div>
             </div>
@@ -127,18 +183,18 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label for="phone">Telefone *</label>
-                        <input type="tel" id="phone" name="phone" required value="(11) 3456-7890" placeholder="(11) 99999-9999" maxlength="15">
+                        <input type="tel" id="phone" name="phone" required value="<?php echo htmlspecialchars($detalhes['telefone'] ?? ''); ?>" placeholder="(11) 99999-9999" maxlength="15">
                     </div>
                     
                     <div class="form-group">
                         <label for="email">E-mail *</label>
-                        <input type="email" id="email" name="email" required value="contato@labellaitalia.com" placeholder="contato@restaurante.com">
+                        <input type="email" id="email" name="email" required value="<?php echo htmlspecialchars($detalhes['email'] ?? ''); ?>" placeholder="contato@restaurante.com">
                     </div>
                 </div>
 
                 <div class="form-group">
                     <label for="website">Website (opcional)</label>
-                    <input type="url" id="website" name="website" value="https://www.labellaitalia.com.br" placeholder="https://www.restaurante.com">
+                    <input type="url" id="website" name="website" value="<?php echo htmlspecialchars($detalhes['website'] ?? ''); ?>" placeholder="https://www.restaurante.com">
                 </div>
             </div>
 
@@ -296,20 +352,6 @@ document.getElementById('zipcode').addEventListener('input', function(e) {
 });
 
 // Submissão do formulário
-document.getElementById('editProfileForm').addEventListener('submit', function(e) {
-    e.preventDefault();
-    
-    const submitBtn = this.querySelector('button[type="submit"]');
-    const originalText = submitBtn.textContent;
-    submitBtn.textContent = 'SALVANDO...';
-    submitBtn.disabled = true;
-    
-    setTimeout(() => {
-        alert('Perfil atualizado com sucesso!');
-        submitBtn.textContent = originalText;
-        submitBtn.disabled = false;
-        window.location.href = 'dashboard.php';
-    }, 1500);
-});
+// O formulário faz submit normalmente para o controller (sem interceptação JS)
 </script>
 

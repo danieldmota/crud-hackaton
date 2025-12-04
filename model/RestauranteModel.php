@@ -283,24 +283,28 @@ class RestauranteModel
         ";
 
         $where = [];
-        $params = [];
+        $bindValues = [];  // Array para bind posicional
 
         if (!empty($texto)) {
-            $where[] = "(r.nome LIKE :texto OR r.categoria LIKE :texto OR r.descricao LIKE :texto OR e.cidade LIKE :texto)";
-            $params[':texto'] = "%{$texto}%";
+            // Usar ? placeholders para cada uso (permite múltiplos usos do mesmo valor)
+            $where[] = "(r.nome LIKE ? OR r.categoria LIKE ? OR r.descricao LIKE ? OR e.cidade LIKE ?)";
+            $textoWildcard = "%{$texto}%";
+            $bindValues[] = $textoWildcard;
+            $bindValues[] = $textoWildcard;
+            $bindValues[] = $textoWildcard;
+            $bindValues[] = $textoWildcard;
         }
 
         if (!empty($cidade)) {
-            $where[] = "e.cidade LIKE :cidade";
-            $params[':cidade'] = "%{$cidade}%";
+            $where[] = "e.cidade LIKE ?";
+            $bindValues[] = "%{$cidade}%";
         }
 
         // Para cada característica, adicionamos uma cláusula EXISTS garantindo que o restaurante tenha essa característica
         if (!empty($caracteristicas)) {
-            foreach ($caracteristicas as $idx => $carId) {
-                $paramName = ':car_' . $idx;
-                $where[] = "EXISTS (SELECT 1 FROM restaurante_caracteristicas rc2 WHERE rc2.restaurante_id = r.id AND rc2.caracteristica_id = {$paramName})";
-                $params[$paramName] = (int)$carId;
+            foreach ($caracteristicas as $carId) {
+                $where[] = "EXISTS (SELECT 1 FROM restaurante_caracteristicas rc2 WHERE rc2.restaurante_id = r.id AND rc2.caracteristica_id = ?)";
+                $bindValues[] = (int)$carId;
             }
         }
 
@@ -311,17 +315,13 @@ class RestauranteModel
         $sql .= " GROUP BY r.id, r.nome, r.categoria, r.imagem, e.rua, e.bairro, e.cidade, e.estado, e.cep, c.telefone, c.email
                   ORDER BY r.nome ASC";
 
-        $stmt = $this->conn->prepare($sql);
-
-        foreach ($params as $k => $v) {
-            if (is_int($v)) {
-                $stmt->bindValue($k, $v, PDO::PARAM_INT);
-            } else {
-                $stmt->bindValue($k, $v, PDO::PARAM_STR);
-            }
+        try {
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute($bindValues);
+        } catch (Throwable $e) {
+            // Throw a more descriptive error for debugging (development only)
+            throw new Exception("Erro ao executar buscar(): " . $e->getMessage() . "\nSQL: " . $sql . "\nParams: " . json_encode($bindValues));
         }
-
-        $stmt->execute();
         $restaurantes = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
         return array_map(function (array $restaurante) {

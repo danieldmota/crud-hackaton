@@ -83,15 +83,6 @@ id int primary key unique auto_increment,
 categoria varchar(230)
 );
 
-
-
-create table perfil ( 
-restaurantes ;
-clientes 
-
-
-);
-
 create table cardapio_itens(
 id int primary key auto_increment,
 restaurante_id int not null,

@@ -91,4 +91,122 @@ class ReservaModel
         $stmt = $this->conn->prepare("DELETE FROM {$this->table} WHERE id = :id");
         return $stmt->execute([":id" => $id]);
     }
+
+    // Buscar reservas de um restaurante específico com informações do cliente
+    public function getByRestaurante($restauranteId)
+    {
+        $sql = "
+            SELECT rsv.*, cli.nome AS cliente_nome, cli.email AS cliente_email, cli.telefone AS cliente_telefone
+            FROM {$this->table} rsv
+            LEFT JOIN clientes cli ON cli.id = rsv.cliente_id
+            WHERE rsv.restaurante_id = :restaurante_id
+            ORDER BY rsv.data_reserva DESC, rsv.horario DESC
+        ";
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute([":restaurante_id" => $restauranteId]);
+
+        return $stmt->fetchAll(PDO::FETCH_ASSOC);
+    }
+
+    /**
+     * Conta reservas de um restaurante, opcionalmente filtrando por status
+     * @param int $restauranteId
+     * @param string|null $status
+     * @return int
+     */
+    public function countByRestaurante(int $restauranteId, $status = null): int
+    {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table} WHERE restaurante_id = :restaurante_id";
+        $params = [":restaurante_id" => $restauranteId];
+
+        if ($status !== null) {
+            if (is_array($status)) {
+                // construir placeholders para IN
+                $placeholders = [];
+                foreach ($status as $i => $s) {
+                    $ph = ':status_' . $i;
+                    $placeholders[] = $ph;
+                    $params[$ph] = strtolower($s);
+                }
+                    $sql .= " AND LOWER(TRIM(status)) IN (" . implode(', ', $placeholders) . ")";
+            } else {
+                    $sql .= " AND LOWER(TRIM(status)) = :status";
+                $params[':status'] = strtolower($status);
+            }
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int) ($row['total'] ?? 0);
+    }
+
+    /**
+     * Conta reservas de um restaurante em uma data específica (YYYY-MM-DD), opcionalmente por status
+     */
+    public function countByRestauranteOnDate(int $restauranteId, string $dateYmd, $status = null): int
+    {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table} WHERE restaurante_id = :restaurante_id AND DATE(data_reserva) = :data_reserva";
+        $params = [
+            ':restaurante_id' => $restauranteId,
+            ':data_reserva' => $dateYmd,
+        ];
+
+        if ($status !== null) {
+            if (is_array($status)) {
+                $placeholders = [];
+                foreach ($status as $i => $s) {
+                    $ph = ':status_' . $i;
+                    $placeholders[] = $ph;
+                    $params[$ph] = strtolower($s);
+                }
+                    $sql .= " AND LOWER(TRIM(status)) IN (" . implode(', ', $placeholders) . ")";
+            } else {
+                    $sql .= " AND LOWER(TRIM(status)) = :status";
+                $params[':status'] = strtolower($status);
+            }
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int) ($row['total'] ?? 0);
+    }
+
+    /**
+     * Conta reservas de um restaurante em um mês específico (ano e mês), opcionalmente por status
+     */
+    public function countByRestauranteInMonth(int $restauranteId, int $year, int $month, $status = null): int
+    {
+        $sql = "SELECT COUNT(*) as total FROM {$this->table} WHERE restaurante_id = :restaurante_id AND YEAR(data_reserva) = :year AND MONTH(data_reserva) = :month";
+        $params = [
+            ':restaurante_id' => $restauranteId,
+            ':year' => $year,
+            ':month' => $month,
+        ];
+
+        if ($status !== null) {
+            if (is_array($status)) {
+                $placeholders = [];
+                foreach ($status as $i => $s) {
+                    $ph = ':status_' . $i;
+                    $placeholders[] = $ph;
+                    $params[$ph] = strtolower($s);
+                }
+                $sql .= " AND LOWER(TRIM(status)) IN (" . implode(', ', $placeholders) . ")";
+            } else {
+                $sql .= " AND LOWER(TRIM(status)) = :status";
+                $params[':status'] = strtolower($status);
+            }
+        }
+
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute($params);
+        $row = $stmt->fetch(PDO::FETCH_ASSOC);
+
+        return (int) ($row['total'] ?? 0);
+    }
 }

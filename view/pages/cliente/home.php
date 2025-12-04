@@ -2,6 +2,14 @@
 <?php require_once __DIR__ . '/../../../model/RestauranteModel.php'; ?>
 
 <?php
+// Página exclusiva para clientes logados
+// Se não estiver logado, redireciona para login
+if (empty($_SESSION['cliente_id'])) {
+    $_SESSION['redirect'] = $_SERVER['REQUEST_URI'];
+    header('Location: ../../pages/login-cliente.php?redirect=' . urlencode($_SERVER['REQUEST_URI']));
+    exit();
+}
+
 if (!empty($_SESSION['sucesso'])) {
     $msg = $_SESSION['sucesso'];
     echo "<script>
@@ -135,7 +143,7 @@ $placeholderImage = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c
                             <div class="restaurant-actions">
                                 <button class="btn btn-primary btn-small"
                                     onclick="event.stopPropagation(); makeReservation(<?php echo $restaurante['id']; ?>)">
-                                    Reservar Mesa
+                                    💼 Reservar Mesa
                                 </button>
                             </div>
                         </div>
