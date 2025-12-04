@@ -1,10 +1,25 @@
-<?php include_once __DIR__ . '/../components/header.php'; ?>
-<?php include_once __DIR__ . '/../../model/cadastroRestauranteModel.php';
+<?php
+include_once __DIR__ . '/../components/header.php';
+include_once __DIR__ . '/../../model/CadastroRestauranteModel.php';
+
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
+
+// Mostrar mensagens de sessão (erro / sucesso)
+if (!empty($_SESSION['erro'])) {
+    echo '<div class="alert alert-error" style="margin:1rem 2rem; padding:1rem; background:#ffe6e6; color:#800;">' . htmlspecialchars($_SESSION['erro']) . '</div>';
+    unset($_SESSION['erro']);
+}
+if (!empty($_SESSION['sucesso'])) {
+    echo '<div class="alert alert-success" style="margin:1rem 2rem; padding:1rem; background:#e6ffed; color:#064;">' . htmlspecialchars($_SESSION['sucesso']) . '</div>';
+    unset($_SESSION['sucesso']);
+}
 
 $model = new CadastroRestauranteModel();
 
 $estados = $model->listarEstados();
-$categorias = $model->listarCaracteristicas();
+$categorias = $model->listarCategorias();
 $caracteristicas = $model->caracteristicasDoRestaurante();
 $formasPagamento = $model->listarFormasPagamento();
 
@@ -21,7 +36,7 @@ $formasPagamento = $model->listarFormasPagamento();
 
 <div class="container">
     <div class="registration-form-container">
-        <form id="restaurantRegistrationForm" class="registration-form" enctype="multipart/form-data">
+        <form id="restaurantRegistrationForm" class="registration-form" enctype="multipart/form-data" method="POST" action="../../controller/CadastroRestauranteController.php">
 
             <!-- Dados do Restaurante -->
             <div class="form-section">
@@ -45,11 +60,18 @@ $formasPagamento = $model->listarFormasPagamento();
                     <div class="form-group">
                         <label for="category">Categoria *</label>
                         <select id="category" name="category" required>
-                            <option value="">Selecione a categoria</option>
-                            <?php foreach ($categorias as $categoria): ?>
-                                <option value="<?= $categoria['id'] ?>"><?= $categoria['nome'] ?></option>
-                            <?php endforeach; ?>
-                        </select>
+                                <option value="">Selecione a categoria</option>
+                                <?php foreach ($categorias as $categoria): ?>
+                                    <?php /* se o método retornar ['categoria'] (string) ou ['id','nome'] suportamos ambos */ ?>
+                                    <?php if (isset($categoria['id']) && isset($categoria['nome'])): ?>
+                                        <option value="<?= htmlspecialchars($categoria['nome']) ?>"><?= htmlspecialchars($categoria['nome']) ?></option>
+                                    <?php elseif (isset($categoria['categoria'])): ?>
+                                        <option value="<?= htmlspecialchars($categoria['categoria']) ?>"><?= htmlspecialchars($categoria['categoria']) ?></option>
+                                    <?php else: ?>
+                                        <option value="<?= htmlspecialchars($categoria[0] ?? '') ?>"><?= htmlspecialchars($categoria[0] ?? '') ?></option>
+                                    <?php endif; ?>
+                                <?php endforeach; ?>
+                            </select>
                     </div>
 
                     <div class="form-group">
@@ -242,15 +264,19 @@ $formasPagamento = $model->listarFormasPagamento();
         }
     });
 
-    document.getElementById('owner_cpf').addEventListener('input', function (e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length <= 11) {
-            value = value.replace(/^(\d{3})(\d)/, '$1.$2');
-            value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
-            value = value.replace(/\.(\d{3})(\d)/, '.$1-$2');
-            e.target.value = value;
-        }
-    });
+    // owner_cpf não presente no formulário atual — só anexar listener se existir
+    const ownerCpfEl = document.getElementById('owner_cpf');
+    if (ownerCpfEl) {
+        ownerCpfEl.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{3})(\d)/, '$1.$2');
+                value = value.replace(/^(\d{3})\.(\d{3})(\d)/, '$1.$2.$3');
+                value = value.replace(/\.(\d{3})(\d)/, '.$1-$2');
+                e.target.value = value;
+            }
+        });
+    }
 
     document.getElementById('zipcode').addEventListener('input', function (e) {
         let value = e.target.value.replace(/\D/g, '');
@@ -269,14 +295,18 @@ $formasPagamento = $model->listarFormasPagamento();
         }
     });
 
-    document.getElementById('owner_phone').addEventListener('input', function (e) {
-        let value = e.target.value.replace(/\D/g, '');
-        if (value.length <= 11) {
-            value = value.replace(/^(\d{2})(\d)/, '($1) $2');
-            value = value.replace(/(\d{5})(\d)/, '$1-$2');
-            e.target.value = value;
-        }
-    });
+    // owner_phone não presente no formulário atual — só anexar listener se existir
+    const ownerPhoneEl = document.getElementById('owner_phone');
+    if (ownerPhoneEl) {
+        ownerPhoneEl.addEventListener('input', function (e) {
+            let value = e.target.value.replace(/\D/g, '');
+            if (value.length <= 11) {
+                value = value.replace(/^(\d{2})(\d)/, '($1) $2');
+                value = value.replace(/(\d{5})(\d)/, '$1-$2');
+                e.target.value = value;
+            }
+        });
+    }
 
     // Validação de senha
     document.getElementById('confirm_password').addEventListener('input', function (e) {
@@ -288,33 +318,17 @@ $formasPagamento = $model->listarFormasPagamento();
         }
     });
 
-    // Submissão do formulário
+    // Submissão do formulário: fazer validação básica no cliente e permitir POST normal
     document.getElementById('restaurantRegistrationForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-
-        // Validar senhas
-        const password = formData.get('password');
-        const confirmPassword = formData.get('confirm_password');
-
+        // Validação de senhas no cliente — se falhar, impedir envio
+        const password = document.getElementById('password').value;
+        const confirmPassword = document.getElementById('confirm_password').value;
         if (password !== confirmPassword) {
+            e.preventDefault();
             alert('As senhas não coincidem!');
             return;
         }
 
-        // Aqui você faria a requisição AJAX para salvar os dados
-        console.log('Dados do formulário:', Object.fromEntries(formData));
-
-        // Simular envio
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'CADASTRANDO...';
-        submitBtn.disabled = true;
-
-        setTimeout(() => {
-            alert('Cadastro realizado com sucesso! Aguarde a aprovação.');
-            window.location.href = 'login.php';
-        }, 2000);
+        // Permitir envio normal ao controller; o controller retornará mensagens via sessão/redirect
     });
 </script>

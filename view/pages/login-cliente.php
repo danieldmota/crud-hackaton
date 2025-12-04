@@ -1,9 +1,16 @@
 <?php include_once __DIR__ . '/../components/header.php'; ?>
 
 <?php
+if (session_status() !== PHP_SESSION_ACTIVE) {
+    session_start();
+}
 if (!empty($_SESSION['erro'])) {
-    echo '<script>alert("' . $_SESSION['erro'] . '");</script>';
+    echo '<div class="alert alert-error" style="margin:1rem 2rem; padding:1rem; background:#ffe6e6; color:#800;">' . htmlspecialchars($_SESSION['erro']) . '</div>';
     unset($_SESSION['erro']);
+}
+if (!empty($_SESSION['sucesso'])) {
+    echo '<div class="alert alert-success" style="margin:1rem 2rem; padding:1rem; background:#e6ffed; color:#064;">' . htmlspecialchars($_SESSION['sucesso']) . '</div>';
+    unset($_SESSION['sucesso']);
 }
 ?>
 
@@ -24,7 +31,7 @@ if (!empty($_SESSION['erro'])) {
                 credenciais
             </p>
 
-            <form action="/crud-hackaton/controller/loginController.php" method="POST" id="loginForm"
+            <form action="../../controller/LoginController.php" method="POST" id="loginForm"
                 class="login-form">
                 <input type="hidden" name="redirect" value="<?php echo htmlspecialchars($_GET['redirect'] ?? ''); ?>">
                 <div class="form-group">

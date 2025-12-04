@@ -16,16 +16,16 @@
             <p style="text-align: center; color: var(--text-secondary); margin-bottom: 2rem;">Entre com suas credenciais
             </p>
 
-            <form action="loginController.php" method="POST" id="loginForm" class="login-form">
+            <form action="../../controller/LoginController.php" method="POST" id="loginForm" class="login-form">
                 <div class="form-group">
                     <label for="login_email">E-mail ou CNPJ</label>
-                    <input type="text" id="login_email" name="email" required placeholder="CNPJ">
+                    <input type="text" id="login_email" name="login" required placeholder="CNPJ">
                     <input type="hidden" name="tipo" value="restaurante">
                 </div>
 
                 <div class="form-group">
                     <label for="login_password">Senha</label>
-                    <input type="password" id="login_password" name="password" required placeholder="Digite sua senha">
+                    <input type="password" id="login_password" name="senha" required placeholder="Digite sua senha">
                     <a href="#"
                         style="color: var(--primary-neon); font-size: 0.9rem; float: right; margin-top: 0.5rem;">Esqueceu
                         a senha?</a>
@@ -47,26 +47,3 @@
 <?php include_once __DIR__ . '/../components/footer.php'; ?>
 
 <script src="../assets/js/main.js"></script>
-<script>
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const email = formData.get('email');
-        const password = formData.get('password');
-
-        // Aqui você faria a requisição AJAX para autenticar
-        console.log('Login:', { email, password });
-
-        // Simular login
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'ENTRANDO...';
-        submitBtn.disabled = true;
-
-        setTimeout(() => {
-            alert('Login realizado com sucesso!');
-            window.location.href = 'dashboard.php';
-        }, 1500);
-    });
-</script>

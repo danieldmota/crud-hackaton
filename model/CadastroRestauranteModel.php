@@ -190,6 +190,39 @@ class CadastroRestauranteModel
         return $stmt->fetchAll(PDO::FETCH_ASSOC);
     }
 
+    // Pega todas as categorias (se existir tabela 'categoria') ou lista distintas existentes em restaurantes
+    public function listarCategorias()
+    {
+        // Tenta obter da tabela 'categoria' se existir
+        try {
+            $sql = "SELECT id, categoria FROM categoria ORDER BY categoria ASC";
+            $stmt = $this->conn->prepare($sql);
+            $stmt->execute();
+            $rows = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if (!empty($rows)) {
+                // Mapear para formato consistente ['id' => x, 'nome' => categoria]
+                $out = [];
+                foreach ($rows as $r) {
+                    $out[] = ['id' => $r['id'], 'nome' => $r['categoria']];
+                }
+                return $out;
+            }
+        } catch (Exception $e) {
+            // ignorar e tentar fallback
+        }
+
+        // Fallback: pegar categorias distintas já cadastradas nos restaurantes
+        $sql = "SELECT DISTINCT categoria FROM restaurantes WHERE categoria IS NOT NULL AND categoria != '' ORDER BY categoria ASC";
+        $stmt = $this->conn->prepare($sql);
+        $stmt->execute();
+        $rows = $stmt->fetchAll(PDO::FETCH_COLUMN);
+        $out = [];
+        foreach ($rows as $r) {
+            $out[] = ['categoria' => $r];
+        }
+        return $out;
+    }
+
     // Pega todos os estados
     public function listarEstados()
     {

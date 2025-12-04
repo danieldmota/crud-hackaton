@@ -132,12 +132,14 @@ try {
     }
 
     $_SESSION['sucesso'] = "Restaurante cadastrado com sucesso!";
-    header("Location: ../view/pages/restaurante-sucesso.php");
+    // Redirecionar para a página de login do restaurante após cadastro
+    header("Location: ../view/pages/login-restaurante.php");
     exit();
 
 } catch (Exception $e) {
     $_SESSION['erro'] = $e->getMessage();
-    header("Location: ../view/pages/restaurante-cadastro.php");
+    // Redirecionar de volta para o formulário de cadastro existente
+    header("Location: ../view/pages/cadastro-restaurante.php");
     exit();
 }
 ?>

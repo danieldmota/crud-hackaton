@@ -18,6 +18,7 @@ CREATE TABLE restaurantes (
     capacidade INT NOT NULL,
     descricao TEXT NOT NULL,
     imagem VARCHAR(255) DEFAULT NULL,
+    senha VARCHAR(255) DEFAULT NULL,
     criado_em TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
