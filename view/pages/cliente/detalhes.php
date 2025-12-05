@@ -5,7 +5,7 @@ include_once __DIR__ . '/../../components/header.php';
 require_once __DIR__ . '/../../../model/RestauranteModel.php';
 
 $restauranteModel = new RestauranteModel();
-$restaurante = $restauranteModel->getDetalhesCompletos((int)$restaurantId);
+$restaurante = $restauranteModel->getDetalhesCompletos((int) $restaurantId);
 
 if (!$restaurante) {
     die("Erro: Restaurante não encontrado.");
@@ -18,7 +18,10 @@ if (!isset($restaurantId)) {
 }
 ?>
 
-<link rel="stylesheet" href="../../assets/css/style.css">
+
+<link rel="stylesheet" href="../../assets/css/shared.css">
+<link rel="stylesheet" href="../../assets/css/pages/detalhes.css">
+
 
 <div class="container">
     <button class="btn-back" onclick="goBack()">
@@ -30,13 +33,15 @@ if (!isset($restaurantId)) {
                 <h1><?php echo htmlspecialchars($restaurante['nome']); ?></h1>
                 <p class="restaurant-category"><?php echo htmlspecialchars($restaurante['categoria']); ?></p>
                 <div class="restaurant-rating" style="justify-content: center; margin-top: 1rem;">
-                    <span class="stars"><?php 
-                        $rating = (int)$restaurante['rating_medio'];
-                        for ($i = 0; $i < 5; $i++) {
-                            echo $i < $rating ? '★' : '☆';
-                        }
+                    <span class="stars"><?php
+                    $rating = (int) $restaurante['rating_medio'];
+                    for ($i = 0; $i < 5; $i++) {
+                        echo $i < $rating ? '★' : '☆';
+                    }
                     ?></span>
-                    <span class="rating-text" style="color: white;"><?php echo number_format($restaurante['rating_medio'], 1, ',', '.'); ?> (<?php echo count($restaurante['avaliacoes']); ?> avaliações)</span>
+                    <span class="rating-text"
+                        style="color: white;"><?php echo number_format($restaurante['rating_medio'], 1, ',', '.'); ?>
+                        (<?php echo count($restaurante['avaliacoes']); ?> avaliações)</span>
                 </div>
             </div>
         </div>
@@ -65,7 +70,8 @@ if (!isset($restaurantId)) {
                                     <div class="menu-item">
                                         <h4 class="menu-item-name"><?php echo htmlspecialchars($item['nome']); ?></h4>
                                         <p class="menu-item-description"><?php echo htmlspecialchars($item['descricao']); ?></p>
-                                        <p class="menu-item-price">R$ <?php echo number_format($item['preco'], 2, ',', '.'); ?></p>
+                                        <p class="menu-item-price">R$ <?php echo number_format($item['preco'], 2, ',', '.'); ?>
+                                        </p>
                                     </div>
                                 <?php endforeach; ?>
                             <?php endforeach; ?>
@@ -79,15 +85,17 @@ if (!isset($restaurantId)) {
                                 <div class="review-card">
                                     <div class="review-header">
                                         <div>
-                                            <div class="reviewer-name"><?php echo htmlspecialchars($avaliacao['nome_cliente']); ?></div>
-                                            <div class="review-date"><?php echo date('d \d\e F, Y', strtotime($avaliacao['data_criacao'])); ?></div>
+                                            <div class="reviewer-name">
+                                                <?php echo htmlspecialchars($avaliacao['nome_cliente']); ?></div>
+                                            <div class="review-date">
+                                                <?php echo date('d \d\e F, Y', strtotime($avaliacao['data_criacao'])); ?></div>
                                         </div>
                                         <div class="review-rating">
                                             <span class="stars">
-                                                <?php 
-                                                    for ($i = 0; $i < 5; $i++) {
-                                                        echo $i < $avaliacao['rating'] ? '★' : '☆';
-                                                    }
+                                                <?php
+                                                for ($i = 0; $i < 5; $i++) {
+                                                    echo $i < $avaliacao['rating'] ? '★' : '☆';
+                                                }
                                                 ?>
                                             </span>
                                         </div>
@@ -111,7 +119,9 @@ if (!isset($restaurantId)) {
                                     <strong>Endereço:</strong><br>
                                     <?php echo htmlspecialchars($restaurante['rua'] ?? ''); ?><br>
                                     <?php echo htmlspecialchars($restaurante['bairro'] ?? ''); ?><br>
-                                    <?php echo htmlspecialchars($restaurante['cidade'] ?? ''); ?>, <?php echo htmlspecialchars($restaurante['estado'] ?? ''); ?> - CEP: <?php echo htmlspecialchars($restaurante['cep'] ?? ''); ?>
+                                    <?php echo htmlspecialchars($restaurante['cidade'] ?? ''); ?>,
+                                    <?php echo htmlspecialchars($restaurante['estado'] ?? ''); ?> - CEP:
+                                    <?php echo htmlspecialchars($restaurante['cep'] ?? ''); ?>
                                 </div>
                             </div>
                             <div class="info-item">
@@ -119,7 +129,9 @@ if (!isset($restaurantId)) {
                                 <div>
                                     <strong>Horário de Funcionamento:</strong><br>
                                     <?php foreach ($restaurante['horarios'] as $horario): ?>
-                                        <?php echo htmlspecialchars($horario['dia_semana']); ?>: <?php echo date('H:i', strtotime($horario['hora_abertura'])); ?> - <?php echo date('H:i', strtotime($horario['hora_fechamento'])); ?><br>
+                                        <?php echo htmlspecialchars($horario['dia_semana']); ?>:
+                                        <?php echo date('H:i', strtotime($horario['hora_abertura'])); ?> -
+                                        <?php echo date('H:i', strtotime($horario['hora_fechamento'])); ?><br>
                                     <?php endforeach; ?>
                                 </div>
                             </div>
@@ -141,9 +153,9 @@ if (!isset($restaurantId)) {
                                 <i>💳</i>
                                 <div>
                                     <strong>Formas de Pagamento:</strong><br>
-                                    <?php 
-                                        $pagamentos = array_column($restaurante['pagamentos'], 'nome');
-                                        echo !empty($pagamentos) ? htmlspecialchars(implode(', ', $pagamentos)) : 'Não informado';
+                                    <?php
+                                    $pagamentos = array_column($restaurante['pagamentos'], 'nome');
+                                    echo !empty($pagamentos) ? htmlspecialchars(implode(', ', $pagamentos)) : 'Não informado';
                                     ?>
                                 </div>
                             </div>
@@ -157,12 +169,14 @@ if (!isset($restaurantId)) {
                         <?php if (empty($_SESSION['cliente_id'])): ?>
                             <p>Para fazer uma reserva é necessário estar logado.</p>
                             <?php
-                                $current = $_SERVER['REQUEST_URI'] ?? '/crud-hackaton/';
-                                $loginUrl = '/crud-hackaton/view/pages/login-cliente.php?redirect=' . urlencode($current);
+                            $current = $_SERVER['REQUEST_URI'] ?? '/crud-hackaton/';
+                            $loginUrl = '/crud-hackaton/view/pages/login-cliente.php?redirect=' . urlencode($current);
                             ?>
-                            <a href="<?php echo $loginUrl; ?>" class="btn btn-primary" style="width:100%;">Entrar para Reservar</a>
+                            <a href="<?php echo $loginUrl; ?>" class="btn btn-primary" style="width:100%;">Entrar para
+                                Reservar</a>
                         <?php else: ?>
-                            <form id="reservationForm" action="../../controller/reservaController.php" method="POST" onsubmit="submitReservation(event)">
+                            <form id="reservationForm" action="../../controller/reservaController.php" method="POST"
+                                onsubmit="submitReservation(event)">
                                 <input type="hidden" name="restaurant_id" value="<?php echo $restaurantId; ?>">
                                 <input type="hidden" name="action" value="create">
 
@@ -204,7 +218,8 @@ if (!isset($restaurantId)) {
 
                                 <div class="form-group">
                                     <label for="special_requests">Pedidos Especiais (opcional):</label>
-                                    <textarea id="special_requests" name="special_requests" placeholder="Ex: Mesa perto da janela, aniversário, restrições alimentares..."></textarea>
+                                    <textarea id="special_requests" name="special_requests"
+                                        placeholder="Ex: Mesa perto da janela, aniversário, restrições alimentares..."></textarea>
                                 </div>
 
                                 <button type="submit" class="btn btn-primary" style="width: 100%;">CONFIRMAR
