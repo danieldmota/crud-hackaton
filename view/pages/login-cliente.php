@@ -64,26 +64,3 @@ if (!empty($_SESSION['sucesso'])) {
 <?php include_once __DIR__ . '/../components/footer.php'; ?>
 
 <script src="../assets/js/main.js"></script>
-<!-- <script>
-    document.getElementById('loginForm').addEventListener('submit', function (e) {
-        e.preventDefault();
-
-        const formData = new FormData(this);
-        const email = formData.get('email');
-        const password = formData.get('password');
-
-        // Aqui você faria a requisição AJAX para autenticar
-        console.log('Login:', { email, password });
-
-        // Simular login
-        const submitBtn = this.querySelector('button[type="submit"]');
-        const originalText = submitBtn.textContent;
-        submitBtn.textContent = 'ENTRANDO...';
-        submitBtn.disabled = true;
-
-        setTimeout(() => {
-            alert('Login realizado com sucesso!');
-            window.location.href = 'dashboard.php';
-        }, 1500);
-    });
-</script> -->
