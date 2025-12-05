@@ -1,0 +1,18 @@
+/* Login */
+.login-container {
+    max-width: 500px;
+    margin: 0 auto;
+}
+
+.login-card {
+    background: rgba(18, 18, 26, 0.6);
+    backdrop-filter: blur(20px);
+    padding: 3rem;
+    border-radius: 25px;
+    border: 1px solid var(--dark-border);
+    box-shadow: 0 10px 50px rgba(0, 0, 0, 0.5);
+}
+
+.login-form {
+    margin-top: 2rem;
+}

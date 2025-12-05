@@ -65,7 +65,6 @@ if ($action === "delete") {
     } else {
         header("Location: ../view/erro.php?msg=Erro ao deletar");
     }
-    var_dump($_POST);
     exit;
 }
 

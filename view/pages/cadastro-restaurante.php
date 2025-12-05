@@ -25,7 +25,8 @@ $formasPagamento = $model->listarFormasPagamento();
 
 ?>
 
-<link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/shared.css">
+<link rel="stylesheet" href="../assets/css/pages/forms.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">
