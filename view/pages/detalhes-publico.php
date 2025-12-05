@@ -159,9 +159,7 @@ if (!$restaurante) {
                                 $current = $_SERVER['REQUEST_URI'] ?? '/crud-hackaton/';
                                 $loginUrl = '/crud-hackaton/view/pages/login-cliente.php?redirect=' . urlencode($current);
                             ?>
-                            <a href="<?php echo $loginUrl; ?>" class="btn btn-primary" style="width:100%; margin-top: 1.5rem;">
-                                Fazer Login
-                            </a>
+                            
                             <p style="margin-top: 1rem; color: var(--text-secondary); font-size: 0.9rem;">
                                 Não tem conta? <a href="cadastro-cliente.php" style="color: var(--primary-neon); font-weight: 600;">Cadastre-se aqui</a>
                             </p>
