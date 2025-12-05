@@ -78,7 +78,7 @@ $clienteId = $_SESSION['cliente_id'] ?? null;
                         <?php endif; ?>
                         <div class="reservation-actions">
                             <a class="btn btn-secondary" href="detalhes.php?id=<?php echo (int)$r['restaurante_id']; ?>">Ver Detalhes</a>
-                            <form method="POST" action="../../controller/reservaController.php" style="display:inline-block; margin-left:0.5rem;" onsubmit="return confirm('Cancelar reserva?');">
+                            <form method="POST" action="../../../controller/reservaController.php" style="display:inline-block; margin-left:0.5rem;" onsubmit="return confirm('Cancelar reserva?');">
                                 <input type="hidden" name="action" value="delete">
                                 <input type="hidden" name="id" value="<?php echo (int)$r['id']; ?>">
                                 <button type="submit" class="btn btn-primary">Cancelar Reserva</button>

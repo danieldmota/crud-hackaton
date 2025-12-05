@@ -21,13 +21,6 @@ $restauranteModel = new RestauranteModel();
 $reservas = $reservaModel->getByRestaurante($restauranteId);
 $detalhes = $restauranteModel->getDetalhesCompletos($restauranteId) ?: [];
 
-// Calcular estatísticas via consultas SQL (mais preciso)
-$today = date('Y-m-d');
-$currentYear = (int) date('Y');
-$currentMonth = (int) date('m');
-$reservasHoje = $reservaModel->countByRestauranteOnDate($restauranteId, $today, ['confirmada','confirmado']);
-$reservasMes = $reservaModel->countByRestauranteInMonth($restauranteId, $currentYear, $currentMonth, ['confirmada','confirmado']);
-
 $ratingMedio = isset($detalhes['rating_medio']) ? (float)$detalhes['rating_medio'] : 0.0;
 ?>
 

@@ -333,26 +333,4 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 <?php include_once __DIR__ . '/../../components/footer.php'; ?>
 
 <script src="../../assets/js/main.js"></script>
-<script>
-// Máscaras de input (mesmo código do cadastro)
-document.getElementById('phone').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 11) {
-        value = value.replace(/^(\d{2})(\d)/, '($1) $2');
-        value = value.replace(/(\d{5})(\d)/, '$1-$2');
-        e.target.value = value;
-    }
-});
-
-document.getElementById('zipcode').addEventListener('input', function(e) {
-    let value = e.target.value.replace(/\D/g, '');
-    if (value.length <= 8) {
-        value = value.replace(/^(\d{5})(\d)/, '$1-$2');
-        e.target.value = value;
-    }
-});
-
-// Submissão do formulário
-// O formulário faz submit normalmente para o controller (sem interceptação JS)
-</script>
-
+<script src="../../assets/js/pages/restaurante/editar-perfil.js" ></script>
