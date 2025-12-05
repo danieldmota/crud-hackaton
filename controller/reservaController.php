@@ -61,10 +61,11 @@ if ($action === "delete") {
     }
 
     if ($reserva->delete($id)) {
-        header("Location: ../view/sucesso.php?msg=Reserva deletada");
+        header("Location: ../view/pages/cliente/reservas.php");
     } else {
         header("Location: ../view/erro.php?msg=Erro ao deletar");
     }
+    var_dump($_POST);
     exit;
 }
 
