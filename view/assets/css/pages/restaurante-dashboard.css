@@ -1,0 +1,103 @@
+/* CSS específico: restaurante-dashboard (movido de style.css) */
+
+/* Dashboard */
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 2rem;
+}
+
+.dashboard-section {
+  background: rgba(18, 18, 26, 0.6);
+  -webkit-backdrop-filter: blur(20px);
+  backdrop-filter: blur(20px);
+  padding: 2.5rem;
+  border-radius: 20px;
+  border: 1px solid var(--dark-border);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
+}
+
+.stats-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1.5rem;
+  margin-top: 1.5rem;
+}
+
+.stat-card {
+  background: rgba(10, 10, 15, 0.4);
+  padding: 2rem;
+  border-radius: 15px;
+  border: 1px solid var(--dark-border);
+  text-align: center;
+  transition: all var(--transition-normal);
+}
+
+.stat-card:hover {
+  border-color: var(--primary-orange);
+}
+
+.quick-actions {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 1rem;
+}
+
+.action-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  justify-content: center;
+  padding: 1rem;
+  border-radius: 12px;
+  background: rgba(10, 10, 15, 0.35);
+  border: 1px solid var(--dark-border);
+}
+
+.action-icon {
+  font-size: 1.5rem;
+}
+
+/* Dashboard Mobile variants */
+.stats-grid {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.stat-card {
+  padding: 1.5rem;
+}
+
+.stat-value {
+  font-size: 2rem;
+}
+
+.stat-label {
+  font-size: 0.9rem;
+}
+
+.quick-actions {
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+}
+
+.action-btn {
+  padding: 1.25rem 0.75rem;
+}
+
+.action-icon {
+  font-size: 1.75rem;
+}
+
+.action-btn span:not(.action-icon) {
+  font-size: 0.95rem;
+}
+
+.dashboard-section {
+  padding: 1.5rem 1rem;
+}
+
+.section-title-form {
+  font-size: 1.3rem;
+  margin-bottom: 1.25rem;
+}
