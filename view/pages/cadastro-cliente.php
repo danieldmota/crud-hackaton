@@ -8,6 +8,7 @@ if (!empty($_SESSION['erro'])) {
 ?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/pages/cadastro.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">

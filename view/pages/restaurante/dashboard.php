@@ -32,6 +32,7 @@ $ratingMedio = isset($detalhes['rating_medio']) ? (float)$detalhes['rating_medio
 ?>
 
 <link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/pages/restaurante-dashboard.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">

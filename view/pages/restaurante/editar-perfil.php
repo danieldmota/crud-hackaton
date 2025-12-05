@@ -21,6 +21,7 @@ unset($_SESSION['flash_success'], $_SESSION['flash_error']);
 ?>
 
 <link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/pages/restaurante-dashboard.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">

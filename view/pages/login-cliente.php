@@ -15,6 +15,7 @@ if (!empty($_SESSION['sucesso'])) {
 ?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/pages/login.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">

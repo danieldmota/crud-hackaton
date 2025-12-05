@@ -14,6 +14,7 @@ if (!$restaurante) {
 ?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/pages/detalhes.css">
 
 <div class="container">
     <button class="btn-back" onclick="goBack()">

@@ -21,6 +21,7 @@ $placeholderImage = 'https://images.unsplash.com/photo-1414235077428-338989a2e8c
 ?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/pages/home.css">
 
 <section class="hero-section">
     <div class="container">

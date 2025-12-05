@@ -17,6 +17,7 @@ $clienteId = $_SESSION['cliente_id'] ?? null;
 ?>
 
 <link rel="stylesheet" href="../../assets/css/style.css">
+<link rel="stylesheet" href="../../assets/css/pages/cliente-home.css">
 
 <div class="container">
     <button class="btn-back" onclick="goBack()">

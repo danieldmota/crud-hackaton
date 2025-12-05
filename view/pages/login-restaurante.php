@@ -1,6 +1,7 @@
 <?php include_once __DIR__ . '/../components/header.php'; ?>
 
 <link rel="stylesheet" href="../assets/css/style.css">
+<link rel="stylesheet" href="../assets/css/pages/login.css">
 
 <section class="hero-section" style="padding: 4rem 2rem;">
     <div class="container">
